@@ -1,16 +1,17 @@
 /* 양식 카드 */
 .template-card {
   background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid #d2d2d7;
+  border-radius: 12px;
   padding: 20px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  transition: box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: all 0.2s;
 }
 
 .template-card:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
 }
 
 .template-header {
@@ -19,30 +20,32 @@
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #f5f5f5;
+  border-bottom: 2px solid #f5f5f7;
 }
 
 .template-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #1d1d1f;
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;  /* 일반 폰트 */
 }
 
 .template-date {
   font-size: 12px;
-  color: #999;
+  color: #86868b;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;  /* 일반 폰트 */
 }
 
 .template-content {
   background: #f9f9f9;
   border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
   white-space: pre-wrap;
   word-wrap: break-word;
-  font-family: 'Consolas', 'Monaco', monospace;
+  font-family: 'D2Coding', 'Consolas', 'Monaco', 'Courier New', monospace;  /* ← 모노스페이스! */
   font-size: 13px;
   line-height: 1.6;
   color: #333;
@@ -53,21 +56,27 @@
 .template-actions {
   display: flex;
   gap: 8px;
-  justify-content: flex-end;
 }
 
+/* 복사 버튼 */
 .btn-copy {
-  padding: 8px 16px;
-  background: #4CAF50;
+  height: 32px;
+  padding: 0 14px;
+  background-color: #30d158;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background 0.2s;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;  /* 일반 폰트 */
 }
 
 .btn-copy:hover {
-  background: #45a049;
+  background-color: #28cd4f;
+}
+
+.btn-copy:active {
+  background-color: #24b946;
 }

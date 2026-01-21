@@ -42,7 +42,6 @@
   padding: 0 var(--spacing-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'D2Coding', sans-serif;
   font-size: 13px;  /* 14px → 13px */
   background-color: var(--bg-light);
   color: var(--text-primary);
@@ -52,7 +51,7 @@
 
 .input-form textarea {
   height: auto;
-  min-height: 100px;
+  min-height: 200px;
   padding: var(--spacing-sm);
   resize: vertical;
   line-height: 1.5;
@@ -96,7 +95,7 @@ select {
 
 .requester-fields {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: var(--spacing-xs);
   margin-bottom: var(--spacing-sm);
 }
@@ -107,15 +106,11 @@ select {
   margin-bottom: var(--spacing-sm);
 }
 
-.requester-fields-inline .field-team {
+.requester-fields-inline .field-flex2 {
   flex: 2;  /* 50% */
 }
 
-.requester-fields-inline .field-name {
-  flex: 1;  /* 25% */
-}
-
-.requester-fields-inline .field-position {
+.requester-fields-inline .field-flex1 {
   flex: 1;  /* 25% */
 }
 
@@ -159,7 +154,6 @@ select {
   padding: 0 40px 0 var(--spacing-md);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'D2Coding', sans-serif;
   font-size: 13px;  /* 14px → 13px */
   background-color: #ffffff;
   color: var(--text-primary);

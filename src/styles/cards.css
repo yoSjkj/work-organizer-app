@@ -29,6 +29,8 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f5f5f7;  /* ← 구분선 추가 */
   gap: 16px;
 }
 
@@ -38,9 +40,10 @@
 
 .item-header h3 {
   color: #1d1d1f;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;  /* 15px → 16px */
+  font-weight: 700;  /* 600 → 700 */
   margin-bottom: 4px;
+  line-height: 1.4;
 }
 
 /* 메타 */
@@ -72,6 +75,15 @@
   padding: 4px 10px;
   background-color: #5e5ce6;
   color: white;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-contact {
+  background: #9C27B0;
+  color: white;
+  padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
@@ -165,11 +177,11 @@
   font-weight: 500;
 }
 
-/* 카드 내용 고정 높이 */
+/* 카드 내용 - 제목과 구분 강화 */
 .item-content {
-  color: #1d1d1f;
+  color: #555;  /* #1d1d1f → #555 (조금 더 연하게) */
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;  /* 1.5 → 1.6 */
   margin-bottom: 12px;
   white-space: pre-wrap;
   word-break: break-word;
@@ -181,6 +193,24 @@
   display: flex;
   gap: 8px;
   margin-top: 8px;
+}
+
+/* 복사 버튼 */
+.btn-copy {
+  height: 32px;
+  padding: 0 14px;
+  background-color: #30d158;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-copy:hover {
+  background-color: #28cd4f;
 }
 
 /* 스크롤바 스타일 */
@@ -200,13 +230,4 @@
 
 .item-content::-webkit-scrollbar-thumb:hover {
   background: #b8b8bb;
-}
-
-.badge-contact {
-  background: #9C27B0;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
 }

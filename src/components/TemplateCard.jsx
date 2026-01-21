@@ -1,4 +1,4 @@
-function TemplateCard({ template, onCopy, onEdit, onDelete }) {
+function TemplateCard({ template, onEdit, onDelete }) {
   const handleCopy = () => {
     navigator.clipboard.writeText(template.content)
       .then(() => {
@@ -14,7 +14,6 @@ function TemplateCard({ template, onCopy, onEdit, onDelete }) {
     <div className="template-card">
       <div className="template-header">
         <h3 className="template-title">{template.title}</h3>
-        <span className="template-date">{template.date}</span>
       </div>
       
       <pre className="template-content">{template.content}</pre>
@@ -25,14 +24,14 @@ function TemplateCard({ template, onCopy, onEdit, onDelete }) {
           className="btn-copy"
           title="복사"
         >
-          📋 복사
+          복사
         </button>
         <button 
           onClick={() => onEdit(template)}
-          className="btn-edit"
+          className="edit-btn"
           title="수정"
         >
-          ✏️ 수정
+          수정
         </button>
         <button
           onClick={() => {
@@ -40,10 +39,10 @@ function TemplateCard({ template, onCopy, onEdit, onDelete }) {
               onDelete(template.id)
             }
           }}
-          className="btn-delete"
+          className="delete-btn"
           title="삭제"
         >
-          🗑️ 삭제
+          삭제
         </button>
       </div>
     </div>

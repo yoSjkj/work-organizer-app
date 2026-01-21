@@ -22,6 +22,8 @@ const OPTIONS = {
     'PC환경 문의',
     '조직이관 문의',
     '주문 문의',
+    '통제자재 등록 요청',
+    '부자재코드 생성 요청',
     '기타'
   ],
   requesterTypes: ['대리점', '현업', '시공사', 'IT담당자', '기타']
@@ -56,6 +58,26 @@ function App() {
   
   // ref
   const inputFormRef = useRef(null)
+
+  // 문의유형 변경 핸들러 (자동 입력 기능 포함)
+  const handleInquiryTypeChange = (value) => {
+    memoForm.setInquiryType(value)
+
+    if (value === '부자재코드 생성 요청') {
+      memoForm.setRequestMethod('CSR')
+      memoForm.setRequesterType('현업')
+      memoForm.setTeam('창호.지인스퀘어 수원')
+      memoForm.setName('장동희')
+      memoForm.setPosition('책임')
+    } else if (value === '통제자재 등록 요청') {
+      memoForm.setRequestMethod('메신저')
+      memoForm.setRequesterType('현업')
+      memoForm.setTeam('창호.상품개발팀')
+      memoForm.setName('박범석')
+      memoForm.setPosition('선임')
+      memoForm.setTitle('통제자재 등록 요청')
+    }
+  }
 
   // 항목 추가/수정
   const handleSubmit = () => {
@@ -190,7 +212,7 @@ function App() {
           options={OPTIONS}
           editingId={editingId}
           onRequestMethodChange={memoForm.setRequestMethod}
-          onInquiryTypeChange={memoForm.setInquiryType}
+          onInquiryTypeChange={handleInquiryTypeChange}
           onRequesterTypeChange={memoForm.setRequesterType}
           onContactInfoChange={memoForm.setContactInfo}
           onDealerCodeChange={memoForm.setDealerCode}

@@ -2,10 +2,8 @@ function MemoForm({
   requestMethod,
   inquiryType,
   requesterType,
-  // 연락 정보 (새로 추가!)
   contactInfo,
   onContactInfoChange,
-  // 기존 props...
   dealerCode,
   dealerName,
   team,
@@ -40,7 +38,7 @@ function MemoForm({
           <div className="contact-field">
             <input
               type="tel"
-              placeholder="📞 전화번호 (예: 010-1234-5678)"
+              placeholder="전화번호 (예: 010-1234-5678)"
               value={contactInfo}
               onChange={(e) => onContactInfoChange(e.target.value)}
             />
@@ -52,7 +50,7 @@ function MemoForm({
           <div className="contact-field">
             <input
               type="email"
-              placeholder="📧 이메일 주소"
+              placeholder="이메일 주소"
               value={contactInfo}
               onChange={(e) => onContactInfoChange(e.target.value)}
             />
@@ -64,7 +62,7 @@ function MemoForm({
           <div className="contact-field">
             <input
               type="text"
-              placeholder="🎫 CSR 요청번호 (예: RITM1234567)"
+              placeholder="CSR 처리번호 (예: RITM1234567)"
               value={contactInfo}
               onChange={(e) => onContactInfoChange(e.target.value)}
             />
@@ -84,18 +82,20 @@ function MemoForm({
     switch(requesterType) {
       case '대리점':
         return (
-          <div className="requester-fields">
+          <div className="requester-fields requester-fields-inline">
             <input
               type="text"
               placeholder="대리점코드"
               value={dealerCode}
               onChange={(e) => onDealerCodeChange(e.target.value)}
+              className="field-flex1"
             />
             <input
               type="text"
               placeholder="대리점명"
               value={dealerName}
               onChange={(e) => onDealerNameChange(e.target.value)}
+              className="field-flex1"
             />
           </div>
         )
@@ -108,21 +108,21 @@ function MemoForm({
               placeholder="팀명"
               value={team}
               onChange={(e) => onTeamChange(e.target.value)}
-              className="field-team"
+              className="field-flex2"
             />
             <input
               type="text"
               placeholder="이름"
               value={name}
               onChange={(e) => onNameChange(e.target.value)}
-              className="field-name"
+              className="field-flex1"
             />
             <input
               type="text"
               placeholder="직위"
               value={position}
               onChange={(e) => onPositionChange(e.target.value)}
-              className="field-position"
+              className="field-flex1"
             />
           </div>
         )
