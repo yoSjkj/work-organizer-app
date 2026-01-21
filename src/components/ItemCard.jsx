@@ -1,5 +1,6 @@
 function ItemCard({ item, onDelete, onStatusChange, onEdit }) {
   const isMemo = item.requestMethod !== undefined
+  const isDeployment = item.target !== undefined
   
   const getRequesterDisplay = () => {
     if (!item.requester) return null
@@ -45,8 +46,10 @@ function ItemCard({ item, onDelete, onStatusChange, onEdit }) {
                 {item.inquiryType && (
                   <span className="badge-inquiry">{item.inquiryType}</span>
                 )}
+                {item.contactInfo && (
+                  <span className="badge-contact">{item.contactInfo}</span>
+                )}
               </div>
-              
               <h3>{item.title || '제목 없음'}</h3>
               
               {getRequesterDisplay()}

@@ -201,3 +201,12 @@
 .item-content::-webkit-scrollbar-thumb:hover {
   background: #b8b8bb;
 }
+
+.badge-contact {
+  background: #9C27B0;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}

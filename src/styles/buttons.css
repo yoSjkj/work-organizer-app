@@ -1,58 +1,94 @@
-/* 추가 버튼 */
-.form-controls .add-btn {
-  flex: 1;
-  height: 44px;
-  background-color: #0071e3;
-  border: none;
-  color: white;
-  border-radius: 10px;
-  font-size: 15px;
+/* ===== 공통 버튼 스타일 ===== */
+:root {
+  --button-height: 39px;
+  --button-font-size: 13px;
+  --button-radius: 8px;
+}
+
+/* ===== 폼 버튼 (추가, 저장, 취소) ===== */
+.form-controls .add-btn,
+.form-controls .cancel-btn,
+.button-group .add-btn,
+.button-group .cancel-btn {
+  height: var(--button-height);
+  padding: 0 20px;
+  border-radius: var(--button-radius);
+  font-size: var(--button-font-size);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  border: none;
 }
 
-.form-controls .add-btn:hover {
+.form-controls .add-btn,
+.button-group .add-btn {
+  background-color: #0071e3;
+  color: white;
+}
+
+.form-controls .add-btn:hover,
+.button-group .add-btn:hover {
   background-color: #0077ed;
   box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
 }
 
-.form-controls .add-btn:active {
+.form-controls .add-btn:active,
+.button-group .add-btn:active {
   background-color: #006edb;
 }
 
-/* 상태 변경 버튼 */
-.status-change-btn {
-  padding: 7px 14px;
-  background-color: #ffffff;
-  border: 1.5px solid #0071e3;
-  color: #0071e3;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.status-change-btn:hover {
-  background-color: #0071e3;
-  color: white;
-}
-
-/* 삭제 버튼 */
-.delete-btn {
-  padding: 7px 14px;
+.form-controls .cancel-btn,
+.button-group .cancel-btn {
   background-color: #ffffff;
   border: 1.5px solid #d2d2d7;
   color: #1d1d1f;
-  border-radius: 8px;
+}
+
+.form-controls .cancel-btn:hover,
+.button-group .cancel-btn:hover {
+  background-color: #f5f5f7;
+  border-color: #86868b;
+}
+
+/* ===== 카드 버튼 (수정, 삭제, 완료 등) ===== */
+.edit-btn,
+.delete-btn,
+.status-change-btn,
+.btn-complete,
+.btn-copy {
+  height: 32px;
+  padding: 0 14px;
+  background-color: #ffffff;
+  border: 1.5px solid #d2d2d7;
+  color: #1d1d1f;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 600;
   transition: all 0.2s ease;
+}
+
+.edit-btn {
+  border-color: #0071e3;
+  color: #0071e3;
+}
+
+.edit-btn:hover {
+  background-color: #e3f2fd;
+}
+
+.status-change-btn,
+.btn-complete {
+  border-color: #0071e3;
+  color: #0071e3;
+}
+
+.status-change-btn:hover,
+.btn-complete:hover {
+  background-color: #0071e3;
+  color: white;
 }
 
 .delete-btn:hover {
@@ -60,10 +96,21 @@
   border-color: #86868b;
 }
 
-/* 백업 버튼 */
+.btn-copy {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.btn-copy:hover {
+  background: #45a049;
+}
+
+/* ===== 백업 버튼 ===== */
 .backup-btn {
   width: 100%;
-  padding: 9px 12px;
+  height: 36px;
+  padding: 0 12px;
   margin-bottom: 6px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
@@ -75,6 +122,8 @@
   text-align: left;
   color: #d1d1d6;
   background-color: transparent;
+  display: flex;
+  align-items: center;
 }
 
 .backup-btn:hover {
@@ -96,7 +145,6 @@
   background-color: rgba(0, 113, 227, 0.15);
   border-color: rgba(0, 113, 227, 0.3);
   color: #0071e3;
-  display: block;
 }
 
 .backup-btn.import:hover {
@@ -111,42 +159,4 @@
 
 .backup-btn.clear:hover {
   background-color: rgba(255, 59, 48, 0.25);
-}
-
-/* 수정 버튼 */
-.edit-btn {
-  padding: 7px 14px;
-  background-color: #ffffff;
-  border: 1.5px solid #0071e3;
-  color: #0071e3;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.edit-btn:hover {
-  background-color: #e3f2fd;
-}
-
-/* 취소 버튼 */
-.cancel-btn {
-  padding: 0 16px;
-  height: 44px;
-  background-color: #ffffff;
-  border: 1.5px solid #d2d2d7;
-  color: #1d1d1f;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.cancel-btn:hover {
-  background-color: #f5f5f7;
-  border-color: #86868b;
 }

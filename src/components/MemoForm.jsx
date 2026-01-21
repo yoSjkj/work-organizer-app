@@ -2,6 +2,10 @@ function MemoForm({
   requestMethod,
   inquiryType,
   requesterType,
+  // 연락 정보 (새로 추가!)
+  contactInfo,
+  onContactInfoChange,
+  // 기존 props...
   dealerCode,
   dealerName,
   team,
@@ -28,6 +32,53 @@ function MemoForm({
   onCancel,
   onSubmit 
 }) {
+  // 문의 방식별 연락처 필드 렌더링
+  const renderContactField = () => {
+    switch(requestMethod) {
+      case '전화':
+        return (
+          <div className="contact-field">
+            <input
+              type="tel"
+              placeholder="📞 전화번호 (예: 010-1234-5678)"
+              value={contactInfo}
+              onChange={(e) => onContactInfoChange(e.target.value)}
+            />
+          </div>
+        )
+      
+      case '이메일':
+        return (
+          <div className="contact-field">
+            <input
+              type="email"
+              placeholder="📧 이메일 주소"
+              value={contactInfo}
+              onChange={(e) => onContactInfoChange(e.target.value)}
+            />
+          </div>
+        )
+      
+      case 'CSR':
+        return (
+          <div className="contact-field">
+            <input
+              type="text"
+              placeholder="🎫 CSR 요청번호 (예: RITM1234567)"
+              value={contactInfo}
+              onChange={(e) => onContactInfoChange(e.target.value)}
+            />
+          </div>
+        )
+      
+      case '직접방문':
+        return null // 직접방문은 연락처 불필요
+      
+      default:
+        return null
+    }
+  }
+
   // 요청자유형에 따라 다른 입력 폼 렌더링
   const renderRequesterFields = () => {
     switch(requesterType) {
@@ -51,24 +102,27 @@ function MemoForm({
       
       case '현업':
         return (
-          <div className="requester-fields">
+          <div className="requester-fields requester-fields-inline">
             <input
               type="text"
               placeholder="팀명"
               value={team}
               onChange={(e) => onTeamChange(e.target.value)}
+              className="field-team"
             />
             <input
               type="text"
               placeholder="이름"
               value={name}
               onChange={(e) => onNameChange(e.target.value)}
+              className="field-name"
             />
             <input
               type="text"
               placeholder="직위"
               value={position}
               onChange={(e) => onPositionChange(e.target.value)}
+              className="field-position"
             />
           </div>
         )
@@ -118,6 +172,9 @@ function MemoForm({
         </select>
       </div>
 
+      {/* 연락 정보 (문의 방식별) */}
+      {renderContactField()}
+      
       {/* 요청자 정보 (유형별로 다름) */}
       {renderRequesterFields()}
       
@@ -137,16 +194,23 @@ function MemoForm({
         rows="4"
       />
       
-      {/* 하단: 상태 선택, 추가 버튼 */}
+      {/* 하단: 상태 선택, 추가/취소 버튼 */}
       <div className="form-controls">
         <select value={status} onChange={(e) => onStatusChange(e.target.value)}>
           <option value="임시">📝 임시</option>
           <option value="진행">⚙️ 진행</option>
           <option value="완료">✅ 완료</option>
         </select>
-        <button onClick={onSubmit} className="add-btn">
-          {editingId ? '저장' : '추가'}
-        </button>
+        <div className="button-group">
+          {editingId && (
+            <button onClick={onCancel} className="cancel-btn">
+              취소
+            </button>
+          )}
+          <button onClick={onSubmit} className="add-btn">
+            {editingId ? '저장' : '추가'}
+          </button>
+        </div>
       </div>
     </>
   )

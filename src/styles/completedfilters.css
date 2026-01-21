@@ -1,0 +1,168 @@
+.completed-filters {
+  background-color: #ffffff;
+  border: 1px solid #d2d2d7;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+
+/* 필터 섹션 */
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f5f5f7;
+}
+
+.filter-section:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* 라벨 */
+.filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+  min-width: 70px;
+}
+
+/* 컨트롤 */
+.filter-controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+/* 필터 버튼 */
+.filter-btn {
+  height: 32px;
+  padding: 0 14px;
+  background-color: #f5f5f7;
+  border: 1px solid #d2d2d7;
+  color: #1d1d1f;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.filter-btn:hover {
+  background-color: #e8e8ed;
+  border-color: #b8b8bb;
+}
+
+/* active 상태 */
+.filter-btn.active {
+  background-color: #0071e3;
+  color: white;
+  border-color: #0071e3;
+}
+
+/* 날짜 입력 */
+.date-inputs {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.date-inputs input[type="date"] {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #d2d2d7;
+  border-radius: 6px;
+  font-size: 12px;
+  background-color: #ffffff;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.date-inputs input[type="date"]:hover {
+  border-color: #b8b8bb;
+}
+
+.date-inputs input[type="date"]:focus {
+  outline: none;
+  border-color: #0071e3;
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+}
+
+.date-inputs span {
+  color: #86868b;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* 검색 버튼 */
+.apply-btn {
+  height: 32px;
+  padding: 0 16px;
+  background-color: #0071e3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.apply-btn:hover {
+  background-color: #0077ed;
+}
+
+.apply-btn:active {
+  background-color: #006edb;
+}
+
+/* 초기화 버튼 */
+.reset-all-btn {
+  height: 30px;
+  padding: 0 14px;
+  background-color: #ffffff;
+  color: #ff3b30;
+  border: 1px solid #ff3b30;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+.reset-all-btn:hover {
+  background-color: #ff3b30;
+  color: white;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-label {
+    min-width: auto;
+  }
+  
+  .date-inputs {
+    flex-wrap: wrap;
+  }
+  
+  .date-inputs input[type="date"] {
+    flex: 1;
+    min-width: 120px;
+  }
+}

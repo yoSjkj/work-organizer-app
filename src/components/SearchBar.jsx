@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function SearchBar({ onSearch }) {
+function SearchBar({ onSearch, placeholder = "🔍 검색..." }) {
   const [searchTerm, setSearchTerm] = useState('')
 
   const handleSearch = (value) => {
@@ -17,7 +17,7 @@ function SearchBar({ onSearch }) {
     <div className="search-bar">
       <input
         type="text"
-        placeholder="검색... (제목, 내용, 대리점코드, 담당자)"
+        placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => handleSearch(e.target.value)}
         className="search-input"
