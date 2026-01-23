@@ -44,6 +44,15 @@ const getLastReportWeek = () => {
   wednesday.setDate(thursday.getDate() + 6)
   wednesday.setHours(23, 59, 59, 999)
   
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+  console.log('📅 주간보고 날짜 범위 계산')
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+  console.log('오늘:', today.toLocaleDateString('ko-KR'), `(${['일','월','화','수','목','금','토'][dayOfWeek]}요일)`)
+  console.log('빼는 날수:', daysToSubtract, '일')
+  console.log('시작:', thursday.toLocaleDateString('ko-KR'), thursday.toLocaleTimeString('ko-KR'))
+  console.log('종료:', wednesday.toLocaleDateString('ko-KR'), wednesday.toLocaleTimeString('ko-KR'))
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    
   return { start: thursday, end: wednesday }
 }
 

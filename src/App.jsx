@@ -7,10 +7,12 @@ import TemplateForm from './components/TemplateForm'
 import ItemList from './components/ItemList'
 import SearchBar from './components/SearchBar'
 import CompletedFilters from './components/CompletedFilters'
+import DocumentForm from './components/DocumentForm'
 import { useWorkItems } from './hooks/useWorkItems'
 import { useMemoForm } from './hooks/useMemoForm'
 import { useDeploymentForm } from './hooks/useDeploymentForm'
 import { useTemplateForm } from './hooks/useTemplateForm'
+import { useDocumentForm } from './hooks/useDocumentForm'
 import { parseKoreanDate } from './utils/dateUtils'
 
 // 옵션 데이터 정의
@@ -31,8 +33,11 @@ const OPTIONS = {
 
 function App() {
   // 카테고리 목록 (메뉴 순서대로)
-  const categories = ['메모', '완료', '양식', '매뉴얼', '문서', '배포 기록']
+  const categories = ['메모', '완료', '양식', '문서', '배포 기록']
   
+  // 문서 카테고리 추가
+  const DOCUMENT_CATEGORIES = ['전체', '주문', '처리중', '조직이관', '인수인계', '기타']
+
   // 커스텀 훅 사용
   const { 
     items, 
@@ -48,6 +53,7 @@ function App() {
   const memoForm = useMemoForm()
   const deploymentForm = useDeploymentForm()
   const templateForm = useTemplateForm()
+  const documentForm = useDocumentForm()
 
   // 상태들
   const [selectedCategory, setSelectedCategory] = useState('메모')
@@ -83,13 +89,25 @@ function App() {
   const handleSubmit = () => {
     // 메모, 완료
     if (selectedCategory === '메모' || selectedCategory === '완료') {
-      if (!memoForm.content.trim()) return
-      searchTerm
+      if (!memoForm.content.trim()) {
+        alert('⚠️ 내용을 입력해주세요!')
+        return
+      }
+      
       const formData = memoForm.getFormData()
+      let targetCategory
+      if (formData.status === '완료') {
+        targetCategory = '완료'
+      } else if (formData.status === '임시' || formData.status === '진행') {
+        targetCategory = '메모'
+      } else {
+        targetCategory = selectedCategory
+      }
+
       const newItem = {
         id: editingId || Date.now(),
         ...formData,
-        category: formData.status === '완료' ? '완료' : selectedCategory,
+        category: targetCategory,
         date: new Date().toLocaleDateString('ko-KR'),
         time: new Date().toLocaleTimeString('ko-KR', { 
           hour: '2-digit', 
@@ -105,14 +123,18 @@ function App() {
       }
       
       memoForm.resetForm()
-      
-      if (formData.status === '완료') {
-        setSelectedCategory('완료')
-      }
+      setSelectedCategory(targetCategory)
     }
     // 양식
     else if (selectedCategory === '양식') {
-      if (!templateForm.title.trim()) return
+      if (!templateForm.title.trim()) {
+        alert('⚠️ 제목을 입력해주세요!')
+        return
+      }
+      if (!templateForm.content.trim()) {
+        alert('⚠️ 내용을 입력해주세요!')
+        return
+      }
       
       const newItem = {
         id: editingId || Date.now(),
@@ -131,9 +153,40 @@ function App() {
       
       templateForm.resetForm()
     }
+    // 문서
+    else if (selectedCategory === '문서') {
+      if (!documentForm.title.trim()) {
+        alert('⚠️ 제목을 입력해주세요!')
+        return
+      }
+      if (!documentForm.content.trim()) {
+        alert('⚠️ 내용을 입력해주세요!')
+        return
+      }
+      
+      const newItem = {
+        id: editingId || Date.now(),
+        ...documentForm.getFormData(),
+        category: selectedCategory,
+        date: new Date().toLocaleDateString('ko-KR'),
+        time: new Date().toLocaleTimeString('ko-KR')
+      }
+      
+      if (editingId) {
+        updateItem(editingId, newItem)
+        setEditingId(null)
+      } else {
+        addItemToList(newItem)
+      }
+      
+      documentForm.resetForm()
+    }
     // 배포 기록
     else if (selectedCategory === '배포 기록') {
-      if (!deploymentForm.file.trim()) return
+      if (!deploymentForm.file.trim()) {
+        alert('⚠️ 파일명을 입력해주세요!')
+        return
+      }
       
       const newItem = {
         id: editingId || Date.now(),
@@ -164,6 +217,9 @@ function App() {
     } else if (item.target) {
       // 배포 기록 수정
       deploymentForm.setFormData(item)
+    } else if (item.docCategory) {
+      // 문서 수정
+      documentForm.setFormData(item)
     } else {
       // 양식 수정
       templateForm.setFormData(item)
@@ -185,6 +241,7 @@ function App() {
     memoForm.resetForm()
     deploymentForm.resetForm()
     templateForm.resetForm()
+    documentForm.resetForm()
   }
 
   // 입력 폼이 있는 카테고리 체크
@@ -243,6 +300,25 @@ function App() {
         />
       )
     }
+    // 문서
+    else if (selectedCategory === '문서') {
+      return (
+        <DocumentForm
+        docCategory={documentForm.docCategory}
+        title={documentForm.title}
+        content={documentForm.content}
+        isMarkdown={documentForm.isMarkdown}
+        editingId={editingId}
+        categories={DOCUMENT_CATEGORIES}
+        onDocCategoryChange={documentForm.setDocCategory}
+        onTitleChange={documentForm.setTitle}
+        onContentChange={documentForm.setContent}
+        onIsMarkdownChange={documentForm.setIsMarkdown}
+        onCancel={cancelEdit}
+        onSubmit={handleSubmit}
+        />
+      )
+    }
     // 배포 기록
     else if (selectedCategory === '배포 기록') {
       return (
@@ -261,7 +337,7 @@ function App() {
         />
       )
     }
-    
+
     return null
   }
 
@@ -270,15 +346,14 @@ function App() {
     '메모': '🔍 검색... (제목, 내용, 연락처, 대리점, 담당자)',
     '완료': '🔍 검색... (제목, 내용, 연락처, 대리점, 담당자)',
     '양식': '🔍 양식 검색...',
-    '매뉴얼': '🔍 매뉴얼 검색...',
     '문서': '🔍 문서 검색...'
   }
 
   // 카테고리별 UI 설정
   const categoryConfig = {
-    hasSearch: ['메모', '완료', '양식', '매뉴얼', '문서'].includes(selectedCategory),
+    hasSearch: ['메모', '완료', '양식', '문서'].includes(selectedCategory),
     hasAdvancedFilter: selectedCategory === '완료',
-    hasInputForm: ['메모', '완료', '양식', '배포 기록'].includes(selectedCategory)
+    hasInputForm: ['메모', '완료', '양식', '문서', '배포 기록'].includes(selectedCategory)
   }
 
   // 필터링된 항목들
@@ -362,6 +437,7 @@ function App() {
           onStatusChange={changeStatus}
           onEdit={startEdit}
           isTemplate={selectedCategory === '양식'}
+          isDocument={selectedCategory === '문서'}
         />
       </main>
     </div>

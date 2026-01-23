@@ -231,3 +231,13 @@
 .item-content::-webkit-scrollbar-thumb:hover {
   background: #b8b8bb;
 }
+
+/* 문서 카테고리 배지 */
+.badge-doc-category {
+  padding: 4px 10px;
+  background-color: #FF9500;
+  color: white;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}

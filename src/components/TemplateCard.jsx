@@ -1,9 +1,6 @@
 function TemplateCard({ template, onEdit, onDelete }) {
   const handleCopy = () => {
     navigator.clipboard.writeText(template.content)
-      .then(() => {
-        alert('📋 클립보드에 복사되었습니다!')
-      })
       .catch(err => {
         console.error('복사 실패:', err)
         alert('복사에 실패했습니다.')
