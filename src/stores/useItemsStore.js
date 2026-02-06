@@ -1,10 +1,138 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useFormStore } from './useFormStore'
+import { useUIStore } from './useUIStore'
 
 export const useItemsStore = create(
   persist(
     (set, get) => ({
       items: [],
+
+      // 항목 추가/수정 (통합)
+      submitItem: () => {
+        const { selectedCategory, editingId, setEditingId, setSelectedCategory } = useUIStore.getState()
+        const { getFormData, resetForm, memo, template, document, deployment } = useFormStore.getState()
+        const { addItem, updateItem } = get()
+
+        // 메모/완료
+        if (selectedCategory === '메모' || selectedCategory === '완료') {
+          if (!memo.content.trim()) {
+            alert('내용을 입력해주세요!')
+            return
+          }
+
+          const formData = getFormData('memo')
+          let targetCategory
+          if (formData.status === '완료') {
+            targetCategory = '완료'
+          } else if (formData.status === '임시' || formData.status === '진행') {
+            targetCategory = '메모'
+          } else {
+            targetCategory = selectedCategory
+          }
+
+          const newItem = {
+            id: editingId || Date.now(),
+            ...formData,
+            category: targetCategory,
+            date: new Date().toLocaleDateString('ko-KR'),
+            time: new Date().toLocaleTimeString('ko-KR', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          }
+
+          if (editingId) {
+            updateItem(editingId, newItem)
+            setEditingId(null)
+          } else {
+            addItem(newItem)
+          }
+
+          resetForm('memo')
+          setSelectedCategory(targetCategory)
+        }
+        // 양식
+        else if (selectedCategory === '양식') {
+          if (!template.title.trim()) {
+            alert('제목을 입력해주세요!')
+            return
+          }
+          if (!template.content.trim()) {
+            alert('내용을 입력해주세요!')
+            return
+          }
+
+          const newItem = {
+            id: editingId || Date.now(),
+            ...getFormData('template'),
+            category: selectedCategory,
+            date: new Date().toLocaleDateString('ko-KR'),
+            time: new Date().toLocaleTimeString('ko-KR')
+          }
+
+          if (editingId) {
+            updateItem(editingId, newItem)
+            setEditingId(null)
+          } else {
+            addItem(newItem)
+          }
+
+          resetForm('template')
+        }
+        // 문서
+        else if (selectedCategory === '문서') {
+          if (!document.title.trim()) {
+            alert('제목을 입력해주세요!')
+            return
+          }
+          if (!document.content.trim()) {
+            alert('내용을 입력해주세요!')
+            return
+          }
+
+          const newItem = {
+            id: editingId || Date.now(),
+            ...getFormData('document'),
+            category: selectedCategory,
+            date: new Date().toLocaleDateString('ko-KR'),
+            time: new Date().toLocaleTimeString('ko-KR')
+          }
+
+          if (editingId) {
+            updateItem(editingId, newItem)
+            setEditingId(null)
+          } else {
+            addItem(newItem)
+          }
+
+          resetForm('document')
+        }
+        // 배포 기록
+        else if (selectedCategory === '배포 기록') {
+          if (!deployment.file.trim()) {
+            alert('파일명을 입력해주세요!')
+            return
+          }
+
+          const newItem = {
+            id: editingId || Date.now(),
+            ...getFormData('deployment'),
+            category: selectedCategory,
+            date: new Date().toLocaleDateString('ko-KR'),
+            time: new Date().toLocaleTimeString('ko-KR')
+          }
+
+          if (editingId) {
+            updateItem(editingId, newItem)
+            setEditingId(null)
+          } else {
+            addItem(newItem)
+          }
+
+          resetForm('deployment')
+        }
+      },
 
       // 항목 추가
       addItem: (newItem) => {
@@ -23,6 +151,26 @@ export const useItemsStore = create(
         set((state) => ({
           items: state.items.filter(item => item.id !== id)
         }))
+      },
+
+      // 항목 수정 시작
+      startEdit: (item) => {
+        const { setEditingId, setSelectedCategory } = useUIStore.getState()
+        const { setFormData } = useFormStore.getState()
+
+        setEditingId(item.id)
+
+        if (item.requestMethod) {
+          setFormData('memo', item)
+        } else if (item.target) {
+          setFormData('deployment', item)
+        } else if (item.docCategory) {
+          setFormData('document', item)
+        } else {
+          setFormData('template', item)
+        }
+
+        setSelectedCategory(item.category)
       },
 
       // 상태 변경
