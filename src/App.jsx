@@ -1,100 +1,58 @@
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
 import './App.css'
 import Sidebar from './components/Sidebar'
 import MemoForm from './components/MemoForm'
 import DeploymentForm from './components/DeploymentForm'
 import TemplateForm from './components/TemplateForm'
+import DocumentForm from './components/DocumentForm'
 import ItemList from './components/ItemList'
 import SearchBar from './components/SearchBar'
 import CompletedFilters from './components/CompletedFilters'
-import DocumentForm from './components/DocumentForm'
-import { useWorkItems } from './hooks/useWorkItems'
-import { useMemoForm } from './hooks/useMemoForm'
-import { useDeploymentForm } from './hooks/useDeploymentForm'
-import { useTemplateForm } from './hooks/useTemplateForm'
-import { useDocumentForm } from './hooks/useDocumentForm'
+import { useItemsStore } from './stores/useItemsStore'
+import { useUIStore } from './stores/useUIStore'
+import { useFormStore } from './stores/useFormStore'
 import { parseKoreanDate } from './utils/dateUtils'
 
-// 옵션 데이터 정의
-const OPTIONS = {
-  requestMethods: ['전화', '이메일', 'CSR', '메신저', '직접방문'],
-  inquiryTypes: [
-    '계정 문의',
-    '시스템 문의',
-    'PC환경 문의',
-    '조직이관 문의',
-    '주문 문의',
-    '통제자재 등록 요청',
-    '부자재코드 생성 요청',
-    '기타'
-  ],
-  requesterTypes: ['대리점', '현업', '시공사', 'IT담당자', '기타']
-}
-
 function App() {
-  // 카테고리 목록 (메뉴 순서대로)
-  const categories = ['메모', '완료', '양식', '문서', '배포 기록']
-  
-  // 문서 카테고리 추가
-  const DOCUMENT_CATEGORIES = ['전체', '주문', '처리중', '조직이관', '인수인계', '기타']
-
-  // 커스텀 훅 사용
-  const { 
-    items, 
-    addItem: addItemToList, 
-    updateItem, 
-    deleteItem, 
-    changeStatus,
-    exportData,
-    importData,
-    clearAllData
-  } = useWorkItems()
-  
-  const memoForm = useMemoForm()
-  const deploymentForm = useDeploymentForm()
-  const templateForm = useTemplateForm()
-  const documentForm = useDocumentForm()
-
-  // 상태들
-  const [selectedCategory, setSelectedCategory] = useState('메모')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [editingId, setEditingId] = useState(null)
-  const [dateFilter, setDateFilter] = useState({ type: 'all' })
-  const [inquiryTypeFilter, setInquiryTypeFilter] = useState('전체')
-  
-  // ref
   const inputFormRef = useRef(null)
 
-  // 문의유형 변경 핸들러 (자동 입력 기능 포함)
-  const handleInquiryTypeChange = (value) => {
-    memoForm.setInquiryType(value)
+  // Items store
+  const items = useItemsStore((state) => state.items)
+  const addItem = useItemsStore((state) => state.addItem)
+  const updateItem = useItemsStore((state) => state.updateItem)
+  const deleteItem = useItemsStore((state) => state.deleteItem)
+  const changeStatus = useItemsStore((state) => state.changeStatus)
 
-    if (value === '부자재코드 생성 요청') {
-      memoForm.setRequestMethod('CSR')
-      memoForm.setRequesterType('현업')
-      memoForm.setTeam('창호.지인스퀘어 수원')
-      memoForm.setName('장동희')
-      memoForm.setPosition('책임')
-    } else if (value === '통제자재 등록 요청') {
-      memoForm.setRequestMethod('메신저')
-      memoForm.setRequesterType('현업')
-      memoForm.setTeam('창호.상품개발팀')
-      memoForm.setName('박범석')
-      memoForm.setPosition('선임')
-      memoForm.setTitle('통제자재 등록 요청')
-    }
-  }
+  // UI store
+  const selectedCategory = useUIStore((state) => state.selectedCategory)
+  const setSelectedCategory = useUIStore((state) => state.setSelectedCategory)
+  const searchTerm = useUIStore((state) => state.searchTerm)
+  const setSearchTerm = useUIStore((state) => state.setSearchTerm)
+  const editingId = useUIStore((state) => state.editingId)
+  const setEditingId = useUIStore((state) => state.setEditingId)
+  const dateFilter = useUIStore((state) => state.dateFilter)
+  const setDateFilter = useUIStore((state) => state.setDateFilter)
+  const inquiryTypeFilter = useUIStore((state) => state.inquiryTypeFilter)
+  const setInquiryTypeFilter = useUIStore((state) => state.setInquiryTypeFilter)
+
+  // Form store
+  const getFormData = useFormStore((state) => state.getFormData)
+  const setFormData = useFormStore((state) => state.setFormData)
+  const resetForm = useFormStore((state) => state.resetForm)
+  const memo = useFormStore((state) => state.memo)
+  const template = useFormStore((state) => state.template)
+  const document = useFormStore((state) => state.document)
+  const deployment = useFormStore((state) => state.deployment)
 
   // 항목 추가/수정
   const handleSubmit = () => {
-    // 메모, 완료
     if (selectedCategory === '메모' || selectedCategory === '완료') {
-      if (!memoForm.content.trim()) {
-        alert('⚠️ 내용을 입력해주세요!')
+      if (!memo.content.trim()) {
+        alert('내용을 입력해주세요!')
         return
       }
-      
-      const formData = memoForm.getFormData()
+
+      const formData = getFormData('memo')
       let targetCategory
       if (formData.status === '완료') {
         targetCategory = '완료'
@@ -109,244 +67,128 @@ function App() {
         ...formData,
         category: targetCategory,
         date: new Date().toLocaleDateString('ko-KR'),
-        time: new Date().toLocaleTimeString('ko-KR', { 
-          hour: '2-digit', 
-          minute: '2-digit' 
+        time: new Date().toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit'
         })
       }
-      
+
       if (editingId) {
         updateItem(editingId, newItem)
         setEditingId(null)
       } else {
-        addItemToList(newItem)
+        addItem(newItem)
       }
-      
-      memoForm.resetForm()
+
+      resetForm('memo')
       setSelectedCategory(targetCategory)
-    }
-    // 양식
-    else if (selectedCategory === '양식') {
-      if (!templateForm.title.trim()) {
-        alert('⚠️ 제목을 입력해주세요!')
+    } else if (selectedCategory === '양식') {
+      if (!template.title.trim()) {
+        alert('제목을 입력해주세요!')
         return
       }
-      if (!templateForm.content.trim()) {
-        alert('⚠️ 내용을 입력해주세요!')
+      if (!template.content.trim()) {
+        alert('내용을 입력해주세요!')
         return
       }
-      
+
       const newItem = {
         id: editingId || Date.now(),
-        ...templateForm.getFormData(),
+        ...getFormData('template'),
         category: selectedCategory,
         date: new Date().toLocaleDateString('ko-KR'),
         time: new Date().toLocaleTimeString('ko-KR')
       }
-      
+
       if (editingId) {
         updateItem(editingId, newItem)
         setEditingId(null)
       } else {
-        addItemToList(newItem)
+        addItem(newItem)
       }
-      
-      templateForm.resetForm()
-    }
-    // 문서
-    else if (selectedCategory === '문서') {
-      if (!documentForm.title.trim()) {
-        alert('⚠️ 제목을 입력해주세요!')
+
+      resetForm('template')
+    } else if (selectedCategory === '문서') {
+      if (!document.title.trim()) {
+        alert('제목을 입력해주세요!')
         return
       }
-      if (!documentForm.content.trim()) {
-        alert('⚠️ 내용을 입력해주세요!')
+      if (!document.content.trim()) {
+        alert('내용을 입력해주세요!')
         return
       }
-      
+
       const newItem = {
         id: editingId || Date.now(),
-        ...documentForm.getFormData(),
+        ...getFormData('document'),
         category: selectedCategory,
         date: new Date().toLocaleDateString('ko-KR'),
         time: new Date().toLocaleTimeString('ko-KR')
       }
-      
+
       if (editingId) {
         updateItem(editingId, newItem)
         setEditingId(null)
       } else {
-        addItemToList(newItem)
+        addItem(newItem)
       }
-      
-      documentForm.resetForm()
-    }
-    // 배포 기록
-    else if (selectedCategory === '배포 기록') {
-      if (!deploymentForm.file.trim()) {
-        alert('⚠️ 파일명을 입력해주세요!')
+
+      resetForm('document')
+    } else if (selectedCategory === '배포 기록') {
+      if (!deployment.file.trim()) {
+        alert('파일명을 입력해주세요!')
         return
       }
-      
+
       const newItem = {
         id: editingId || Date.now(),
-        ...deploymentForm.getFormData(),
+        ...getFormData('deployment'),
         category: selectedCategory,
         date: new Date().toLocaleDateString('ko-KR'),
         time: new Date().toLocaleTimeString('ko-KR')
       }
-      
+
       if (editingId) {
         updateItem(editingId, newItem)
         setEditingId(null)
       } else {
-        addItemToList(newItem)
+        addItem(newItem)
       }
-      
-      deploymentForm.resetForm()
+
+      resetForm('deployment')
     }
   }
 
   // 항목 수정 시작
   const startEdit = (item) => {
     setEditingId(item.id)
-    
+
     if (item.requestMethod) {
-      // 메모 수정
-      memoForm.setFormData(item)
+      setFormData('memo', item)
     } else if (item.target) {
-      // 배포 기록 수정
-      deploymentForm.setFormData(item)
+      setFormData('deployment', item)
     } else if (item.docCategory) {
-      // 문서 수정
-      documentForm.setFormData(item)
+      setFormData('document', item)
     } else {
-      // 양식 수정
-      templateForm.setFormData(item)
+      setFormData('template', item)
     }
-    
+
     setSelectedCategory(item.category)
-    
+
     setTimeout(() => {
-      inputFormRef.current?.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
+      inputFormRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       })
     }, 100)
   }
 
-  // 수정 취소
-  const cancelEdit = () => {
-    setEditingId(null)
-    memoForm.resetForm()
-    deploymentForm.resetForm()
-    templateForm.resetForm()
-    documentForm.resetForm()
-  }
-
-  // 입력 폼이 있는 카테고리 체크
-  const hasInputForm = ['메모', '완료', '양식', '배포 기록'].includes(selectedCategory)
-
-  // 입력 폼 렌더링
-  const renderInputForm = () => {
-    // 메모, 완료
-    if (selectedCategory === '메모' || selectedCategory === '완료') {
-      return (
-        <MemoForm
-          requestMethod={memoForm.requestMethod}
-          inquiryType={memoForm.inquiryType}
-          requesterType={memoForm.requesterType}
-          contactInfo={memoForm.contactInfo}
-          dealerCode={memoForm.dealerCode}
-          dealerName={memoForm.dealerName}
-          team={memoForm.team}
-          name={memoForm.name}
-          position={memoForm.position}
-          freeText={memoForm.freeText}
-          title={memoForm.title}
-          content={memoForm.content}
-          status={memoForm.status}
-          options={OPTIONS}
-          editingId={editingId}
-          onRequestMethodChange={memoForm.setRequestMethod}
-          onInquiryTypeChange={handleInquiryTypeChange}
-          onRequesterTypeChange={memoForm.setRequesterType}
-          onContactInfoChange={memoForm.setContactInfo}
-          onDealerCodeChange={memoForm.setDealerCode}
-          onDealerNameChange={memoForm.setDealerName}
-          onTeamChange={memoForm.setTeam}
-          onNameChange={memoForm.setName}
-          onPositionChange={memoForm.setPosition}
-          onFreeTextChange={memoForm.setFreeText}
-          onTitleChange={memoForm.setTitle}
-          onContentChange={memoForm.setContent}
-          onStatusChange={memoForm.setStatus}
-          onCancel={cancelEdit}
-          onSubmit={handleSubmit}
-        />
-      )
-    }
-    // 양식
-    else if (selectedCategory === '양식') {
-      return (
-        <TemplateForm
-          title={templateForm.title}
-          content={templateForm.content}
-          editingId={editingId}
-          onTitleChange={templateForm.setTitle}
-          onContentChange={templateForm.setContent}
-          onCancel={cancelEdit}
-          onSubmit={handleSubmit}
-        />
-      )
-    }
-    // 문서
-    else if (selectedCategory === '문서') {
-      return (
-        <DocumentForm
-        docCategory={documentForm.docCategory}
-        title={documentForm.title}
-        content={documentForm.content}
-        isMarkdown={documentForm.isMarkdown}
-        editingId={editingId}
-        categories={DOCUMENT_CATEGORIES}
-        onDocCategoryChange={documentForm.setDocCategory}
-        onTitleChange={documentForm.setTitle}
-        onContentChange={documentForm.setContent}
-        onIsMarkdownChange={documentForm.setIsMarkdown}
-        onCancel={cancelEdit}
-        onSubmit={handleSubmit}
-        />
-      )
-    }
-    // 배포 기록
-    else if (selectedCategory === '배포 기록') {
-      return (
-        <DeploymentForm
-          file={deploymentForm.file}
-          changes={deploymentForm.changes}
-          target={deploymentForm.target}
-          status={deploymentForm.status}
-          editingId={editingId}
-          onFileChange={deploymentForm.setFile}
-          onChangesChange={deploymentForm.setChanges}
-          onTargetChange={deploymentForm.setTarget}
-          onStatusChange={deploymentForm.setStatus}
-          onCancel={cancelEdit}
-          onSubmit={handleSubmit}
-        />
-      )
-    }
-
-    return null
-  }
-
   // 검색어 플레이스홀더 설정
   const searchPlaceholders = {
-    '메모': '🔍 검색... (제목, 내용, 연락처, 대리점, 담당자)',
-    '완료': '🔍 검색... (제목, 내용, 연락처, 대리점, 담당자)',
-    '양식': '🔍 양식 검색...',
-    '문서': '🔍 문서 검색...'
+    '메모': '검색... (제목, 내용, 연락처, 대리점, 담당자)',
+    '완료': '검색... (제목, 내용, 연락처, 대리점, 담당자)',
+    '양식': '양식 검색...',
+    '문서': '문서 검색...'
   }
 
   // 카테고리별 UI 설정
@@ -356,15 +198,28 @@ function App() {
     hasInputForm: ['메모', '완료', '양식', '문서', '배포 기록'].includes(selectedCategory)
   }
 
+  // 입력 폼 렌더링
+  const renderInputForm = () => {
+    if (selectedCategory === '메모' || selectedCategory === '완료') {
+      return <MemoForm onSubmit={handleSubmit} />
+    } else if (selectedCategory === '양식') {
+      return <TemplateForm onSubmit={handleSubmit} />
+    } else if (selectedCategory === '문서') {
+      return <DocumentForm onSubmit={handleSubmit} />
+    } else if (selectedCategory === '배포 기록') {
+      return <DeploymentForm onSubmit={handleSubmit} />
+    }
+    return null
+  }
+
   // 필터링된 항목들
   const filteredItems = items
-    .filter(item => item.category === selectedCategory)
-    .filter(item => {
-      // 검색어 필터
+    .filter((item) => item.category === selectedCategory)
+    .filter((item) => {
       if (!searchTerm) return true
-      
+
       const searchLower = searchTerm.toLowerCase()
-      
+
       if (item.title?.toLowerCase().includes(searchLower)) return true
       if (item.content?.toLowerCase().includes(searchLower)) return true
       if (item.contactInfo?.toLowerCase().includes(searchLower)) return true
@@ -373,65 +228,49 @@ function App() {
       if (item.requester?.name?.toLowerCase().includes(searchLower)) return true
       if (item.requester?.team?.toLowerCase().includes(searchLower)) return true
       if (item.requester?.freeText?.toLowerCase().includes(searchLower)) return true
-      
+
       return false
     })
-    .filter(item => {
-      // 날짜 필터
+    .filter((item) => {
       if (dateFilter.type === 'all') return true
-      
+
       const itemDate = parseKoreanDate(item.date)
-      
+
       return itemDate >= dateFilter.start && itemDate <= dateFilter.end
     })
-    .filter(item => {
-      // 문의 방식 필터
+    .filter((item) => {
       if (inquiryTypeFilter === '전체') return true
       return item.requestMethod === inquiryTypeFilter
     })
 
   return (
     <div className="app-container">
-      {/* 사이드바 */}
-      <Sidebar 
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-        onExport={exportData}
-        onImport={importData}
-        onClearAll={clearAllData}
-        itemCount={items.length}
-      />
+      <Sidebar />
 
-      {/* 메인 콘텐츠 */}
       <main className="main-content">
         <h2>{selectedCategory}</h2>
 
-        {/* 검색 */}
         {categoryConfig.hasSearch && (
-          <SearchBar 
-            onSearch={setSearchTerm} 
-            placeholder={searchPlaceholders[selectedCategory] || '🔍 검색...'}
+          <SearchBar
+            onSearch={setSearchTerm}
+            placeholder={searchPlaceholders[selectedCategory] || '검색...'}
           />
         )}
 
-        {/* 고급 필터 */}
         {categoryConfig.hasAdvancedFilter && (
-          <CompletedFilters 
+          <CompletedFilters
             onDateFilterChange={setDateFilter}
             onInquiryTypeChange={setInquiryTypeFilter}
           />
         )}
 
-        {/* 입력 폼 */}
         {categoryConfig.hasInputForm && (
           <div ref={inputFormRef} className="input-form">
             {renderInputForm()}
           </div>
         )}
 
-        {/* 목록 */}
-        <ItemList 
+        <ItemList
           items={filteredItems}
           onDelete={deleteItem}
           onStatusChange={changeStatus}

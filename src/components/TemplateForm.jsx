@@ -1,32 +1,38 @@
-function TemplateForm({ 
-  title,
-  content,
-  editingId,
-  onTitleChange,
-  onContentChange,
-  onCancel,
-  onSubmit 
-}) {
+import { useFormStore } from '../stores/useFormStore'
+import { useUIStore } from '../stores/useUIStore'
+
+function TemplateForm({ onSubmit }) {
+  const template = useFormStore((state) => state.template)
+  const setTemplateField = useFormStore((state) => state.setTemplateField)
+  const editingId = useUIStore((state) => state.editingId)
+  const cancelEdit = useUIStore((state) => state.cancelEdit)
+  const resetForm = useFormStore((state) => state.resetForm)
+
+  const handleCancel = () => {
+    cancelEdit()
+    resetForm('template')
+  }
+
   return (
     <>
       <input
         type="text"
         placeholder="양식 제목 (예: 비밀번호 초기화)"
-        value={title}
-        onChange={(e) => onTitleChange(e.target.value)}
+        value={template.title}
+        onChange={(e) => setTemplateField('title', e.target.value)}
       />
-      
+
       <textarea
         placeholder="양식 내용을 입력하세요"
-        value={content}
-        onChange={(e) => onContentChange(e.target.value)}
+        value={template.content}
+        onChange={(e) => setTemplateField('content', e.target.value)}
         rows="10"
       />
-      
+
       <div className="form-controls">
         <div className="button-group">
           {editingId && (
-            <button onClick={onCancel} className="cancel-btn">
+            <button onClick={handleCancel} className="cancel-btn">
               취소
             </button>
           )}
