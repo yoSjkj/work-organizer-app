@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useRef, useDeferredValue, useEffect } from 'react'
+import localforage from 'localforage'
 import './App.css'
 import Sidebar from './components/Sidebar'
 import MemoForm from './components/MemoForm'
@@ -30,6 +31,33 @@ function App() {
   const setDateFilter = useUIStore((state) => state.setDateFilter)
   const inquiryTypeFilter = useUIStore((state) => state.inquiryTypeFilter)
   const setInquiryTypeFilter = useUIStore((state) => state.setInquiryTypeFilter)
+
+  // 검색어를 지연시켜서 클릭 이벤트가 먼저 처리되도록
+  const deferredSearchTerm = useDeferredValue(searchTerm)
+
+  // localStorage에서 IndexedDB로 데이터 마이그레이션 (한 번만 실행)
+  useEffect(() => {
+    const migrateData = async () => {
+      try {
+        const oldData = localStorage.getItem('workItems')
+        if (oldData) {
+          console.log('📦 localStorage → IndexedDB 마이그레이션 시작...')
+          // 문자열 그대로 저장 (Zustand persist가 JSON.parse()를 처리함)
+          await localforage.setItem('workItems', oldData)
+          console.log('✅ 마이그레이션 완료!')
+          // 마이그레이션 후 localStorage는 유지 (백업용)
+        }
+      } catch (error) {
+        console.error('마이그레이션 오류:', error)
+      }
+    }
+    migrateData()
+  }, [])
+
+  // 카테고리 변경 시 검색어 초기화
+  useEffect(() => {
+    setSearchTerm('')
+  }, [selectedCategory, setSearchTerm])
 
   // 수정 시 스크롤
   const handleEdit = (item) => {
@@ -75,9 +103,9 @@ function App() {
   const filteredItems = items
     .filter((item) => item.category === selectedCategory)
     .filter((item) => {
-      if (!searchTerm) return true
+      if (!deferredSearchTerm) return true
 
-      const searchLower = searchTerm.toLowerCase()
+      const searchLower = deferredSearchTerm.toLowerCase()
 
       if (item.title?.toLowerCase().includes(searchLower)) return true
       if (item.content?.toLowerCase().includes(searchLower)) return true
@@ -111,6 +139,7 @@ function App() {
 
         {categoryConfig.hasSearch && (
           <SearchBar
+            value={searchTerm}
             onSearch={setSearchTerm}
             placeholder={searchPlaceholders[selectedCategory] || '검색...'}
           />

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import localforage from 'localforage'
 import { useFormStore } from './useFormStore'
 import { useUIStore } from './useUIStore'
 
@@ -245,7 +246,8 @@ export const useItemsStore = create(
       }
     }),
     {
-      name: 'workItems'
+      name: 'workItems',
+      storage: createJSONStorage(() => localforage)
     }
   )
 )

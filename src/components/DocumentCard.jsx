@@ -1,9 +1,12 @@
-import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { useUIStore } from '../stores/useUIStore'
 
 function DocumentCard({ document, onEdit, onDelete }) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const expandedDocuments = useUIStore((state) => state.expandedDocuments)
+  const toggleDocumentExpanded = useUIStore((state) => state.toggleDocumentExpanded)
+
+  const isExpanded = expandedDocuments.has(document.id)
   
   const getPreview = () => {
     const lines = document.content.split('\n')
@@ -22,9 +25,12 @@ function DocumentCard({ document, onEdit, onDelete }) {
           {document.isMarkdown && (
             <span className="badge-markdown">MD</span>
           )}
-          <h3 
+          <h3
             className="document-title"
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleDocumentExpanded(document.id)
+            }}
             style={{ cursor: 'pointer' }}
           >
             {document.title}
@@ -52,9 +58,14 @@ function DocumentCard({ document, onEdit, onDelete }) {
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{getPreview()}</ReactMarkdown>
               </div>
               {hasMore && (
-                <button 
+                <button
+                  type="button"
                   className="btn-expand"
-                  onClick={() => setIsExpanded(true)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    toggleDocumentExpanded(document.id)
+                  }}
                 >
                   더보기 ({document.content.split('\n').length}줄)
                 </button>
@@ -73,9 +84,14 @@ function DocumentCard({ document, onEdit, onDelete }) {
                 {getPreview()}
               </pre>
               {hasMore && (
-                <button 
+                <button
+                  type="button"
                   className="btn-expand"
-                  onClick={() => setIsExpanded(true)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    toggleDocumentExpanded(document.id)
+                  }}
                 >
                   더보기 ({document.content.split('\n').length}줄)
                 </button>
@@ -86,15 +102,21 @@ function DocumentCard({ document, onEdit, onDelete }) {
       </div>
       
       <div className="document-actions">
-        <button 
+        <button
+          type="button"
           className="edit-btn"
-          onClick={() => onEdit(document)}
+          onClick={(e) => {
+            e.stopPropagation()
+            onEdit(document)
+          }}
         >
           수정
         </button>
         <button
+          type="button"
           className="delete-btn"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
             if (window.confirm('정말 삭제하시겠습니까?')) {
               onDelete(document.id)
             }
@@ -103,9 +125,14 @@ function DocumentCard({ document, onEdit, onDelete }) {
           삭제
         </button>
         {isExpanded && (
-          <button 
+          <button
+            type="button"
             className="btn-collapse"
-            onClick={() => setIsExpanded(false)}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              toggleDocumentExpanded(document.id)
+            }}
           >
             접기 ▲
           </button>
