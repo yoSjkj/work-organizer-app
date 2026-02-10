@@ -280,6 +280,11 @@ select option {
   accent-color: var(--accent-primary);
 }
 
+/* 라이트 모드에서 체크박스 더 부드럽게 */
+:root[data-theme="light"] .markdown-checkbox-wrapper input[type="checkbox"]:not(:checked) {
+  opacity: 0.4;
+}
+
 .markdown-checkbox-label {
   font-size: 13px;
   color: var(--text-tertiary);
