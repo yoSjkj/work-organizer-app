@@ -1,17 +1,18 @@
 /* 양식 카드 */
 .template-card {
-  background: white;
-  border: 1px solid #d2d2d7;
-  border-radius: 12px;
-  padding: 20px;
+  background: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .template-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .template-header {
@@ -19,64 +20,83 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f5f5f7;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .template-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1d1d1f;
+  font-size: 17px;
+  font-weight: 700;
+  color: #e5e7eb;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;  /* 일반 폰트 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+  line-height: 1.4;
+  letter-spacing: -0.3px;
 }
 
 .template-date {
-  font-size: 12px;
-  color: #86868b;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;  /* 일반 폰트 */
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .template-content {
-  background: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
   white-space: pre-wrap;
   word-wrap: break-word;
-  font-family: 'D2Coding', 'Consolas', 'Monaco', 'Courier New', monospace;  /* ← 모노스페이스! */
+  font-family: 'D2Coding', 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 13px;
-  line-height: 1.6;
-  color: #333;
+  line-height: 1.7;
+  color: #9ca3af;
   max-height: 200px;
   overflow-y: auto;
 }
 
+/* 스크롤바 */
+.template-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.template-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.template-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.template-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .template-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 /* 복사 버튼 */
 .btn-copy {
-  height: 32px;
-  padding: 0 14px;
-  background-color: #30d158;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  height: 36px;
+  padding: 0 16px;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   transition: all 0.2s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;  /* 일반 폰트 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .btn-copy:hover {
-  background-color: #28cd4f;
-}
-
-.btn-copy:active {
-  background-color: #24b946;
+  background-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
 }

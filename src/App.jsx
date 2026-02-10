@@ -1,7 +1,7 @@
 import { useRef, useDeferredValue, useEffect } from 'react'
 import localforage from 'localforage'
 import './App.css'
-import Sidebar from './components/Sidebar'
+import Sidebar, { categoryLabels } from './components/Sidebar'
 import MemoForm from './components/MemoForm'
 import DeploymentForm from './components/DeploymentForm'
 import TemplateForm from './components/TemplateForm'
@@ -39,13 +39,19 @@ function App() {
   useEffect(() => {
     const migrateData = async () => {
       try {
+        // 마이그레이션 완료 플래그 확인
+        const migrated = localStorage.getItem('migrated-to-indexeddb')
+        if (migrated) return
+
         const oldData = localStorage.getItem('workItems')
         if (oldData) {
           console.log('📦 localStorage → IndexedDB 마이그레이션 시작...')
-          // 문자열 그대로 저장 (Zustand persist가 JSON.parse()를 처리함)
           await localforage.setItem('workItems', oldData)
           console.log('✅ 마이그레이션 완료!')
-          // 마이그레이션 후 localStorage는 유지 (백업용)
+
+          // 마이그레이션 완료 플래그 저장 & 기존 데이터 삭제
+          localStorage.setItem('migrated-to-indexeddb', 'true')
+          localStorage.removeItem('workItems')
         }
       } catch (error) {
         console.error('마이그레이션 오류:', error)
@@ -135,7 +141,7 @@ function App() {
       <Sidebar />
 
       <main className="main-content">
-        <h2>{selectedCategory}</h2>
+        <h2>{categoryLabels[selectedCategory]}</h2>
 
         {categoryConfig.hasSearch && (
           <SearchBar

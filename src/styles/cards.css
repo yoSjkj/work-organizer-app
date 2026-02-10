@@ -2,25 +2,25 @@
 .items-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 /* 카드 */
 .item-card {
-  background-color: #ffffff;
-  border: 1px solid #d2d2d7;
-  padding: 16px;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  background-color: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
   max-width: 100%;
   overflow: hidden;
 }
 
 .item-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
-  border-color: #b8b8bb;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* 헤더 */
@@ -28,10 +28,10 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f5f5f7;  /* ← 구분선 추가 */
-  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 20px;
 }
 
 .item-title-section {
@@ -39,61 +39,65 @@
 }
 
 .item-header h3 {
-  color: #1d1d1f;
-  font-size: 16px;  /* 15px → 16px */
-  font-weight: 700;  /* 600 → 700 */
-  margin-bottom: 4px;
+  color: #e5e7eb;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
   line-height: 1.4;
+  letter-spacing: -0.3px;
 }
 
 /* 메타 */
 .item-meta {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   flex-wrap: wrap;
 }
 
-/* 배지 */
+/* 배지 - 단색 스타일 */
 .item-badges-top {
   display: flex;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
 }
 
 .badge-method {
-  padding: 4px 10px;
-  background-color: #0071e3;
-  color: white;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 3px 8px;
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border-radius: 5px;
+  font-size: 11px;
   font-weight: 600;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .badge-inquiry {
-  padding: 4px 10px;
-  background-color: #5e5ce6;
-  color: white;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 3px 8px;
+  background-color: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+  border-radius: 5px;
+  font-size: 11px;
   font-weight: 600;
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 .badge-contact {
-  background: #9C27B0;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
+  background-color: rgba(236, 72, 153, 0.2);
+  color: #f9a8d4;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11px;
   font-weight: 600;
+  border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
 /* 요청자 정보 */
 .requester-display {
   display: flex;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
 }
 
@@ -102,87 +106,97 @@
 .badge-team,
 .badge-position,
 .badge-free {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11px;
   font-weight: 600;
 }
 
 .badge-code {
-  background-color: #f5f5f7;
-  color: #1d1d1f;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #9ca3af;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .badge-name {
-  background-color: #d9f2dd;
-  color: #1d6f42;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-team {
-  background-color: #d9e9ff;
-  color: #0040dd;
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .badge-position {
-  background-color: #ffe5cc;
-  color: #cc5500;
+  background-color: rgba(251, 146, 60, 0.2);
+  color: #fdba74;
+  border: 1px solid rgba(251, 146, 60, 0.3);
 }
 
 .badge-free {
-  background-color: #f5f5f7;
-  color: #6e6e73;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #6b7280;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* 상태 배지 */
 .status-badge {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11px;
   font-weight: 600;
 }
 
 .status-임시 {
-  background-color: #86868b;
-  color: white;
+  background-color: rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
+  border: 1px solid rgba(107, 114, 128, 0.3);
 }
 
 .status-진행,
 .status-진행중 {
-  background-color: #0071e3;
-  color: white;
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .status-완료 {
-  background-color: #30d158;
-  color: white;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .status-실패 {
-  background-color: #ff3b30;
-  color: white;
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .target-badge {
-  padding: 4px 10px;
-  background-color: #48484a;
-  color: white;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 3px 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #d1d5db;
+  border-radius: 5px;
+  font-size: 11px;
   font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .item-date {
-  font-size: 12px;
-  color: #86868b;
+  font-size: 13px;
+  color: #6b7280;
   font-weight: 500;
 }
 
-/* 카드 내용 - 제목과 구분 강화 */
+/* 카드 내용 */
 .item-content {
-  color: #555;  /* #1d1d1f → #555 (조금 더 연하게) */
+  color: #9ca3af;
   font-size: 13px;
-  line-height: 1.6;  /* 1.5 → 1.6 */
-  margin-bottom: 12px;
+  line-height: 1.7;
+  margin-bottom: 16px;
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;
@@ -191,26 +205,27 @@
 /* 액션 */
 .item-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 /* 복사 버튼 */
 .btn-copy {
-  height: 32px;
-  padding: 0 14px;
-  background-color: #30d158;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  height: 36px;
+  padding: 0 16px;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
 .btn-copy:hover {
-  background-color: #28cd4f;
+  background-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
 }
 
 /* 스크롤바 스타일 */
@@ -219,25 +234,26 @@
 }
 
 .item-content::-webkit-scrollbar-track {
-  background: #f5f5f7;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 3px;
 }
 
 .item-content::-webkit-scrollbar-thumb {
-  background: #d2d2d7;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
 }
 
 .item-content::-webkit-scrollbar-thumb:hover {
-  background: #b8b8bb;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* 문서 카테고리 배지 */
 .badge-doc-category {
-  padding: 4px 10px;
-  background-color: #FF9500;
-  color: white;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 3px 8px;
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+  border-radius: 5px;
+  font-size: 11px;
   font-weight: 600;
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }

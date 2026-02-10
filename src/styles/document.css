@@ -1,16 +1,18 @@
 /* 문서 카드 */
 .document-card {
-  background: white;
-  border: 1px solid #d2d2d7;
-  border-radius: 12px;
-  padding: 20px;
+  background: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .document-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* 헤더 */
@@ -19,8 +21,8 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f5f5f7;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .document-title-section {
@@ -29,39 +31,45 @@
 
 .badge-doc-category {
   display: inline-block;
-  padding: 4px 8px;
-  background-color: #FF9500;
-  color: white;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 3px 8px;
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+  border-radius: 5px;
+  font-size: 11px;
   font-weight: 600;
-  margin-right: 6px;
-  margin-bottom: 4px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  margin-right: 8px;
+  margin-bottom: 6px;
 }
 
 .document-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
-  color: #1d1d1f;
+  color: #e5e7eb;
   margin: 0;
   display: flex;
   align-items: center;
   user-select: none;
+  cursor: pointer;
+  line-height: 1.4;
+  letter-spacing: -0.3px;
 }
 
 .document-title:hover {
-  color: #0071e3;
+  color: #93c5fd;
 }
 
 .expand-icon {
   margin-left: 8px;
   font-size: 14px;
-  color: #86868b;
+  color: #6b7280;
+  transition: transform 0.2s ease;
 }
 
 .document-date {
-  font-size: 12px;
-  color: #86868b;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
   white-space: nowrap;
 }
 
@@ -71,16 +79,16 @@
 }
 
 .document-content {
-  background: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 16px;
   white-space: pre-wrap;
   word-wrap: break-word;
   font-family: 'D2Coding', 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 13px;
-  line-height: 1.6;
-  color: #333;
+  line-height: 1.7;
+  color: #9ca3af;
   margin: 0;
 }
 
@@ -100,10 +108,10 @@
   width: 100%;
   padding: 8px;
   margin-top: 8px;
-  background: #f5f5f7;
-  border: 1px solid #d2d2d7;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  color: #0071e3;
+  color: #93c5fd;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -111,23 +119,25 @@
 }
 
 .btn-expand:hover {
-  background: #e8e8ed;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* 버튼 */
 .document-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .btn-collapse {
   margin-left: auto;
   height: 32px;
   padding: 0 14px;
-  background: #f5f5f7;
-  border: 1px solid #d2d2d7;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  color: #555;
+  color: #9ca3af;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -135,23 +145,27 @@
 }
 
 .btn-collapse:hover {
-  background: #e8e8ed;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e5e7eb;
 }
 
 .badge-markdown {
   display: inline-block;
-  padding: 4px 8px;
-  background-color: #6e6e73;
-  color: white;
+  padding: 2px 6px;
+  background-color: rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
+  border: 1px solid rgba(107, 114, 128, 0.3);
   margin-right: 8px;
 }
 
 .markdown-body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.6;
+  color: #e5e7eb;
 }
 
 .markdown-body table {
@@ -162,48 +176,54 @@
 
 .markdown-body table th,
 .markdown-body table td {
-  border: 1px solid #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px 12px;
   text-align: left;
 }
 
 .markdown-body table th {
-  background-color: #f6f8fa;
+  background-color: rgba(255, 255, 255, 0.05);
   font-weight: 600;
+  color: #e5e7eb;
 }
 
 .markdown-body table tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .markdown-body h1, .markdown-body h2, .markdown-body h3 {
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  color: #e5e7eb;
 }
 
 .markdown-body h2 {
-  border-bottom: 1px solid #eaecef;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 8px;
 }
 
 .markdown-body pre code {
   display: block;
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: 1px solid #d2d2d7;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  color: #e5e7eb;
 }
 
 .markdown-body code {
-  background-color: #ffffff;
-  border: 1px solid #d2d2d7;
-  padding: 1px 4px;
-  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
   font-family: 'D2Coding', monospace;
   word-break: break-word;
   margin: 0 2px;
+  color: #fcd34d;
+  font-size: 0.9em;
 }
 
 .markdown-body ul {
@@ -218,6 +238,7 @@
 .markdown-body li {
   margin-top: -20px;
   margin-bottom: -20px;
+  color: #d1d5db;
 }
 
 .markdown-body li + li {
@@ -234,8 +255,8 @@
 
 .markdown-body blockquote {
   padding: 0 1em;
-  color: #6a737d;
-  border-left: 4px solid #dfe2e5;
+  color: #9ca3af;
+  border-left: 4px solid rgba(255, 255, 255, 0.2);
   margin: 16px 0;
 }
 
@@ -243,4 +264,14 @@
 .markdown-body li > p {
   margin-top: -20px;
   margin-bottom: -20px;
+}
+
+.markdown-body a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.markdown-body a:hover {
+  color: #bfdbfe;
+  text-decoration: underline;
 }

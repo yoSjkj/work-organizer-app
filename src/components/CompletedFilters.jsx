@@ -43,16 +43,7 @@ const getLastReportWeek = () => {
   const wednesday = new Date(thursday)
   wednesday.setDate(thursday.getDate() + 6)
   wednesday.setHours(23, 59, 59, 999)
-  
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-  console.log('📅 주간보고 날짜 범위 계산')
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-  console.log('오늘:', today.toLocaleDateString('ko-KR'), `(${['일','월','화','수','목','금','토'][dayOfWeek]}요일)`)
-  console.log('빼는 날수:', daysToSubtract, '일')
-  console.log('시작:', thursday.toLocaleDateString('ko-KR'), thursday.toLocaleTimeString('ko-KR'))
-  console.log('종료:', wednesday.toLocaleDateString('ko-KR'), wednesday.toLocaleTimeString('ko-KR'))
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-    
+
   return { start: thursday, end: wednesday }
 }
 
@@ -114,7 +105,7 @@ const getLastReportWeek = () => {
     <div className="completed-filters">
       {/* 날짜 필터 */}
       <div className="filter-section">
-        <span className="filter-label">📅 기간</span>
+        <span className="filter-label">기간</span>
         <div className="filter-controls">
           <button 
             className={`filter-btn ${filterType === 'all' ? 'active' : ''}`}
@@ -149,7 +140,7 @@ const getLastReportWeek = () => {
 
       {/* 문의 방식 필터 */}
       <div className="filter-section">
-        <span className="filter-label">📞 방식</span>
+        <span className="filter-label">방식</span>
         <div className="filter-controls">
           {inquiryTypes.map(type => (
             <button

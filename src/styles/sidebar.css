@@ -9,12 +9,12 @@
 }
 
 .sidebar h1 {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 24px;
   padding: 0 8px;
   color: #ffffff;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.6px;
 }
 
 /* 통계 */
@@ -31,43 +31,73 @@
 .categories {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   margin-bottom: 24px;
 }
 
 .category-btn {
-  padding: 8px 12px;
+  padding: 7px 12px;
   background-color: transparent;
   color: #d1d1d6;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 15px;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
   text-align: left;
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 10px;
+  position: relative;
 }
 
 .category-btn:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
+  transform: translateX(2px);
 }
 
 .category-btn.active {
-  background-color: #0071e3;
+  background-color: rgba(59, 130, 246, 0.15);
   color: #ffffff;
   font-weight: 600;
+  border-left: 3px solid #3b82f6;
+  padding-left: 7px;
 }
 
 .category-icon {
-  font-size: 16px;
+  font-size: 11px;
   display: inline-block;
-  width: 20px;
+  width: 14px;
   text-align: center;
+  transition: all 0.2s ease;
+  color: #4b5563;
+}
+
+.category-btn:hover .category-icon {
+  transform: scale(1.1);
+}
+
+/* active 상태일 때만 색상 */
+.category-btn.active:nth-child(1) .category-icon {
+  color: #93c5fd;
+}
+
+.category-btn.active:nth-child(2) .category-icon {
+  color: #6ee7b7;
+}
+
+.category-btn.active:nth-child(3) .category-icon {
+  color: #c4b5fd;
+}
+
+.category-btn.active:nth-child(4) .category-icon {
+  color: #fcd34d;
+}
+
+.category-btn.active:nth-child(5) .category-icon {
+  color: #fca5a5;
 }
 
 /* 접을 수 있는 섹션 */
@@ -112,13 +142,6 @@
 
 .backup-buttons {
   padding-top: 12px;
-}
-
-/* 백업 섹션 */
-.backup-section {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .backup-section h3 {

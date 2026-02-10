@@ -3,12 +3,12 @@ import { useUIStore } from '../stores/useUIStore'
 
 const categories = ['메모', '완료', '양식', '문서', '배포 기록']
 
-const categoryIcons = {
-  '메모': '',
-  '완료': '',
-  '양식': '',
-  '문서': '',
-  '배포 기록': ''
+export const categoryLabels = {
+  '메모': 'Notes',
+  '완료': 'Done',
+  '양식': 'Forms',
+  '문서': 'Docs',
+  '배포 기록': 'Releases'
 }
 
 function Sidebar() {
@@ -35,8 +35,10 @@ function Sidebar() {
             className={`category-btn ${selectedCategory === cat ? 'active' : ''}`}
             onClick={() => setSelectedCategory(cat)}
           >
-            <span className="category-icon">{categoryIcons[cat]}</span>
-            <span>{cat}</span>
+            <span className="category-icon">
+              {selectedCategory === cat ? '●' : '○'}
+            </span>
+            <span>{categoryLabels[cat]}</span>
           </button>
         ))}
       </nav>
