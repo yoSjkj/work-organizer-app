@@ -1,7 +1,9 @@
 import { useRef, useDeferredValue, useEffect } from 'react'
 import localforage from 'localforage'
 import { invoke } from '@tauri-apps/api/core'
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { isTauri } from './stores/tauriStorage'
+import { useThemeStore } from './stores/useThemeStore'
 import './App.css'
 import Sidebar, { categoryLabels } from './components/Sidebar'
 import MemoForm from './components/MemoForm'
@@ -17,6 +19,9 @@ import { parseKoreanDate } from './utils/dateUtils'
 
 function App() {
   const inputFormRef = useRef(null)
+
+  // Theme
+  const theme = useThemeStore((state) => state.theme)
 
   // Items store
   const items = useItemsStore((state) => state.items)
@@ -36,6 +41,11 @@ function App() {
 
   // 검색어를 지연시켜서 클릭 이벤트가 먼저 처리되도록
   const deferredSearchTerm = useDeferredValue(searchTerm)
+
+  // 테마 적용
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
 
   // 데이터 마이그레이션 (Tauri: IndexedDB → 파일)
   useEffect(() => {
@@ -75,6 +85,39 @@ function App() {
       }
     }
     migrateData()
+  }, [])
+
+  // 빠른 메모 이벤트 리스너 (Tauri 전역 단축키)
+  useEffect(() => {
+    if (!isTauri()) return
+
+    const currentWindow = getCurrentWebviewWindow()
+
+    const unlisten = currentWindow.listen('quick-note-added', (event) => {
+      const content = event.payload
+
+      // 메모 추가
+      const newItem = {
+        id: Date.now(),
+        category: '메모',
+        status: '진행',
+        requestMethod: 'POST',
+        url: '',
+        content: content,
+        date: new Date().toLocaleDateString('ko-KR'),
+        time: new Date().toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }
+
+      useItemsStore.getState().addItem(newItem)
+      console.log('⚡ 빠른 메모 추가됨:', content.substring(0, 30) + '...')
+    })
+
+    return () => {
+      unlisten.then(fn => fn())
+    }
   }, [])
 
   // 카테고리 변경 시 검색어 초기화

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useItemsStore } from '../stores/useItemsStore'
 import { useUIStore } from '../stores/useUIStore'
-import { isTauri, getDataPath } from '../stores/tauriStorage'
+import SettingsModal from './SettingsModal'
 
 const categories = ['메모', '완료', '양식', '문서', '배포 기록']
 
@@ -15,20 +15,9 @@ export const categoryLabels = {
 
 function Sidebar() {
   const items = useItemsStore((state) => state.items)
-  const exportData = useItemsStore((state) => state.exportData)
-  const importData = useItemsStore((state) => state.importData)
-  const clearAllData = useItemsStore((state) => state.clearAllData)
-
   const selectedCategory = useUIStore((state) => state.selectedCategory)
   const setSelectedCategory = useUIStore((state) => state.setSelectedCategory)
-
-  const [dataPath, setDataPath] = useState(null)
-
-  useEffect(() => {
-    if (isTauri()) {
-      getDataPath().then(path => setDataPath(path))
-    }
-  }, [])
+  const [showSettings, setShowSettings] = useState(false)
 
   return (
     <aside className="sidebar">
@@ -53,33 +42,17 @@ function Sidebar() {
         ))}
       </nav>
 
-      {/* 접을 수 있는 데이터 관리 */}
-      <details className="backup-section">
-        <summary>데이터 관리</summary>
-        <div className="backup-buttons">
-          <button onClick={exportData} className="backup-btn export">
-            백업
-          </button>
-          <label className="backup-btn import">
-            복원
-            <input
-              type="file"
-              accept=".json"
-              onChange={importData}
-              style={{ display: 'none' }}
-            />
-          </label>
-          <button onClick={clearAllData} className="backup-btn clear">
-            전체삭제
-          </button>
-        </div>
-        {dataPath && (
-          <div className="data-path">
-            <small>💾 저장 위치:</small>
-            <small title={dataPath}>{dataPath}</small>
-          </div>
-        )}
-      </details>
+      {/* 설정 버튼 */}
+      <div className="settings-button-container">
+        <button className="settings-button" onClick={() => setShowSettings(true)}>
+          설정
+        </button>
+      </div>
+
+      {/* 설정 모달 */}
+      {showSettings && (
+        <SettingsModal onClose={() => setShowSettings(false)} />
+      )}
     </aside>
   )
 }

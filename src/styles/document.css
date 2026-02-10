@@ -1,18 +1,18 @@
 /* 문서 카드 */
 .document-card {
-  background: #2a2a2a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .document-card:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-secondary);
 }
 
 /* 헤더 */
@@ -22,7 +22,7 @@
   align-items: flex-start;
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .document-title-section {
@@ -32,20 +32,30 @@
 .badge-doc-category {
   display: inline-block;
   padding: 3px 8px;
-  background-color: rgba(245, 158, 11, 0.2);
-  color: #fcd34d;
   border-radius: 5px;
   font-size: 11px;
   font-weight: 600;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid;
   margin-right: 8px;
   margin-bottom: 6px;
+}
+
+:root[data-theme="dark"] .badge-doc-category {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+:root[data-theme="light"] .badge-doc-category {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border-color: rgba(245, 158, 11, 0.3);
 }
 
 .document-title {
   font-size: 17px;
   font-weight: 700;
-  color: #e5e7eb;
+  color: var(--text-primary);
   margin: 0;
   display: flex;
   align-items: center;
@@ -56,19 +66,19 @@
 }
 
 .document-title:hover {
-  color: #93c5fd;
+  color: var(--accent-light);
 }
 
 .expand-icon {
   margin-left: 8px;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-muted);
   transition: transform 0.2s ease;
 }
 
 .document-date {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--text-muted);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -79,8 +89,8 @@
 }
 
 .document-content {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   padding: 16px;
   white-space: pre-wrap;
@@ -88,7 +98,7 @@
   font-family: 'D2Coding', 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 13px;
   line-height: 1.7;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   margin: 0;
 }
 
@@ -108,10 +118,10 @@
   width: 100%;
   padding: 8px;
   margin-top: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-hover);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
-  color: #93c5fd;
+  color: var(--accent-light);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -119,8 +129,8 @@
 }
 
 .btn-expand:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--bg-subtle);
+  border-color: var(--border-secondary);
 }
 
 /* 버튼 */
@@ -134,10 +144,10 @@
   margin-left: auto;
   height: 32px;
   padding: 0 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-hover);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -145,27 +155,37 @@
 }
 
 .btn-collapse:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #e5e7eb;
+  background: var(--bg-subtle);
+  border-color: var(--border-secondary);
+  color: var(--text-secondary);
 }
 
 .badge-markdown {
   display: inline-block;
   padding: 2px 6px;
-  background-color: rgba(107, 114, 128, 0.2);
-  color: #9ca3af;
   border-radius: 4px;
   font-size: 10px;
   font-weight: 600;
-  border: 1px solid rgba(107, 114, 128, 0.3);
+  border: 1px solid;
   margin-right: 8px;
+}
+
+:root[data-theme="dark"] .badge-markdown {
+  background-color: rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
+  border-color: rgba(107, 114, 128, 0.3);
+}
+
+:root[data-theme="light"] .badge-markdown {
+  background-color: rgba(107, 114, 128, 0.1);
+  color: #6b7280;
+  border-color: rgba(107, 114, 128, 0.3);
 }
 
 .markdown-body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.6;
-  color: #e5e7eb;
+  color: var(--text-primary);
 }
 
 .markdown-body table {
@@ -176,29 +196,29 @@
 
 .markdown-body table th,
 .markdown-body table td {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-primary);
   padding: 8px 12px;
   text-align: left;
 }
 
 .markdown-body table th {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-hover);
   font-weight: 600;
-  color: #e5e7eb;
+  color: var(--text-primary);
 }
 
 .markdown-body table tr:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: var(--bg-subtle);
 }
 
 .markdown-body h1, .markdown-body h2, .markdown-body h3 {
   font-weight: 600;
   margin-bottom: 8px;
-  color: #e5e7eb;
+  color: var(--text-primary);
 }
 
 .markdown-body h2 {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-primary);
   padding-bottom: 8px;
 }
 
@@ -206,23 +226,23 @@
   display: block;
   padding: 12px 16px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-subtle);
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  color: #e5e7eb;
+  color: var(--text-primary);
 }
 
 .markdown-body code {
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--bg-hover);
+  border: 1px solid var(--border-primary);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'D2Coding', monospace;
   word-break: break-word;
   margin: 0 2px;
-  color: #fcd34d;
+  color: var(--accent-light);
   font-size: 0.9em;
 }
 
@@ -238,7 +258,7 @@
 .markdown-body li {
   margin-top: -20px;
   margin-bottom: -20px;
-  color: #d1d5db;
+  color: var(--text-secondary);
 }
 
 .markdown-body li + li {
@@ -255,8 +275,8 @@
 
 .markdown-body blockquote {
   padding: 0 1em;
-  color: #9ca3af;
-  border-left: 4px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-tertiary);
+  border-left: 4px solid var(--border-hover);
   margin: 16px 0;
 }
 
@@ -267,11 +287,56 @@
 }
 
 .markdown-body a {
-  color: #93c5fd;
+  color: var(--accent-light);
   text-decoration: none;
 }
 
 .markdown-body a:hover {
-  color: #bfdbfe;
+  color: var(--accent-primary);
   text-decoration: underline;
+}
+
+/* 파일 드롭 영역 */
+.drop-zone {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.drop-zone.dragging {
+  opacity: 0.6;
+}
+
+.drop-zone textarea {
+  transition: all 0.2s ease;
+}
+
+.drop-zone.dragging textarea {
+  border-color: var(--accent-primary);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.drop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px dashed var(--accent-primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.drop-message {
+  background: var(--bg-primary);
+  color: var(--accent-light);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--accent-primary);
 }

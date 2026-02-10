@@ -1,21 +1,21 @@
 .completed-filters {
-  background-color: #2a2a2a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--bg-sidebar);
+  border: 1px solid var(--border-primary);
   padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
+  border-radius: var(--radius-2xl);
+  margin-bottom: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
 }
 
 /* 필터 섹션 */
 .filter-section {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .filter-section:last-of-type {
@@ -26,9 +26,9 @@
 
 /* 라벨 */
 .filter-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #e5e7eb;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
   min-width: 70px;
 }
 
@@ -44,27 +44,27 @@
 .filter-btn {
   height: 32px;
   padding: 0 14px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #9ca3af;
-  border-radius: 6px;
+  background-color: var(--bg-hover);
+  border: 1px solid var(--border-primary);
+  color: var(--text-tertiary);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-base);
 }
 
 .filter-btn:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #e5e7eb;
+  background-color: var(--bg-subtle);
+  border-color: var(--border-secondary);
+  color: var(--text-secondary);
 }
 
 /* active 상태 */
 .filter-btn.active {
-  background-color: rgba(59, 130, 246, 0.25);
-  color: #93c5fd;
-  border-color: rgba(59, 130, 246, 0.4);
+  background-color: var(--bg-active);
+  color: var(--accent-light);
+  border-color: var(--border-focus);
 }
 
 /* 날짜 입력 */
@@ -77,49 +77,57 @@
 .date-inputs input[type="date"] {
   height: 32px;
   padding: 0 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  font-size: 12px;
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #e5e7eb;
-  transition: all 0.2s ease;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  background-color: var(--bg-hover);
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+}
+
+:root[data-theme="dark"] .date-inputs input[type="date"] {
   color-scheme: dark;
 }
 
+:root[data-theme="light"] .date-inputs input[type="date"] {
+  color-scheme: light;
+}
+
 .date-inputs input[type="date"]:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-hover);
+  background-color: var(--bg-subtle);
 }
 
 .date-inputs input[type="date"]:focus {
   outline: none;
-  border-color: #3b82f6;
-  background-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  border-color: var(--accent-primary);
+  background-color: var(--bg-subtle);
+  box-shadow: 0 0 0 4px var(--border-focus);
 }
 
 .date-inputs span {
-  color: #6b7280;
-  font-weight: 600;
-  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-md);
 }
 
 /* 검색 버튼 */
 .apply-btn {
   height: 32px;
   padding: 0 16px;
-  background-color: rgba(59, 130, 246, 0.25);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.4);
-  border-radius: 6px;
+  background-color: var(--bg-active);
+  color: var(--accent-light);
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-base);
 }
 
 .apply-btn:hover {
-  background-color: rgba(59, 130, 246, 0.35);
+  background-color: var(--accent-primary);
+  color: var(--text-primary);
   transform: translateY(-1px);
 }
 
@@ -127,19 +135,20 @@
 .reset-all-btn {
   height: 30px;
   padding: 0 14px;
-  background-color: rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 6px;
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 11px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  margin-top: 8px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-base);
+  margin-top: var(--space-sm);
 }
 
 .reset-all-btn:hover {
-  background-color: rgba(239, 68, 68, 0.25);
+  background-color: var(--error-border);
+  color: var(--text-primary);
 }
 
 /* 반응형 */

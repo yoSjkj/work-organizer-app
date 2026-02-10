@@ -1,3 +1,4 @@
+@import './styles/variables.css';
 @import './styles/base.css';
 @import './styles/sidebar.css';
 @import './styles/forms.css';

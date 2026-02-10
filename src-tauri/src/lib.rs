@@ -1,44 +1,11 @@
-use tauri::{Manager, Emitter};
+use tauri::Manager;
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
-#[tauri::command]
-fn save_data(app: tauri::AppHandle, data: String) -> Result<(), String> {
-    let app_dir = app.path().app_data_dir()
-        .map_err(|e| e.to_string())?;
+mod commands;
 
-    std::fs::create_dir_all(&app_dir)
-        .map_err(|e| e.to_string())?;
-
-    let data_file = app_dir.join("workItems.json");
-    std::fs::write(data_file, data)
-        .map_err(|e| e.to_string())?;
-
-    Ok(())
-}
-
-#[tauri::command]
-fn load_data(app: tauri::AppHandle) -> Result<String, String> {
-    let app_dir = app.path().app_data_dir()
-        .map_err(|e| e.to_string())?;
-
-    let data_file = app_dir.join("workItems.json");
-
-    if !data_file.exists() {
-        return Ok(String::from("null"));
-    }
-
-    std::fs::read_to_string(data_file)
-        .map_err(|e| e.to_string())
-}
-
-#[tauri::command]
-fn get_data_path(app: tauri::AppHandle) -> Result<String, String> {
-    let app_dir = app.path().app_data_dir()
-        .map_err(|e| e.to_string())?;
-
-    Ok(app_dir.to_string_lossy().to_string())
-}
+use commands::data::{save_data, load_data, get_data_path};
+use commands::backup::{backup_data, list_backups, restore_backup, check_and_auto_backup};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -46,6 +13,10 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            Some(vec!["--hidden"]) // 숨김 모드로 시작
+        ))
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -64,7 +35,7 @@ pub fn run() {
             let _tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
                 .menu(&menu)
-                .menu_on_left_click(false)
+                .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => {
                         if let Some(window) = app.get_webview_window("main") {
@@ -94,20 +65,29 @@ pub fn run() {
 
             // 창 닫기 이벤트 처리 (트레이로 숨기기)
             if let Some(window) = app.get_webview_window("main") {
-                window.on_window_event(|event| {
+                let window_clone = window.clone();
+                window.on_window_event(move |event| {
                     if let tauri::WindowEvent::CloseRequested { api, .. } = event {
                         // 창을 닫지 않고 숨김
                         api.prevent_close();
-                        if let Some(window) = event.window().app_handle().get_webview_window("main") {
-                            let _ = window.hide();
-                        }
+                        let _ = window_clone.hide();
                     }
                 });
             }
 
+            // 앱 시작 시 자동 백업 체크
+            check_and_auto_backup(&app.handle());
+
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![save_data, load_data, get_data_path])
+        .invoke_handler(tauri::generate_handler![
+            save_data,
+            load_data,
+            get_data_path,
+            backup_data,
+            list_backups,
+            restore_backup
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

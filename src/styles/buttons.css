@@ -20,31 +20,46 @@
   border: none;
 }
 
-.form-controls .add-btn,
-.button-group .add-btn {
-  background-color: rgba(59, 130, 246, 0.25);
+/* 다크 모드 - 추가 버튼 */
+:root[data-theme="dark"] .form-controls .add-btn,
+:root[data-theme="dark"] .button-group .add-btn {
+  background-color: rgba(59, 130, 246, 0.15);
   color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.4);
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-.form-controls .add-btn:hover,
-.button-group .add-btn:hover {
-  background-color: rgba(59, 130, 246, 0.35);
+:root[data-theme="dark"] .form-controls .add-btn:hover,
+:root[data-theme="dark"] .button-group .add-btn:hover {
+  background-color: rgba(59, 130, 246, 0.25);
+  transform: translateY(-1px);
+}
+
+/* 라이트 모드 - 추가 버튼 */
+:root[data-theme="light"] .form-controls .add-btn,
+:root[data-theme="light"] .button-group .add-btn {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+:root[data-theme="light"] .form-controls .add-btn:hover,
+:root[data-theme="light"] .button-group .add-btn:hover {
+  background-color: rgba(59, 130, 246, 0.2);
   transform: translateY(-1px);
 }
 
 .form-controls .cancel-btn,
 .button-group .cancel-btn {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #9ca3af;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-tertiary);
 }
 
 .form-controls .cancel-btn:hover,
 .button-group .cancel-btn:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #e5e7eb;
+  background-color: var(--bg-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
 }
 
 /* ===== 카드 버튼 (수정, 삭제, 완료 등) ===== */
@@ -55,9 +70,9 @@
 .btn-copy {
   height: 32px;
   padding: 0 14px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #9ca3af;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-tertiary);
   border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
@@ -113,22 +128,22 @@
   height: 36px;
   padding: 0 12px;
   margin-bottom: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-secondary);
   border-radius: 8px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
   transition: all 0.2s ease;
   text-align: left;
-  color: #d1d1d6;
+  color: var(--text-secondary);
   background-color: transparent;
   display: flex;
   align-items: center;
 }
 
 .backup-btn:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .backup-btn.export {
