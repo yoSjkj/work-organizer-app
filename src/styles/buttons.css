@@ -80,45 +80,87 @@
   transition: all 0.2s ease;
 }
 
-.edit-btn {
-  border-color: rgba(59, 130, 246, 0.4);
+/* 다크 모드 - 수정 버튼 */
+:root[data-theme="dark"] .edit-btn {
+  border-color: rgba(59, 130, 246, 0.3);
   color: #93c5fd;
   background: rgba(59, 130, 246, 0.1);
 }
 
-.edit-btn:hover {
+:root[data-theme="dark"] .edit-btn:hover {
   background: rgba(59, 130, 246, 0.2);
   transform: translateY(-1px);
 }
 
-.status-change-btn,
-.btn-complete {
-  border-color: rgba(59, 130, 246, 0.4);
+/* 라이트 모드 - 수정 버튼 */
+:root[data-theme="light"] .edit-btn {
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #2563eb;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+:root[data-theme="light"] .edit-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
+}
+
+/* 다크 모드 - 상태변경/완료 버튼 */
+:root[data-theme="dark"] .status-change-btn,
+:root[data-theme="dark"] .btn-complete {
+  border-color: rgba(59, 130, 246, 0.3);
   color: #93c5fd;
   background: rgba(59, 130, 246, 0.1);
 }
 
-.status-change-btn:hover,
-.btn-complete:hover {
+:root[data-theme="dark"] .status-change-btn:hover,
+:root[data-theme="dark"] .btn-complete:hover {
   background: rgba(59, 130, 246, 0.25);
   transform: translateY(-1px);
 }
 
-.delete-btn:hover {
-  background-color: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.4);
-  color: #fca5a5;
+/* 라이트 모드 - 상태변경/완료 버튼 */
+:root[data-theme="light"] .status-change-btn,
+:root[data-theme="light"] .btn-complete {
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #2563eb;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+:root[data-theme="light"] .status-change-btn:hover,
+:root[data-theme="light"] .btn-complete:hover {
+  background: rgba(59, 130, 246, 0.2);
   transform: translateY(-1px);
 }
 
-.btn-copy {
-  background-color: rgba(16, 185, 129, 0.2);
+/* 삭제 버튼 */
+.delete-btn:hover {
+  background-color: var(--error-bg);
+  border-color: var(--error-border);
+  color: var(--error-text);
+  transform: translateY(-1px);
+}
+
+/* 다크 모드 - 복사 버튼 */
+:root[data-theme="dark"] .btn-copy {
+  background-color: rgba(16, 185, 129, 0.15);
   color: #6ee7b7;
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-.btn-copy:hover {
-  background-color: rgba(16, 185, 129, 0.3);
+:root[data-theme="dark"] .btn-copy:hover {
+  background-color: rgba(16, 185, 129, 0.25);
+  transform: translateY(-1px);
+}
+
+/* 라이트 모드 - 복사 버튼 */
+:root[data-theme="light"] .btn-copy {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+:root[data-theme="light"] .btn-copy:hover {
+  background-color: rgba(16, 185, 129, 0.2);
   transform: translateY(-1px);
 }
 
@@ -146,32 +188,64 @@
   color: var(--text-primary);
 }
 
-.backup-btn.export {
+/* 다크 모드 - 백업 버튼 */
+:root[data-theme="dark"] .backup-btn.export {
   background-color: rgba(16, 185, 129, 0.15);
   border-color: rgba(16, 185, 129, 0.3);
   color: #6ee7b7;
 }
 
-.backup-btn.export:hover {
+:root[data-theme="dark"] .backup-btn.export:hover {
   background-color: rgba(16, 185, 129, 0.25);
 }
 
-.backup-btn.import {
+:root[data-theme="dark"] .backup-btn.import {
   background-color: rgba(59, 130, 246, 0.15);
   border-color: rgba(59, 130, 246, 0.3);
   color: #93c5fd;
 }
 
-.backup-btn.import:hover {
+:root[data-theme="dark"] .backup-btn.import:hover {
   background-color: rgba(59, 130, 246, 0.25);
 }
 
-.backup-btn.clear {
+:root[data-theme="dark"] .backup-btn.clear {
   background-color: rgba(239, 68, 68, 0.15);
   border-color: rgba(239, 68, 68, 0.3);
   color: #fca5a5;
 }
 
-.backup-btn.clear:hover {
+:root[data-theme="dark"] .backup-btn.clear:hover {
   background-color: rgba(239, 68, 68, 0.25);
+}
+
+/* 라이트 모드 - 백업 버튼 */
+:root[data-theme="light"] .backup-btn.export {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #059669;
+}
+
+:root[data-theme="light"] .backup-btn.export:hover {
+  background-color: rgba(16, 185, 129, 0.2);
+}
+
+:root[data-theme="light"] .backup-btn.import {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #2563eb;
+}
+
+:root[data-theme="light"] .backup-btn.import:hover {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+:root[data-theme="light"] .backup-btn.clear {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #dc2626;
+}
+
+:root[data-theme="light"] .backup-btn.clear:hover {
+  background-color: rgba(239, 68, 68, 0.2);
 }
