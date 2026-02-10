@@ -25,3 +25,12 @@ dist-ssr
 
 # Claude Code
 .claude/
+
+# Debug files
+*.png
+nul
+quick-note.html
+DESIGN.md
+THEME_DEBUG.md
+.mcp.json
+.cargo/
