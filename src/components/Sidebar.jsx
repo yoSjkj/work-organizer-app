@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react'
 import { useItemsStore } from '../stores/useItemsStore'
 import { useUIStore } from '../stores/useUIStore'
+import { isTauri, getDataPath } from '../stores/tauriStorage'
 
 const categories = ['메모', '완료', '양식', '문서', '배포 기록']
 
@@ -19,6 +21,14 @@ function Sidebar() {
 
   const selectedCategory = useUIStore((state) => state.selectedCategory)
   const setSelectedCategory = useUIStore((state) => state.setSelectedCategory)
+
+  const [dataPath, setDataPath] = useState(null)
+
+  useEffect(() => {
+    if (isTauri()) {
+      getDataPath().then(path => setDataPath(path))
+    }
+  }, [])
 
   return (
     <aside className="sidebar">
@@ -63,6 +73,12 @@ function Sidebar() {
             전체삭제
           </button>
         </div>
+        {dataPath && (
+          <div className="data-path">
+            <small>💾 저장 위치:</small>
+            <small title={dataPath}>{dataPath}</small>
+          </div>
+        )}
       </details>
     </aside>
   )

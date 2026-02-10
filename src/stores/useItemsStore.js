@@ -3,6 +3,10 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import localforage from 'localforage'
 import { useFormStore } from './useFormStore'
 import { useUIStore } from './useUIStore'
+import { tauriStorage, isTauri } from './tauriStorage'
+
+// Tauri 환경이면 파일 저장, 아니면 IndexedDB
+const storage = isTauri() ? tauriStorage : localforage
 
 export const useItemsStore = create(
   persist(
@@ -247,7 +251,7 @@ export const useItemsStore = create(
     }),
     {
       name: 'workItems',
-      storage: createJSONStorage(() => localforage)
+      storage: createJSONStorage(() => storage)
     }
   )
 )

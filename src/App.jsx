@@ -1,5 +1,7 @@
 import { useRef, useDeferredValue, useEffect } from 'react'
 import localforage from 'localforage'
+import { invoke } from '@tauri-apps/api/core'
+import { isTauri } from './stores/tauriStorage'
 import './App.css'
 import Sidebar, { categoryLabels } from './components/Sidebar'
 import MemoForm from './components/MemoForm'
@@ -35,23 +37,38 @@ function App() {
   // 검색어를 지연시켜서 클릭 이벤트가 먼저 처리되도록
   const deferredSearchTerm = useDeferredValue(searchTerm)
 
-  // localStorage에서 IndexedDB로 데이터 마이그레이션 (한 번만 실행)
+  // 데이터 마이그레이션 (Tauri: IndexedDB → 파일)
   useEffect(() => {
     const migrateData = async () => {
       try {
-        // 마이그레이션 완료 플래그 확인
-        const migrated = localStorage.getItem('migrated-to-indexeddb')
-        if (migrated) return
+        if (isTauri()) {
+          // Tauri 환경: IndexedDB → 파일로 마이그레이션
+          const migrated = localStorage.getItem('migrated-to-tauri')
+          if (migrated) return
 
-        const oldData = localStorage.getItem('workItems')
-        if (oldData) {
-          console.log('📦 localStorage → IndexedDB 마이그레이션 시작...')
-          await localforage.setItem('workItems', oldData)
-          console.log('✅ 마이그레이션 완료!')
+          const indexedDBData = await localforage.getItem('workItems')
+          if (indexedDBData) {
+            console.log('📦 IndexedDB → Tauri 파일 마이그레이션 시작...')
+            await invoke('save_data', { data: indexedDBData })
+            console.log('✅ Tauri 마이그레이션 완료!')
 
-          // 마이그레이션 완료 플래그 저장 & 기존 데이터 삭제
-          localStorage.setItem('migrated-to-indexeddb', 'true')
-          localStorage.removeItem('workItems')
+            localStorage.setItem('migrated-to-tauri', 'true')
+            // IndexedDB 데이터는 유지 (백업용)
+          }
+        } else {
+          // 웹 환경: localStorage → IndexedDB (기존 로직)
+          const migrated = localStorage.getItem('migrated-to-indexeddb')
+          if (migrated) return
+
+          const oldData = localStorage.getItem('workItems')
+          if (oldData) {
+            console.log('📦 localStorage → IndexedDB 마이그레이션 시작...')
+            await localforage.setItem('workItems', oldData)
+            console.log('✅ 마이그레이션 완료!')
+
+            localStorage.setItem('migrated-to-indexeddb', 'true')
+            localStorage.removeItem('workItems')
+          }
         }
       } catch (error) {
         console.error('마이그레이션 오류:', error)

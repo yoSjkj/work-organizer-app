@@ -144,6 +144,28 @@
   padding-top: 12px;
 }
 
+.data-path {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.data-path small {
+  display: block;
+  font-size: 11px;
+  color: #9ca3af;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.data-path small:first-child {
+  color: #60a5fa;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
 .backup-section h3 {
   font-size: 11px;
   margin-bottom: 12px;
