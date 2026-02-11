@@ -1,0 +1,39 @@
+/**
+ * 효과 토큰 (Effects Tokens)
+ *
+ * 그림자, 트랜지션, 애니메이션 등의 시각 효과
+ */
+
+:root,
+:root[data-theme="dark"] {
+  /* ============================================
+     Shadows - Dark Theme (그림자)
+     ============================================ */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+  --shadow-focus: 0 0 0 4px rgba(59, 130, 246, 0.3);
+
+  /* ============================================
+     Transitions (트랜지션)
+     ============================================ */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  --transition-all: all 0.2s ease;
+
+  /* ============================================
+     Timing Functions (타이밍 함수)
+     ============================================ */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root[data-theme="light"] {
+  /* Shadows - Light Theme (더 강한 그림자) */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.2);
+  --shadow-focus: 0 0 0 4px rgba(59, 130, 246, 0.4);
+}

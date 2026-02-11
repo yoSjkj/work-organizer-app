@@ -1,0 +1,68 @@
+/**
+ * Toggle Switch Component
+ *
+ * 토글 스위치 (sidebar.css에서 분리)
+ */
+
+/* ============================================
+   Toggle Container
+   ============================================ */
+.autostart-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 10px var(--space-md);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  user-select: none;
+}
+
+.autostart-toggle:hover {
+  background-color: var(--bg-hover);
+}
+
+/* ============================================
+   Toggle Switch
+   ============================================ */
+.autostart-toggle input[type='checkbox'] {
+  width: 40px;
+  height: 22px;
+  appearance: none;
+  background-color: var(--border-secondary);
+  border-radius: 11px;
+  position: relative;
+  cursor: pointer;
+  transition: var(--transition-base);
+  flex-shrink: 0;
+}
+
+.autostart-toggle input[type='checkbox']:checked {
+  background-color: var(--accent-primary);
+}
+
+.autostart-toggle input[type='checkbox']::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: white;
+  top: 2px;
+  left: 2px;
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.autostart-toggle input[type='checkbox']:checked::before {
+  left: 20px;
+}
+
+/* ============================================
+   Toggle Label
+   ============================================ */
+.autostart-toggle span {
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-normal);
+}

@@ -1,0 +1,54 @@
+/**
+ * 간격 토큰 (Spacing Tokens)
+ *
+ * 모든 여백, 패딩, 간격, 크기 값의 단일 소스
+ */
+
+:root {
+  /* ============================================
+     Spacing Scale (간격 스케일)
+     ============================================ */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
+  --space-4xl: 40px;
+  --space-5xl: 48px;
+
+  /* ============================================
+     Component Sizes (컴포넌트 크기)
+     ============================================ */
+
+  /* Input Heights */
+  --size-input-sm: 32px;
+  --size-input-md: 39px;
+  --size-input-lg: 48px;
+
+  /* Button Heights */
+  --size-button-sm: 32px;
+  --size-button-md: 39px;
+  --size-button-lg: 48px;
+
+  /* ============================================
+     Border Radius (모서리 반경)
+     ============================================ */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+  --radius-full: 9999px;
+
+  /* ============================================
+     Z-Index Layers (레이어)
+     ============================================ */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-modal: 1000;
+  --z-tooltip: 1100;
+  --z-overlay: 10;
+}

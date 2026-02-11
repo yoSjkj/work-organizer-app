@@ -1,0 +1,168 @@
+/**
+ * Card Components
+ *
+ * 카드 공통 스타일 (모든 카드 타입이 공유)
+ */
+
+/* ============================================
+   Base Card (기본 카드)
+   ============================================ */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.item-card,
+.template-card,
+.document-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  padding: var(--space-2xl);
+  border-radius: var(--radius-3xl);
+  transition: all 0.3s var(--ease-in-out);
+  box-shadow: var(--shadow-sm);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.item-card:hover,
+.template-card:hover,
+.document-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--border-secondary);
+}
+
+/* ============================================
+   Card Header (카드 헤더)
+   ============================================ */
+.item-header,
+.template-header,
+.document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border-primary);
+  gap: var(--space-xl);
+}
+
+.item-title-section,
+.document-title-section {
+  flex: 1;
+}
+
+.item-header h3,
+.template-title,
+.document-title {
+  color: var(--text-primary);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-normal);
+  font-family: var(--font-sans);
+}
+
+.document-title {
+  display: flex;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+}
+
+.document-title:hover {
+  color: var(--accent-light);
+}
+
+.expand-icon {
+  margin-left: var(--space-sm);
+  font-size: var(--text-md);
+  color: var(--text-muted);
+  transition: transform var(--transition-base);
+}
+
+.item-date,
+.template-date,
+.document-date {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+/* ============================================
+   Card Meta (카드 메타 정보)
+   ============================================ */
+.item-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   Card Content (카드 내용)
+   ============================================ */
+.item-content,
+.template-content,
+.document-content {
+  color: var(--text-tertiary);
+  font-size: var(--text-base);
+  line-height: var(--line-height-loose);
+  margin-bottom: var(--space-lg);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.template-content {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  font-family: var(--font-mono);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.document-content {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  font-family: var(--font-mono);
+  margin: 0;
+}
+
+.document-content-wrapper {
+  margin-bottom: var(--space-lg);
+}
+
+.document-content-preview {
+  max-height: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.document-content-full {
+  max-height: none;
+}
+
+/* ============================================
+   Card Actions (카드 액션)
+   ============================================ */
+.item-actions,
+.template-actions,
+.document-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: var(--space-md);
+}
+
+.btn-collapse {
+  margin-left: auto;
+}

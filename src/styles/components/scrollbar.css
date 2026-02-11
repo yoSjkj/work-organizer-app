@@ -1,0 +1,71 @@
+/**
+ * Scrollbar Utility
+ *
+ * 재사용 가능한 스크롤바 스타일 (중복 제거)
+ */
+
+/* ============================================
+   Thin Scrollbar Utility Class
+   ============================================ */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* ============================================
+   Specific Scrollbars - Dark Mode
+   ============================================ */
+
+/* Item Content Scrollbar */
+:root[data-theme="dark"] .item-content::-webkit-scrollbar,
+:root[data-theme="dark"] .template-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+:root[data-theme="dark"] .item-content::-webkit-scrollbar-track,
+:root[data-theme="dark"] .template-content::-webkit-scrollbar-track {
+  background: var(--color-white-alpha-5);
+  border-radius: 3px;
+}
+
+:root[data-theme="dark"] .item-content::-webkit-scrollbar-thumb,
+:root[data-theme="dark"] .template-content::-webkit-scrollbar-thumb {
+  background: var(--color-white-alpha-20);
+  border-radius: 3px;
+}
+
+:root[data-theme="dark"] .item-content::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"] .template-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-white-alpha-30);
+}
+
+/* ============================================
+   Specific Scrollbars - Light Mode
+   ============================================ */
+
+/* Item Content Scrollbar */
+:root[data-theme="light"] .item-content::-webkit-scrollbar,
+:root[data-theme="light"] .template-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+:root[data-theme="light"] .item-content::-webkit-scrollbar-track,
+:root[data-theme="light"] .template-content::-webkit-scrollbar-track {
+  background: var(--color-black-alpha-5);
+  border-radius: 3px;
+}
+
+:root[data-theme="light"] .item-content::-webkit-scrollbar-thumb,
+:root[data-theme="light"] .template-content::-webkit-scrollbar-thumb {
+  background: var(--color-black-alpha-20);
+  border-radius: 3px;
+}
+
+:root[data-theme="light"] .item-content::-webkit-scrollbar-thumb:hover,
+:root[data-theme="light"] .template-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-black-alpha-30);
+}

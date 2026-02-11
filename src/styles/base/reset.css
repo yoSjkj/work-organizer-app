@@ -1,0 +1,113 @@
+/**
+ * CSS Reset & Base Styles
+ *
+ * 브라우저 기본 스타일 초기화 및 기본 요소 스타일
+ */
+
+/* ============================================
+   Reset
+   ============================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   Document
+   ============================================ */
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  line-height: var(--line-height-normal);
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  line-height: var(--line-height-normal);
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+button,
+input,
+textarea,
+select,
+pre {
+  font-family: inherit;
+}
+
+a {
+  font-weight: var(--font-weight-medium);
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--accent-light);
+}
+
+/* ============================================
+   Global Scrollbar (전역 스크롤바)
+   ============================================ */
+
+/* Dark Mode Scrollbar */
+:root[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--color-white-alpha-5);
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-white-alpha-20);
+  border-radius: 4px;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-white-alpha-30);
+}
+
+/* Light Mode Scrollbar */
+:root[data-theme="light"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+:root[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--color-black-alpha-5);
+}
+
+:root[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--color-black-alpha-20);
+  border-radius: 4px;
+}
+
+:root[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-black-alpha-30);
+}

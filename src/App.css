@@ -1,9 +1,2 @@
-@import './styles/variables.css';
-@import './styles/base.css';
-@import './styles/sidebar.css';
-@import './styles/forms.css';
-@import './styles/cards.css';
-@import './styles/buttons.css';
-@import './styles/completedfilters.css';
-@import './styles/template.css';
-@import './styles/document.css';
+/* Main styles entry point */
+@import './styles/index.css';

@@ -4,7 +4,7 @@ import { isTauri, getDataPath } from '../stores/tauriStorage'
 import { useItemsStore } from '../stores/useItemsStore'
 import { useThemeStore } from '../stores/useThemeStore'
 import { enable, disable, isEnabled } from '@tauri-apps/plugin-autostart'
-import styles from '../styles/SettingsModal.module.css'
+import styles from '../styles/modules/SettingsModal.module.css'
 
 export default function SettingsModal({ onClose }) {
   const [activeTab, setActiveTab] = useState('data')

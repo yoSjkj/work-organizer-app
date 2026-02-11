@@ -1,0 +1,247 @@
+/**
+ * Badge Components
+ *
+ * 모든 배지 스타일 통합 (cards.css, document.css에서 통합)
+ */
+
+/* ============================================
+   Base Badge (기본 배지)
+   ============================================ */
+.badge-method,
+.badge-inquiry,
+.badge-contact,
+.badge-code,
+.badge-name,
+.badge-team,
+.badge-position,
+.badge-free,
+.status-badge,
+.target-badge,
+.badge-doc-category,
+.badge-markdown {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid;
+  display: inline-block;
+}
+
+/* ============================================
+   Badge Variants - Dark Mode (배지 색상 변형)
+   ============================================ */
+
+/* Blue Badges (방문방식, 팀) */
+:root[data-theme="dark"] .badge-method,
+:root[data-theme="dark"] .badge-team {
+  background-color: var(--color-blue-alpha-20);
+  color: var(--color-blue-300);
+  border-color: var(--color-blue-alpha-30);
+}
+
+/* Green Badges (담당자명) */
+:root[data-theme="dark"] .badge-name {
+  background-color: var(--color-green-alpha-20);
+  color: var(--color-green-300);
+  border-color: var(--color-green-alpha-30);
+}
+
+/* Purple Badges (데이터문의) */
+:root[data-theme="dark"] .badge-inquiry {
+  background-color: var(--color-purple-alpha-20);
+  color: var(--color-purple-300);
+  border-color: var(--color-purple-alpha-30);
+}
+
+/* Pink Badges (연락처) */
+:root[data-theme="dark"] .badge-contact {
+  background-color: var(--color-pink-alpha-20);
+  color: var(--color-pink-300);
+  border-color: var(--color-pink-alpha-30);
+}
+
+/* Orange Badges (직급, 문서 카테고리) */
+:root[data-theme="dark"] .badge-position {
+  background-color: var(--color-orange-alpha-20);
+  color: var(--color-orange-200);
+  border-color: var(--color-orange-alpha-30);
+}
+
+:root[data-theme="dark"] .badge-doc-category {
+  background-color: var(--color-orange-yellow-alpha-20);
+  color: var(--color-orange-300);
+  border-color: var(--color-orange-yellow-alpha-30);
+}
+
+/* Gray Badges (코드, 기타, 타겟) */
+:root[data-theme="dark"] .badge-code {
+  background-color: var(--color-white-alpha-8);
+  color: var(--color-gray-400);
+  border-color: var(--color-white-alpha-15);
+}
+
+:root[data-theme="dark"] .badge-free {
+  background-color: var(--color-white-alpha-5);
+  color: var(--color-gray-500);
+  border-color: var(--color-white-alpha-10);
+}
+
+:root[data-theme="dark"] .target-badge {
+  background-color: var(--color-white-alpha-10);
+  color: var(--color-gray-300);
+  border-color: var(--color-white-alpha-20);
+}
+
+:root[data-theme="dark"] .badge-markdown {
+  background-color: var(--color-gray-alpha-20);
+  color: var(--color-gray-400);
+  border-color: var(--color-gray-alpha-30);
+  padding: 2px 6px;
+  font-size: 10px;
+}
+
+/* ============================================
+   Badge Variants - Light Mode
+   ============================================ */
+
+/* Blue Badges */
+:root[data-theme="light"] .badge-method,
+:root[data-theme="light"] .badge-team {
+  background-color: var(--color-blue-alpha-10);
+  color: var(--color-blue-600);
+  border-color: var(--color-blue-alpha-30);
+}
+
+/* Green Badges */
+:root[data-theme="light"] .badge-name {
+  background-color: var(--color-green-alpha-10);
+  color: var(--color-green-600);
+  border-color: var(--color-green-alpha-30);
+}
+
+/* Purple Badges */
+:root[data-theme="light"] .badge-inquiry {
+  background-color: var(--color-purple-alpha-10);
+  color: var(--color-purple-600);
+  border-color: var(--color-purple-alpha-30);
+}
+
+/* Pink Badges */
+:root[data-theme="light"] .badge-contact {
+  background-color: var(--color-pink-alpha-10);
+  color: var(--color-pink-600);
+  border-color: var(--color-pink-alpha-30);
+}
+
+/* Orange Badges */
+:root[data-theme="light"] .badge-position {
+  background-color: var(--color-orange-alpha-10);
+  color: var(--color-orange-700);
+  border-color: var(--color-orange-alpha-30);
+}
+
+:root[data-theme="light"] .badge-doc-category {
+  background-color: var(--color-orange-yellow-alpha-10);
+  color: var(--color-orange-600);
+  border-color: var(--color-orange-yellow-alpha-30);
+}
+
+/* Gray Badges */
+:root[data-theme="light"] .badge-code {
+  background-color: var(--color-black-alpha-5);
+  color: var(--color-gray-500);
+  border-color: var(--color-black-alpha-15);
+}
+
+:root[data-theme="light"] .badge-free {
+  background-color: var(--color-black-alpha-3);
+  color: var(--color-gray-400);
+  border-color: var(--color-black-alpha-10);
+}
+
+:root[data-theme="light"] .target-badge {
+  background-color: var(--color-black-alpha-5);
+  color: var(--color-gray-500);
+  border-color: var(--color-black-alpha-15);
+}
+
+:root[data-theme="light"] .badge-markdown {
+  background-color: var(--color-gray-alpha-10);
+  color: var(--color-gray-500);
+  border-color: var(--color-gray-alpha-30);
+  padding: 2px 6px;
+  font-size: 10px;
+}
+
+/* ============================================
+   Status Badges (상태 배지)
+   ============================================ */
+
+/* Dark Mode - Status Badges */
+:root[data-theme="dark"] .status-임시 {
+  background-color: var(--color-gray-alpha-20);
+  color: var(--color-gray-400);
+  border-color: var(--color-gray-alpha-30);
+}
+
+:root[data-theme="dark"] .status-진행,
+:root[data-theme="dark"] .status-진행중 {
+  background-color: var(--color-blue-alpha-20);
+  color: var(--color-blue-300);
+  border-color: var(--color-blue-alpha-30);
+}
+
+:root[data-theme="dark"] .status-완료 {
+  background-color: var(--color-green-alpha-20);
+  color: var(--color-green-300);
+  border-color: var(--color-green-alpha-30);
+}
+
+:root[data-theme="dark"] .status-실패 {
+  background-color: var(--color-red-alpha-20);
+  color: var(--color-red-300);
+  border-color: var(--color-red-alpha-30);
+}
+
+/* Light Mode - Status Badges */
+:root[data-theme="light"] .status-임시 {
+  background-color: var(--color-gray-alpha-10);
+  color: var(--color-gray-500);
+  border-color: var(--color-gray-alpha-30);
+}
+
+:root[data-theme="light"] .status-진행,
+:root[data-theme="light"] .status-진행중 {
+  background-color: var(--color-blue-alpha-10);
+  color: var(--color-blue-600);
+  border-color: var(--color-blue-alpha-30);
+}
+
+:root[data-theme="light"] .status-완료 {
+  background-color: var(--color-green-alpha-10);
+  color: var(--color-green-600);
+  border-color: var(--color-green-alpha-30);
+}
+
+:root[data-theme="light"] .status-실패 {
+  background-color: var(--color-red-alpha-10);
+  color: var(--color-red-600);
+  border-color: var(--color-red-alpha-30);
+}
+
+/* ============================================
+   Badge Layouts (배지 레이아웃)
+   ============================================ */
+.item-badges-top {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.requester-display {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: 10px;
+  flex-wrap: wrap;
+}

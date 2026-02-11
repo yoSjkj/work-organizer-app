@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import '../styles/completedfilters.css'
+import '../styles/features/completed-filters.css'
 
 function CompletedFilters({ onDateFilterChange, onInquiryTypeChange }) {
   // 날짜 필터

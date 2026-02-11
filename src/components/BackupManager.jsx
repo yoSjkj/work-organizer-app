@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import styles from '../styles/BackupManager.module.css'
+import styles from '../styles/modules/BackupManager.module.css'
 
 export default function BackupManager({ onClose }) {
   const [backups, setBackups] = useState([])
