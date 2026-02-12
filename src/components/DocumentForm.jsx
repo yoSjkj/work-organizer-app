@@ -46,6 +46,7 @@ function DocumentForm({ onSubmit }) {
           value={document.title}
           onChange={(e) => setDocumentField('title', e.target.value)}
           className="doc-title-input"
+          required
         />
       </div>
 
@@ -54,16 +55,17 @@ function DocumentForm({ onSubmit }) {
         value={document.content}
         onChange={(e) => setDocumentField('content', e.target.value)}
         style={{ minHeight: '400px' }}
+        required
       />
 
       <div className="form-controls">
         <div className="button-group">
           {editingId && (
-            <button onClick={handleCancel} className="cancel-btn">
+            <button type="button" onClick={handleCancel} className="cancel-btn">
               취소
             </button>
           )}
-          <button onClick={onSubmit} className="add-btn">
+          <button type="submit" className="add-btn">
             {editingId ? '저장' : '추가'}
           </button>
         </div>

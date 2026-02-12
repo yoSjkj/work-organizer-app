@@ -201,7 +201,7 @@ function App() {
       <Sidebar />
 
       <main className="main-content">
-        <h2 className={`category-title category-${selectedCategory}`}>
+        <h2 className={`category-title category-${selectedCategory.replace(/\s+/g, '-')}`}>
           {categoryLabels[selectedCategory]}
         </h2>
 
@@ -221,9 +221,16 @@ function App() {
         )}
 
         {categoryConfig.hasInputForm && (
-          <div ref={inputFormRef} className="input-form">
+          <form
+            ref={inputFormRef}
+            className="input-form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              submitItem()
+            }}
+          >
             {renderInputForm()}
-          </div>
+          </form>
         )}
 
         <ItemList

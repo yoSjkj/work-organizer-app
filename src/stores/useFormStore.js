@@ -28,10 +28,8 @@ const getTodayDate = () => {
 const initialDeploymentForm = {
   date: getTodayDate(),
   description: '',
-  file: '',
   changes: '',
-  target: '운영',
-  status: '진행중',
+  status: '임시',
   backupPath: '',
   newPath: '',
   fileList: '',
@@ -133,12 +131,10 @@ export const useFormStore = create((set, get) => ({
       case 'deployment':
         set({
           deployment: {
-            date: data.date || getTodayDate(),
+            date: data.deploymentDate || getTodayDate(),
             description: data.description || '',
-            file: data.title,
-            changes: data.content,
-            target: data.target,
-            status: data.status,
+            changes: data.changes || '',
+            status: data.status || '임시',
             backupPath: data.backupPath || '',
             newPath: data.newPath || '',
             fileList: data.fileList || '',
@@ -214,11 +210,11 @@ export const useFormStore = create((set, get) => ({
       }
       case 'deployment':
         return {
-          date: state.deployment.date,
-          description: state.deployment.description,
-          title: state.deployment.file,
+          deploymentDate: state.deployment.date,
+          title: state.deployment.description,
           content: state.deployment.changes,
-          target: state.deployment.target,
+          description: state.deployment.description,
+          changes: state.deployment.changes,
           status: state.deployment.status,
           backupPath: state.deployment.backupPath,
           newPath: state.deployment.newPath,

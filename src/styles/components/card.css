@@ -228,15 +228,15 @@
 }
 
 /* 배포 기록 - 핑크 */
-.item-card.category-배포\ 기록,
-.template-card.category-배포\ 기록,
-.document-card.category-배포\ 기록 {
+.item-card.category-배포-기록,
+.template-card.category-배포-기록,
+.document-card.category-배포-기록 {
   border-left: 3px solid var(--color-pink-400);
 }
 
-.item-card.category-배포\ 기록:hover,
-.template-card.category-배포\ 기록:hover,
-.document-card.category-배포\ 기록:hover {
+.item-card.category-배포-기록:hover,
+.template-card.category-배포-기록:hover,
+.document-card.category-배포-기록:hover {
   background: linear-gradient(to right, var(--color-pink-alpha-5), var(--bg-primary));
 }
 

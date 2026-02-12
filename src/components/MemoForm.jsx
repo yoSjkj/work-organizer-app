@@ -214,6 +214,7 @@ function MemoForm({ onSubmit }) {
         placeholder="제목"
         value={memo.title}
         onChange={(e) => setMemoField('title', e.target.value)}
+        required
       />
 
       {/* 내용 */}
@@ -222,6 +223,7 @@ function MemoForm({ onSubmit }) {
         value={memo.content}
         onChange={(e) => setMemoField('content', e.target.value)}
         rows="4"
+        required
       />
 
       {/* 하단: 상태 선택, 추가/취소 버튼 */}
@@ -236,11 +238,11 @@ function MemoForm({ onSubmit }) {
         </select>
         <div className="button-group">
           {editingId && (
-            <button onClick={handleCancel} className="cancel-btn">
+            <button type="button" onClick={handleCancel} className="cancel-btn">
               취소
             </button>
           )}
-          <button onClick={onSubmit} className="add-btn">
+          <button type="submit" className="add-btn">
             {editingId ? '저장' : '추가'}
           </button>
         </div>

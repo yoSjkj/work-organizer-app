@@ -25,6 +25,7 @@ function DeploymentForm({ onSubmit }) {
   }, [deployment.date, deployment.description, setDeploymentField])
 
   const [creatingFolders, setCreatingFolders] = useState(false)
+  const [folderMessage, setFolderMessage] = useState('')
 
   const handleCancel = () => {
     cancelEdit()
@@ -33,19 +34,23 @@ function DeploymentForm({ onSubmit }) {
 
   const createFolders = async () => {
     if (!deployment.backupPath || !deployment.newPath) {
-      alert('경로가 생성되지 않았습니다. 날짜와 설명을 입력하세요.')
+      setFolderMessage('경로가 생성되지 않았습니다. 날짜와 설명을 입력하세요.')
+      setTimeout(() => setFolderMessage(''), 3000)
       return
     }
 
     setCreatingFolders(true)
+    setFolderMessage('')
     try {
       const result = await invoke('create_deployment_folders', {
         backupPath: deployment.backupPath,
         newPath: deployment.newPath
       })
-      alert(result)
+      setFolderMessage('✓ ' + result)
+      setTimeout(() => setFolderMessage(''), 3000)
     } catch (error) {
-      alert(`폴더 생성 실패: ${error}`)
+      setFolderMessage(`✗ 폴더 생성 실패: ${error}`)
+      setTimeout(() => setFolderMessage(''), 3000)
     } finally {
       setCreatingFolders(false)
     }
@@ -70,67 +75,59 @@ function DeploymentForm({ onSubmit }) {
 
   return (
     <>
-      {/* 날짜 */}
-      <div className="deployment-date">
-        <label>배포 날짜</label>
+      {/* 날짜 & 설명 */}
+      <div className="deployment-top-row">
         <input
           type="date"
           value={deployment.date}
           onChange={(e) => setDeploymentField('date', e.target.value)}
+          required
         />
-      </div>
-
-      {/* 설명 */}
-      <div className="deployment-description">
-        <label>배포 설명</label>
         <input
           type="text"
-          placeholder="쪽지대량발송"
+          placeholder="배포 설명 (예: 쪽지대량발송)"
           value={deployment.description}
           onChange={(e) => setDeploymentField('description', e.target.value)}
+          required
         />
       </div>
 
       {/* 경로 */}
       <div className="deployment-paths">
-        <div className="path-group">
-          <label>백업 경로</label>
-          <div className="path-input-group">
-            <input
-              type="text"
-              value={deployment.backupPath}
-              onChange={(e) => setDeploymentField('backupPath', e.target.value)}
-              readOnly
-            />
-            <button
-              type="button"
-              onClick={() => copyToClipboard(deployment.backupPath)}
-              className="btn-copy-path"
-              title="경로 복사"
-            >
-              복사
-            </button>
-          </div>
+        <div className="path-input-group">
+          <input
+            type="text"
+            placeholder="백업 경로 (자동 생성)"
+            value={deployment.backupPath}
+            onChange={(e) => setDeploymentField('backupPath', e.target.value)}
+            readOnly
+          />
+          <button
+            type="button"
+            onClick={() => copyToClipboard(deployment.backupPath)}
+            className="btn-copy-path"
+            title="경로 복사"
+          >
+            복사
+          </button>
         </div>
 
-        <div className="path-group">
-          <label>신규 파일 경로</label>
-          <div className="path-input-group">
-            <input
-              type="text"
-              value={deployment.newPath}
-              onChange={(e) => setDeploymentField('newPath', e.target.value)}
-              readOnly
-            />
-            <button
-              type="button"
-              onClick={() => copyToClipboard(deployment.newPath)}
-              className="btn-copy-path"
-              title="경로 복사"
-            >
-              복사
-            </button>
-          </div>
+        <div className="path-input-group">
+          <input
+            type="text"
+            placeholder="신규 파일 경로 (자동 생성)"
+            value={deployment.newPath}
+            onChange={(e) => setDeploymentField('newPath', e.target.value)}
+            readOnly
+          />
+          <button
+            type="button"
+            onClick={() => copyToClipboard(deployment.newPath)}
+            className="btn-copy-path"
+            title="경로 복사"
+          >
+            복사
+          </button>
         </div>
 
         {/* 폴더 생성 버튼 */}
@@ -142,33 +139,33 @@ function DeploymentForm({ onSubmit }) {
         >
           {creatingFolders ? '생성 중...' : '폴더 생성'}
         </button>
+
+        {/* 폴더 생성 메시지 */}
+        {folderMessage && (
+          <div className="folder-message">
+            {folderMessage}
+          </div>
+        )}
       </div>
 
       {/* 파일 목록 */}
-      <div className="deployment-files">
-        <label>수정 파일 목록</label>
-        <textarea
-          placeholder="ha0106SaveCmd.class&#10;UserController.java&#10;config.xml"
-          value={deployment.fileList}
-          onChange={(e) => setDeploymentField('fileList', e.target.value)}
-          rows="4"
-        />
-      </div>
+      <textarea
+        placeholder="수정한 파일명 (한 줄씩 입력)&#10;예: ha0106SaveCmd.class&#10;    UserController.java"
+        value={deployment.fileList}
+        onChange={(e) => setDeploymentField('fileList', e.target.value)}
+        rows="4"
+      />
 
       {/* 변경사항 */}
-      <div className="deployment-changes">
-        <label>변경사항</label>
-        <textarea
-          placeholder="쪽지 대량발송 기능 수정&#10;로그인 임계값 보안 패치"
-          value={deployment.changes}
-          onChange={(e) => setDeploymentField('changes', e.target.value)}
-          rows="3"
-        />
-      </div>
+      <textarea
+        placeholder="변경사항 요약&#10;예: 쪽지 대량발송 기능 수정&#10;    로그인 임계값 보안 패치"
+        value={deployment.changes}
+        onChange={(e) => setDeploymentField('changes', e.target.value)}
+        rows="3"
+      />
 
       {/* 체크리스트 */}
       <div className="deployment-checklist">
-        <label>체크리스트</label>
         <div className="checklist-items">
           <label className="checklist-item">
             <input
@@ -205,36 +202,24 @@ function DeploymentForm({ onSubmit }) {
         </div>
       </div>
 
-      {/* 환경 & 상태 */}
-      <div className="deployment-controls">
-        <select
-          value={deployment.target}
-          onChange={(e) => setDeploymentField('target', e.target.value)}
-        >
-          <option value="운영">운영 배포</option>
-          <option value="테스트">테스트 배포</option>
-          <option value="개발">개발 배포</option>
-        </select>
+      {/* 하단: 상태 선택, 추가/취소 버튼 */}
+      <div className="form-controls">
         <select
           value={deployment.status}
           onChange={(e) => setDeploymentField('status', e.target.value)}
         >
-          <option value="진행중">진행중</option>
+          <option value="임시">임시</option>
+          <option value="진행">진행</option>
           <option value="완료">완료</option>
-          <option value="실패">실패</option>
         </select>
-      </div>
-
-      {/* 버튼 */}
-      <div className="form-controls">
         <div className="button-group">
           {editingId && (
-            <button onClick={handleCancel} className="cancel-btn">
+            <button type="button" onClick={handleCancel} className="cancel-btn">
               취소
             </button>
           )}
-          <button onClick={onSubmit} className="add-btn">
-            {editingId ? '저장' : '배포 기록 추가'}
+          <button type="submit" className="add-btn">
+            {editingId ? '저장' : '추가'}
           </button>
         </div>
       </div>

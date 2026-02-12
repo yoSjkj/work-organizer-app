@@ -115,11 +115,6 @@ export const useItemsStore = create(
         }
         // 배포 기록
         else if (selectedCategory === '배포 기록') {
-          if (!deployment.file.trim()) {
-            alert('파일명을 입력해주세요!')
-            return
-          }
-
           const newItem = {
             id: editingId || Date.now(),
             ...getFormData('deployment'),
@@ -167,7 +162,7 @@ export const useItemsStore = create(
 
         if (item.requestMethod) {
           setFormData('memo', item)
-        } else if (item.target) {
+        } else if (item.deploymentDate || item.checklist) {
           setFormData('deployment', item)
         } else if (item.docCategory) {
           setFormData('document', item)

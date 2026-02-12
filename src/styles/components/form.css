@@ -295,23 +295,15 @@ select option {
    Deployment Form (배포 폼)
    ============================================ */
 
-/* 날짜 & 설명 */
-.deployment-date,
-.deployment-description {
+/* 날짜 & 설명 (한 줄) */
+.deployment-top-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: var(--space-md);
   margin-bottom: var(--space-lg);
 }
 
-.deployment-date label,
-.deployment-description label {
-  display: block;
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-secondary);
-  margin-bottom: var(--space-sm);
-}
-
-.deployment-date input[type="date"],
-.deployment-description input[type="text"] {
+.deployment-top-row input {
   width: 100%;
   height: var(--size-input-md);
   padding: 0 var(--space-md);
@@ -323,19 +315,28 @@ select option {
   transition: var(--transition-all);
 }
 
-.deployment-date input[type="date"]:focus,
-.deployment-description input[type="text"]:focus {
+.deployment-top-row input:focus {
   outline: none;
   border-color: var(--border-focus);
   background-color: var(--bg-hover);
   box-shadow: var(--shadow-focus);
 }
 
+/* 다크 모드: 달력 아이콘 표시 */
+:root[data-theme="dark"] .deployment-top-row input[type="date"] {
+  color-scheme: dark;
+}
+
+/* 라이트 모드: 달력 아이콘 표시 */
+:root[data-theme="light"] .deployment-top-row input[type="date"] {
+  color-scheme: light;
+}
+
 /* 경로 */
 .deployment-paths {
   margin-bottom: var(--space-lg);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-md);
   padding: var(--space-lg);
   background: var(--bg-subtle);
@@ -343,13 +344,6 @@ select option {
   border-radius: var(--radius-lg);
 }
 
-.path-group label {
-  display: block;
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-secondary);
-  margin-bottom: var(--space-sm);
-}
 
 .path-input-group {
   display: flex;
@@ -397,6 +391,7 @@ select option {
 
 /* 폴더 생성 버튼 */
 .btn-create-folders {
+  grid-column: 1 / -1;
   width: 100%;
   height: var(--size-button-md);
   padding: 0 var(--space-lg);
@@ -439,43 +434,18 @@ select option {
   cursor: not-allowed;
 }
 
-/* 파일 목록 */
-.deployment-files,
-.deployment-changes {
-  margin-bottom: var(--space-lg);
-}
-
-.deployment-files label,
-.deployment-changes label {
-  display: block;
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-semibold);
+/* 폴더 생성 메시지 */
+.folder-message {
+  grid-column: 1 / -1;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  text-align: center;
+  background: var(--bg-hover);
   color: var(--text-secondary);
-  margin-bottom: var(--space-sm);
-}
-
-.deployment-files textarea,
-.deployment-changes textarea {
-  width: 100%;
-  padding: var(--space-md);
   border: 1px solid var(--border-primary);
-  border-radius: var(--radius-lg);
-  background-color: var(--bg-subtle);
-  color: var(--text-primary);
-  font-size: var(--text-base);
-  font-family: var(--font-mono);
-  resize: vertical;
-  line-height: var(--line-height-relaxed);
-  transition: var(--transition-all);
 }
 
-.deployment-files textarea:focus,
-.deployment-changes textarea:focus {
-  outline: none;
-  border-color: var(--border-focus);
-  background-color: var(--bg-hover);
-  box-shadow: var(--shadow-focus);
-}
 
 /* 체크리스트 */
 .deployment-checklist {
@@ -486,13 +456,6 @@ select option {
   border-radius: var(--radius-lg);
 }
 
-.deployment-checklist > label {
-  display: block;
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-secondary);
-  margin-bottom: var(--space-md);
-}
 
 .checklist-items {
   display: flex;

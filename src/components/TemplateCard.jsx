@@ -3,12 +3,12 @@ function TemplateCard({ template, onEdit, onDelete }) {
     navigator.clipboard.writeText(template.content)
       .catch(err => {
         console.error('복사 실패:', err)
-        alert('복사에 실패했습니다.')
+        // 복사 실패는 조용히 처리
       })
   }
 
   return (
-    <div className={`template-card category-${template.category}`}>
+    <div className={`template-card category-${template.category.replace(/\s+/g, '-')}`}>
       <div className="template-header">
         <h3 className="template-title">{template.title}</h3>
       </div>

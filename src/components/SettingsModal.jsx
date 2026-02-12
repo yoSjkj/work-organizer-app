@@ -105,7 +105,7 @@ export default function SettingsModal({ onClose }) {
       }
     } catch (error) {
       console.error('자동 시작 설정 실패:', error)
-      alert('자동 시작 설정에 실패했습니다.')
+      // 자동 시작 설정 실패는 조용히 처리
     }
   }
 

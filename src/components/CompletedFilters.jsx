@@ -80,9 +80,8 @@ const getLastReportWeek = () => {
   const applyCustomDate = () => {
     if (startDate && endDate) {
       handleDateFilterChange('custom')
-    } else {
-      alert('시작일과 종료일을 모두 선택해주세요')
     }
+    // 날짜 미선택시 조용히 무시
   }
 
   // 초기화

@@ -20,6 +20,7 @@ function TemplateForm({ onSubmit }) {
         placeholder="양식 제목 (예: 비밀번호 초기화)"
         value={template.title}
         onChange={(e) => setTemplateField('title', e.target.value)}
+        required
       />
 
       <textarea
@@ -27,16 +28,17 @@ function TemplateForm({ onSubmit }) {
         value={template.content}
         onChange={(e) => setTemplateField('content', e.target.value)}
         rows="10"
+        required
       />
 
       <div className="form-controls">
         <div className="button-group">
           {editingId && (
-            <button onClick={handleCancel} className="cancel-btn">
+            <button type="button" onClick={handleCancel} className="cancel-btn">
               취소
             </button>
           )}
-          <button onClick={onSubmit} className="add-btn">
+          <button type="submit" className="add-btn">
             {editingId ? '저장' : '추가'}
           </button>
         </div>

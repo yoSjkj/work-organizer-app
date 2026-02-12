@@ -1,6 +1,6 @@
 function ItemCard({ item, onDelete, onStatusChange, onEdit }) {
   const isMemo = item.requestMethod !== undefined
-  const isDeployment = item.target !== undefined
+  const isDeployment = item.deploymentDate !== undefined || item.checklist !== undefined
   
   const getRequesterDisplay = () => {
     if (!item.requester) return null
@@ -34,7 +34,7 @@ function ItemCard({ item, onDelete, onStatusChange, onEdit }) {
   }
   
   return (
-    <div className={`item-card ${isMemo ? 'memo-card' : 'deployment-card'} category-${item.category}`}>
+    <div className={`item-card ${isMemo ? 'memo-card' : 'deployment-card'} category-${item.category.replace(/\s+/g, '-')}`}>
       <div className="item-header">
         <div className="item-title-section">
           {isMemo ? (
