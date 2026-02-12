@@ -317,7 +317,7 @@
 /* 설정 버튼 */
 .settings-button-container {
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: 0;
 }
 
 .settings-button {
