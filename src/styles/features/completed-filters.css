@@ -1,11 +1,10 @@
 .completed-filters {
-  background-color: var(--bg-sidebar);
+  background-color: var(--bg-primary);
   border: 1px solid var(--border-primary);
-  padding: 20px;
+  padding: var(--space-2xl);
   border-radius: var(--radius-2xl);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-2xl);
   box-shadow: var(--shadow-sm);
-  transition: var(--transition-base);
 }
 
 /* 필터 섹션 */
