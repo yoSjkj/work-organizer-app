@@ -228,11 +228,18 @@ select option {
   accent-color: var(--accent-primary);
 }
 
-/* Light mode checkbox styling */
+/* Checkbox styling - unchecked state */
 :root[data-theme='light']
   .markdown-checkbox-wrapper
   input[type='checkbox']:not(:checked) {
   opacity: 0.4;
+}
+
+:root[data-theme='dark']
+  .markdown-checkbox-wrapper
+  input[type='checkbox']:not(:checked) {
+  opacity: 0.5;
+  filter: brightness(0.7);
 }
 
 .markdown-checkbox-label {
