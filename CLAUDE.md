@@ -56,3 +56,15 @@ ItemList + Card 컴포넌트들 (표시)
 - 카테고리: memo, completed, template, document, deployment
 - 컴포넌트 파일명: PascalCase.jsx
 - 훅 파일명: useCamelCase.js
+
+## 최근 작업 (2026-02-12)
+
+### 완료된 작업
+- **배포 기록 폼 간소화**: 환경 선택 제거, 상태 통일(임시/진행/완료), 라벨 제거
+- **HTML5 form validation**: 모든 폼에 required 속성 추가, alert() 제거
+- **데이터 구조 개선**: deploymentDate/date 필드 충돌 해결, deployment 감지 로직 수정
+
+### 다음 작업
+- **배포 카드 디자인 개선** (보류 → 재작업 예정)
+  - 미니멀하면서도 구분 가능한 레이아웃 필요
+  - 사용자 디자인 가이드 제공 후 진행
