@@ -19,11 +19,16 @@ function DocumentCard({ document, onEdit, onDelete }) {
     <div className="document-card">
       <div className="document-header">
         <div className="document-title-section">
-          {document.docCategory && document.docCategory !== '전체' && (
-            <span className="badge-doc-category">{document.docCategory}</span>
-          )}
-          {document.isMarkdown && (
-            <span className="badge-markdown">MD</span>
+          {/* 배지들을 item-badges-top으로 감싸서 일관성 유지 */}
+          {(document.docCategory || document.isMarkdown) && (
+            <div className="item-badges-top">
+              {document.docCategory && document.docCategory !== '전체' && (
+                <span className="badge-doc-category">{document.docCategory}</span>
+              )}
+              {document.isMarkdown && (
+                <span className="badge-markdown">MD</span>
+              )}
+            </div>
           )}
           <h3
             className="document-title"
