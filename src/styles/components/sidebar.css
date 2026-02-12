@@ -6,6 +6,8 @@
   padding: 32px 20px;
   overflow-y: auto;
   border-right: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar h1 {
@@ -317,7 +319,7 @@
 /* 설정 버튼 */
 .settings-button-container {
   margin-top: auto;
-  padding-top: 0;
+  padding-top: 24px;
 }
 
 .settings-button {
