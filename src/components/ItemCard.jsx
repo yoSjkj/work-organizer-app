@@ -74,8 +74,52 @@ function ItemCard({ item, onDelete, onStatusChange, onEdit }) {
         </div>
       </div>
       
+      {/* 배포 기록 추가 정보 */}
+      {isDeployment && (
+        <div className="deployment-details">
+          {/* 경로 */}
+          {(item.backupPath || item.newPath) && (
+            <div className="deployment-paths-display">
+              {item.backupPath && (
+                <div className="path-item">
+                  <span className="path-label">백업:</span>
+                  <code className="path-value">{item.backupPath}</code>
+                </div>
+              )}
+              {item.newPath && (
+                <div className="path-item">
+                  <span className="path-label">신규:</span>
+                  <code className="path-value">{item.newPath}</code>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 파일 목록 */}
+          {item.fileList && (
+            <div className="deployment-files-display">
+              <span className="files-label">수정 파일:</span>
+              <pre className="files-list">{item.fileList}</pre>
+            </div>
+          )}
+
+          {/* 체크리스트 */}
+          {item.checklist && (
+            <div className="deployment-checklist-display">
+              <span className="checklist-label">체크리스트:</span>
+              <div className="checklist-status">
+                {item.checklist.backup && <span className="check-done">백업 ✓</span>}
+                {item.checklist.diff && <span className="check-done">diff ✓</span>}
+                {item.checklist.upload && <span className="check-done">FTP ✓</span>}
+                {item.checklist.verify && <span className="check-done">확인 ✓</span>}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <p className="item-content">{item.content}</p>
-      
+
       <div className="item-actions">
         <button 
           className="edit-btn"

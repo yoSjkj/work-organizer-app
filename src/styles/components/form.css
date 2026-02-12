@@ -236,16 +236,14 @@ select option {
   accent-color: var(--accent-primary);
 }
 
-/* Checkbox styling - unchecked state */
-:root[data-theme='light']
-  .markdown-checkbox-wrapper
-  input[type='checkbox']:not(:checked) {
+/* Checkbox styling - unchecked state (공통) */
+:root[data-theme='light'] .markdown-checkbox-wrapper input[type='checkbox']:not(:checked),
+:root[data-theme='light'] .checklist-item input[type="checkbox"]:not(:checked) {
   opacity: 0.4;
 }
 
-:root[data-theme='dark']
-  .markdown-checkbox-wrapper
-  input[type='checkbox']:not(:checked) {
+:root[data-theme='dark'] .markdown-checkbox-wrapper input[type='checkbox']:not(:checked),
+:root[data-theme='dark'] .checklist-item input[type="checkbox"]:not(:checked) {
   opacity: 0.5;
   filter: brightness(0.7);
 }
@@ -291,4 +289,270 @@ select option {
   .button-group button {
     flex: 1;
   }
+}
+
+/* ============================================
+   Deployment Form (배포 폼)
+   ============================================ */
+
+/* 날짜 & 설명 */
+.deployment-date,
+.deployment-description {
+  margin-bottom: var(--space-lg);
+}
+
+.deployment-date label,
+.deployment-description label {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.deployment-date input[type="date"],
+.deployment-description input[type="text"] {
+  width: 100%;
+  height: var(--size-input-md);
+  padding: 0 var(--space-md);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  transition: var(--transition-all);
+}
+
+.deployment-date input[type="date"]:focus,
+.deployment-description input[type="text"]:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background-color: var(--bg-hover);
+  box-shadow: var(--shadow-focus);
+}
+
+/* 경로 */
+.deployment-paths {
+  margin-bottom: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+}
+
+.path-group label {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.path-input-group {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.path-input-group input {
+  flex: 1;
+  height: var(--size-input-md);
+  padding: 0 var(--space-md);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-subtle);
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+}
+
+.btn-copy-path {
+  height: var(--size-input-md);
+  padding: 0 var(--space-md);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: var(--transition-all);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.btn-copy-path:hover {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.btn-copy-path:active {
+  transform: scale(0.95);
+}
+
+/* 폴더 생성 버튼 */
+.btn-create-folders {
+  width: 100%;
+  height: var(--size-button-md);
+  padding: 0 var(--space-lg);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: var(--transition-all);
+  margin-top: var(--space-sm);
+}
+
+:root[data-theme="dark"] .btn-create-folders {
+  background-color: var(--color-green-alpha-15);
+  color: var(--color-green-300);
+  border: 1px solid var(--color-green-alpha-30);
+}
+
+:root[data-theme="dark"] .btn-create-folders:hover:not(:disabled) {
+  background-color: var(--color-green-alpha-25);
+  transform: translateY(-1px);
+}
+
+:root[data-theme="light"] .btn-create-folders {
+  background-color: var(--color-green-alpha-10);
+  color: var(--color-green-600);
+  border: 1px solid var(--color-green-alpha-30);
+}
+
+:root[data-theme="light"] .btn-create-folders:hover:not(:disabled) {
+  background-color: var(--color-green-alpha-20);
+  transform: translateY(-1px);
+}
+
+.btn-create-folders:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-create-folders:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 파일 목록 */
+.deployment-files,
+.deployment-changes {
+  margin-bottom: var(--space-lg);
+}
+
+.deployment-files label,
+.deployment-changes label {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.deployment-files textarea,
+.deployment-changes textarea {
+  width: 100%;
+  padding: var(--space-md);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  font-family: var(--font-mono);
+  resize: vertical;
+  line-height: var(--line-height-relaxed);
+  transition: var(--transition-all);
+}
+
+.deployment-files textarea:focus,
+.deployment-changes textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background-color: var(--bg-hover);
+  box-shadow: var(--shadow-focus);
+}
+
+/* 체크리스트 */
+.deployment-checklist {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+}
+
+.deployment-checklist > label {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  user-select: none;
+}
+
+.checklist-item:hover {
+  background: var(--bg-hover);
+}
+
+.checklist-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--accent-primary);
+}
+
+/* unchecked 스타일은 위에 공통으로 정의됨 */
+
+.checklist-item span {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* 배포 환경 & 상태 */
+.deployment-controls {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.deployment-controls select {
+  flex: 1;
+  height: var(--size-input-md);
+  padding: 0 var(--space-md);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  transition: var(--transition-all);
+}
+
+.deployment-controls select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background-color: var(--bg-hover);
+  box-shadow: var(--shadow-focus);
 }

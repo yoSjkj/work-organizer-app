@@ -6,6 +6,7 @@ mod commands;
 
 use commands::data::{save_data, load_data, get_data_path};
 use commands::backup::{backup_data, list_backups, restore_backup, check_and_auto_backup};
+use commands::deployment::create_deployment_folders;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -86,7 +87,8 @@ pub fn run() {
             get_data_path,
             backup_data,
             list_backups,
-            restore_backup
+            restore_backup,
+            create_deployment_folders
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

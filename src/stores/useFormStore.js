@@ -17,11 +17,30 @@ const initialMemoForm = {
   status: '임시'
 }
 
+const getTodayDate = () => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const initialDeploymentForm = {
+  date: getTodayDate(),
+  description: '',
   file: '',
   changes: '',
   target: '운영',
-  status: '진행중'
+  status: '진행중',
+  backupPath: '',
+  newPath: '',
+  fileList: '',
+  checklist: {
+    backup: false,
+    diff: false,
+    upload: false,
+    verify: false
+  }
 }
 
 const initialTemplateForm = {
@@ -114,10 +133,21 @@ export const useFormStore = create((set, get) => ({
       case 'deployment':
         set({
           deployment: {
+            date: data.date || getTodayDate(),
+            description: data.description || '',
             file: data.title,
             changes: data.content,
             target: data.target,
-            status: data.status
+            status: data.status,
+            backupPath: data.backupPath || '',
+            newPath: data.newPath || '',
+            fileList: data.fileList || '',
+            checklist: data.checklist || {
+              backup: false,
+              diff: false,
+              upload: false,
+              verify: false
+            }
           }
         })
         break
@@ -184,10 +214,16 @@ export const useFormStore = create((set, get) => ({
       }
       case 'deployment':
         return {
+          date: state.deployment.date,
+          description: state.deployment.description,
           title: state.deployment.file,
           content: state.deployment.changes,
           target: state.deployment.target,
-          status: state.deployment.status
+          status: state.deployment.status,
+          backupPath: state.deployment.backupPath,
+          newPath: state.deployment.newPath,
+          fileList: state.deployment.fileList,
+          checklist: state.deployment.checklist
         }
       case 'template':
         return {
