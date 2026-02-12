@@ -201,8 +201,6 @@ function App() {
       <Sidebar />
 
       <main className="main-content">
-        <h2>{categoryLabels[selectedCategory]}</h2>
-
         {categoryConfig.hasSearch && (
           <SearchBar
             value={searchTerm}
