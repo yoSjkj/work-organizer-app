@@ -23,8 +23,9 @@
   overflow-x: hidden;
   background-color: var(--bg-secondary);
   height: 100vh;
-  max-width: 800px;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .main-content h2 {

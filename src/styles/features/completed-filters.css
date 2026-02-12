@@ -5,6 +5,8 @@
   border-radius: var(--radius-2xl);
   margin-bottom: var(--space-2xl);
   box-shadow: var(--shadow-sm);
+  width: 100%;
+  max-width: 800px;
 }
 
 /* 필터 섹션 */

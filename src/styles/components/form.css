@@ -14,6 +14,8 @@
   border-radius: var(--radius-2xl);
   margin-bottom: var(--space-2xl);
   box-shadow: var(--shadow-sm);
+  width: 100%;
+  max-width: 800px;
 }
 
 /* ============================================
@@ -171,6 +173,8 @@ select option {
 .search-bar {
   position: relative;
   margin-bottom: var(--space-xl);
+  width: 100%;
+  max-width: 800px;
 }
 
 .search-input {
