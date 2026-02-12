@@ -63,7 +63,7 @@
   color: var(--text-primary);
   font-weight: 600;
   border-left: 3px solid var(--accent-primary);
-  padding-left: 7px;
+  padding-left: 9px;
 }
 
 .category-icon {
