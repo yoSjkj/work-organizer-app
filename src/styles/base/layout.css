@@ -28,14 +28,36 @@
   align-items: center;
 }
 
-.main-content h2 {
-  margin-bottom: var(--space-3xl);
-  color: var(--text-primary);
-  border: none;
-  padding-bottom: 0;
-  font-size: var(--text-4xl);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--letter-spacing-tight);
+/* Category Title (카테고리 제목) */
+.category-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-2xl);
+  letter-spacing: var(--letter-spacing-normal);
+  text-transform: uppercase;
+  transition: color var(--transition-base);
+}
+
+/* Category Title Colors */
+.category-title.category-메모 {
+  color: var(--color-blue-400);
+}
+
+.category-title.category-완료 {
+  color: var(--color-green-400);
+}
+
+.category-title.category-양식 {
+  color: var(--color-purple-400);
+}
+
+.category-title.category-문서 {
+  color: var(--color-orange-400);
+}
+
+.category-title.category-배포\ 기록 {
+  color: var(--color-pink-400);
 }
 
 /* ============================================

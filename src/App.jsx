@@ -201,6 +201,10 @@ function App() {
       <Sidebar />
 
       <main className="main-content">
+        <h2 className={`category-title category-${selectedCategory}`}>
+          {categoryLabels[selectedCategory]}
+        </h2>
+
         {categoryConfig.hasSearch && (
           <SearchBar
             value={searchTerm}
