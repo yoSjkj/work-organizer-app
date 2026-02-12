@@ -55,6 +55,10 @@
   color: var(--text-primary);
 }
 
+.category-btn:active {
+  transform: scale(0.98);
+}
+
 .category-btn.active {
   color: var(--text-primary);
   font-weight: 600;
@@ -156,6 +160,10 @@
 .backup-section summary:hover {
   background-color: var(--bg-hover);
   color: var(--text-primary);
+}
+
+.backup-section summary:active {
+  transform: scale(0.98);
 }
 
 .backup-buttons {
@@ -343,6 +351,10 @@
 .settings-button:hover {
   color: var(--text-primary);
   background: transparent;
+}
+
+.settings-button:active {
+  transform: scale(0.98);
 }
 
 @media (max-width: 768px) {

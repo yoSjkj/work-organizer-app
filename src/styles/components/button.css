@@ -48,6 +48,12 @@ button {
   transform: translateY(-1px);
 }
 
+:root[data-theme="dark"] .form-controls .add-btn:active,
+:root[data-theme="dark"] .button-group .add-btn:active {
+  transform: translateY(0);
+  background-color: var(--color-blue-alpha-30);
+}
+
 /* Light Mode - Add Button */
 :root[data-theme="light"] .form-controls .add-btn,
 :root[data-theme="light"] .button-group .add-btn {
@@ -60,6 +66,12 @@ button {
 :root[data-theme="light"] .button-group .add-btn:hover {
   background-color: var(--color-blue-alpha-20);
   transform: translateY(-1px);
+}
+
+:root[data-theme="light"] .form-controls .add-btn:active,
+:root[data-theme="light"] .button-group .add-btn:active {
+  transform: translateY(0);
+  background-color: var(--color-blue-alpha-25);
 }
 
 /* Cancel Button */
@@ -75,6 +87,12 @@ button {
   background-color: var(--bg-hover);
   border-color: var(--border-hover);
   color: var(--text-primary);
+}
+
+.form-controls .cancel-btn:active,
+.button-group .cancel-btn:active {
+  transform: scale(0.98);
+  background-color: var(--bg-active);
 }
 
 /* ============================================
@@ -106,6 +124,11 @@ button {
   transform: translateY(-1px);
 }
 
+:root[data-theme="dark"] .edit-btn:active {
+  transform: translateY(0) scale(0.97);
+  background: var(--color-blue-alpha-25);
+}
+
 :root[data-theme="light"] .edit-btn {
   border-color: var(--color-blue-alpha-30);
   color: var(--color-blue-600);
@@ -115,6 +138,11 @@ button {
 :root[data-theme="light"] .edit-btn:hover {
   background: var(--color-blue-alpha-20);
   transform: translateY(-1px);
+}
+
+:root[data-theme="light"] .edit-btn:active {
+  transform: translateY(0) scale(0.97);
+  background: var(--color-blue-alpha-25);
 }
 
 /* Status Change / Complete Button */
@@ -131,6 +159,12 @@ button {
   transform: translateY(-1px);
 }
 
+:root[data-theme="dark"] .status-change-btn:active,
+:root[data-theme="dark"] .btn-complete:active {
+  transform: translateY(0) scale(0.97);
+  background: var(--color-blue-alpha-30);
+}
+
 :root[data-theme="light"] .status-change-btn,
 :root[data-theme="light"] .btn-complete {
   border-color: var(--color-blue-alpha-30);
@@ -142,6 +176,12 @@ button {
 :root[data-theme="light"] .btn-complete:hover {
   background: var(--color-blue-alpha-20);
   transform: translateY(-1px);
+}
+
+:root[data-theme="light"] .status-change-btn:active,
+:root[data-theme="light"] .btn-complete:active {
+  transform: translateY(0) scale(0.97);
+  background: var(--color-blue-alpha-25);
 }
 
 /* Delete Button */
@@ -158,6 +198,10 @@ button {
   transform: translateY(-1px);
 }
 
+.delete-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
 /* Copy Button */
 :root[data-theme="dark"] .btn-copy {
   background-color: var(--color-green-alpha-20);
@@ -168,6 +212,11 @@ button {
 :root[data-theme="dark"] .btn-copy:hover {
   background-color: var(--color-green-alpha-25);
   transform: translateY(-1px);
+}
+
+:root[data-theme="dark"] .btn-copy:active {
+  transform: translateY(0) scale(0.97);
+  background-color: var(--color-green-alpha-30);
 }
 
 :root[data-theme="light"] .btn-copy {
@@ -181,6 +230,11 @@ button {
   transform: translateY(-1px);
 }
 
+:root[data-theme="light"] .btn-copy:active {
+  transform: translateY(0) scale(0.97);
+  background-color: var(--color-green-alpha-25);
+}
+
 /* Collapse Button */
 .btn-collapse {
   background: var(--bg-hover);
@@ -192,6 +246,10 @@ button {
   background: var(--bg-subtle);
   border-color: var(--border-secondary);
   color: var(--text-secondary);
+}
+
+.btn-collapse:active {
+  transform: scale(0.97);
 }
 
 /* Expand Button */
@@ -213,6 +271,10 @@ button {
 .btn-expand:hover {
   background: var(--bg-subtle);
   border-color: var(--border-secondary);
+}
+
+.btn-expand:active {
+  transform: scale(0.98);
 }
 
 /* ============================================

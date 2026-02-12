@@ -203,6 +203,10 @@ select option {
   color: var(--text-primary);
 }
 
+.search-clear:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
 /* ============================================
    Checkbox Styles (체크박스)
    ============================================ */
@@ -252,53 +256,6 @@ select option {
   font-weight: var(--font-weight-medium);
   user-select: none;
   cursor: pointer;
-}
-
-/* ============================================
-   File Drop Zone (파일 드롭 영역)
-   ============================================ */
-.drop-zone {
-  position: relative;
-  transition: var(--transition-all);
-}
-
-.drop-zone.dragging {
-  opacity: 0.6;
-}
-
-.drop-zone textarea {
-  transition: var(--transition-all);
-}
-
-.drop-zone.dragging textarea {
-  border-color: var(--accent-primary);
-  background: var(--color-blue-alpha-5);
-}
-
-.drop-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--color-blue-alpha-10);
-  border: 2px dashed var(--accent-primary);
-  border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: var(--z-overlay);
-}
-
-.drop-message {
-  background: var(--bg-primary);
-  color: var(--accent-light);
-  padding: var(--space-md) var(--space-2xl);
-  border-radius: var(--radius-lg);
-  font-size: var(--text-md);
-  font-weight: var(--font-weight-semibold);
-  border: 1px solid var(--accent-primary);
 }
 
 /* ============================================
