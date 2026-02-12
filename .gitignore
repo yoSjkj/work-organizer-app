@@ -28,6 +28,7 @@ dist-ssr
 
 # Debug files
 *.png
+screenshots/
 nul
 quick-note.html
 DESIGN.md
