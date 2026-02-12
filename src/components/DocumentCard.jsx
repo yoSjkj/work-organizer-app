@@ -16,7 +16,7 @@ function DocumentCard({ document, onEdit, onDelete }) {
   const hasMore = document.content.split('\n').length > 3
 
   return (
-    <div className="document-card">
+    <div className={`document-card category-${document.category}`}>
       <div className="document-header">
         <div className="document-title-section">
           {/* 배지들을 item-badges-top으로 감싸서 일관성 유지 */}

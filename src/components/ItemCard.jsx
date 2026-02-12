@@ -34,7 +34,7 @@ function ItemCard({ item, onDelete, onStatusChange, onEdit }) {
   }
   
   return (
-    <div className={`item-card ${isMemo ? 'memo-card' : 'deployment-card'}`}>
+    <div className={`item-card ${isMemo ? 'memo-card' : 'deployment-card'} category-${item.category}`}>
       <div className="item-header">
         <div className="item-title-section">
           {isMemo ? (

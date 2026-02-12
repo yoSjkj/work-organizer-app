@@ -8,7 +8,7 @@ function TemplateCard({ template, onEdit, onDelete }) {
   }
 
   return (
-    <div className="template-card">
+    <div className={`template-card category-${template.category}`}>
       <div className="template-header">
         <h3 className="template-title">{template.title}</h3>
       </div>

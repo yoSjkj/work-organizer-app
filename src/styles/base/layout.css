@@ -18,7 +18,7 @@
    ============================================ */
 .main-content {
   flex: 1;
-  padding: 40px 48px;
+  padding: 56px 64px;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--bg-secondary);
