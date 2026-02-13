@@ -199,8 +199,7 @@ function App() {
           onDelete={deleteItem}
           onStatusChange={changeStatus}
           onEdit={handleEdit}
-          isTemplate={selectedCategory === '양식'}
-          isDocument={selectedCategory === '문서'}
+          category={selectedCategory}
         />
       </main>
     </div>

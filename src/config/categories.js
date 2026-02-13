@@ -2,9 +2,13 @@ import MemoForm from '../components/MemoForm'
 import TemplateForm from '../components/TemplateForm'
 import DocumentForm from '../components/DocumentForm'
 import DeploymentForm from '../components/DeploymentForm'
-import ItemCard from '../components/ItemCard'
-import TemplateCard from '../components/TemplateCard'
-import DocumentCard from '../components/DocumentCard'
+import {
+  MemoCard,
+  CompletedCard,
+  TemplateCard,
+  DocumentCard,
+  DeploymentCard
+} from '../components/cards'
 
 /**
  * 카테고리 메타데이터
@@ -16,7 +20,7 @@ export const CATEGORIES = {
     label: '메모',
     displayName: '📝 메모',
     FormComponent: MemoForm,
-    CardComponent: ItemCard,
+    CardComponent: MemoCard,
     hasSearch: true,
     searchFields: ['title', 'content', 'contactInfo', 'requester.dealerCode', 'requester.dealerName', 'requester.name', 'requester.team', 'requester.freeText'],
     searchPlaceholder: '검색... (제목, 내용, 연락처, 대리점, 담당자)',
@@ -30,7 +34,7 @@ export const CATEGORIES = {
     label: '완료',
     displayName: '✅ 완료',
     FormComponent: MemoForm,
-    CardComponent: ItemCard,
+    CardComponent: CompletedCard,
     hasSearch: true,
     searchFields: ['title', 'content', 'contactInfo', 'requester.dealerCode', 'requester.dealerName', 'requester.name', 'requester.team', 'requester.freeText'],
     searchPlaceholder: '검색... (제목, 내용, 연락처, 대리점, 담당자)',
@@ -72,7 +76,7 @@ export const CATEGORIES = {
     label: '배포 기록',
     displayName: '🚀 배포 기록',
     FormComponent: DeploymentForm,
-    CardComponent: ItemCard,  // 배포도 ItemCard 사용 (나중에 분리)
+    CardComponent: DeploymentCard,
     hasSearch: false,
     searchFields: [],
     searchPlaceholder: '',

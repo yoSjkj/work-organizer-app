@@ -1,6 +1,6 @@
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { useUIStore } from '../stores/useUIStore'
+import { useUIStore } from '../../stores/useUIStore'
 
 function DocumentCard({ document, onEdit, onDelete }) {
   const expandedDocuments = useUIStore((state) => state.expandedDocuments)
