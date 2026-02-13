@@ -1,5 +1,5 @@
-import { useFormStore } from '../stores/useFormStore'
-import { useUIStore } from '../stores/useUIStore'
+import { useFormStore } from '../../stores/useFormStore'
+import { useUIStore } from '../../stores/useUIStore'
 
 const DOCUMENT_CATEGORIES = ['전체', '주문', '처리중', '조직이관', '인수인계', '기타']
 

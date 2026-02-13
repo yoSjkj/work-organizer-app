@@ -1,12 +1,12 @@
-import { useFormStore } from '../stores/useFormStore'
-import { useUIStore } from '../stores/useUIStore'
+import { useFormStore } from '../../stores/useFormStore'
+import { useUIStore } from '../../stores/useUIStore'
 import {
   SelectField,
   TextField,
   TextArea,
   ContactField,
   RequesterFields
-} from './forms/fields'
+} from './fields'
 
 // 옵션 데이터
 const OPTIONS = {

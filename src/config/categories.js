@@ -1,7 +1,7 @@
-import MemoForm from '../components/MemoForm'
-import TemplateForm from '../components/TemplateForm'
-import DocumentForm from '../components/DocumentForm'
-import DeploymentForm from '../components/DeploymentForm'
+import MemoForm from '../components/forms/MemoForm'
+import TemplateForm from '../components/forms/TemplateForm'
+import DocumentForm from '../components/forms/DocumentForm'
+import DeploymentForm from '../components/forms/DeploymentForm'
 import {
   MemoCard,
   CompletedCard,

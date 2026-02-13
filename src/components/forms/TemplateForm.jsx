@@ -1,5 +1,5 @@
-import { useFormStore } from '../stores/useFormStore'
-import { useUIStore } from '../stores/useUIStore'
+import { useFormStore } from '../../stores/useFormStore'
+import { useUIStore } from '../../stores/useUIStore'
 
 function TemplateForm({ onSubmit }) {
   const template = useFormStore((state) => state.template)

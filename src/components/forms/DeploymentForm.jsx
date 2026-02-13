@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import { useFormStore } from '../stores/useFormStore'
-import { useUIStore } from '../stores/useUIStore'
+import { useFormStore } from '../../stores/useFormStore'
+import { useUIStore } from '../../stores/useUIStore'
 
 function DeploymentForm({ onSubmit }) {
   const deployment = useFormStore((state) => state.deployment)
