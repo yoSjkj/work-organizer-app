@@ -8,9 +8,8 @@ import './App.css'
 import AppLayout from './layouts/AppLayout'
 import { useItemsStore } from './stores/useItemsStore'
 import { useUIStore } from './stores/useUIStore'
-import { parseKoreanDate } from './utils/dateUtils'
 import { getCategoryByLabel } from './config/categories'
-import { matchesSearch } from './utils/search'
+import { useFilteredItems } from './hooks/useFilteredItems'
 
 function App() {
   const inputFormRef = useRef(null)
@@ -136,23 +135,14 @@ function App() {
   const FormComponent = currentCategory?.FormComponent
 
   // 필터링된 항목들
-  const filteredItems = items
-    .filter((item) => item.category === selectedCategory)
-    .filter((item) => {
-      // 검색 필터
-      return matchesSearch(item, deferredSearchTerm, currentCategory?.searchFields || [])
-    })
-    .filter((item) => {
-      // 날짜 필터
-      if (dateFilter.type === 'all') return true
-      const itemDate = parseKoreanDate(item.date)
-      return itemDate >= dateFilter.start && itemDate <= dateFilter.end
-    })
-    .filter((item) => {
-      // 문의 방식 필터
-      if (inquiryTypeFilter === '전체') return true
-      return item.requestMethod === inquiryTypeFilter
-    })
+  const filteredItems = useFilteredItems({
+    items,
+    selectedCategory,
+    searchTerm: deferredSearchTerm,
+    dateFilter,
+    inquiryTypeFilter,
+    searchFields: currentCategory?.searchFields
+  })
 
   return (
     <AppLayout
