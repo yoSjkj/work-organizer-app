@@ -6,16 +6,14 @@ import { isTauri } from './stores/tauriStorage'
 import { useThemeStore } from './stores/useThemeStore'
 import './App.css'
 import Sidebar, { categoryLabels } from './components/Sidebar'
-import MemoForm from './components/MemoForm'
-import DeploymentForm from './components/DeploymentForm'
-import TemplateForm from './components/TemplateForm'
-import DocumentForm from './components/DocumentForm'
 import ItemList from './components/ItemList'
 import SearchBar from './components/SearchBar'
 import CompletedFilters from './components/CompletedFilters'
 import { useItemsStore } from './stores/useItemsStore'
 import { useUIStore } from './stores/useUIStore'
 import { parseKoreanDate } from './utils/dateUtils'
+import { getCategoryByLabel } from './config/categories'
+import { matchesSearch } from './utils/search'
 
 function App() {
   const inputFormRef = useRef(null)
@@ -136,62 +134,25 @@ function App() {
     }, 100)
   }
 
-  // 검색어 플레이스홀더
-  const searchPlaceholders = {
-    '메모': '검색... (제목, 내용, 연락처, 대리점, 담당자)',
-    '완료': '검색... (제목, 내용, 연락처, 대리점, 담당자)',
-    '양식': '양식 검색...',
-    '문서': '문서 검색...'
-  }
-
-  // 카테고리별 UI 설정
-  const categoryConfig = {
-    hasSearch: ['메모', '완료', '양식', '문서'].includes(selectedCategory),
-    hasAdvancedFilter: selectedCategory === '완료',
-    hasInputForm: ['메모', '완료', '양식', '문서', '배포 기록'].includes(selectedCategory)
-  }
-
-  // 입력 폼 렌더링
-  const renderInputForm = () => {
-    if (selectedCategory === '메모' || selectedCategory === '완료') {
-      return <MemoForm onSubmit={submitItem} />
-    } else if (selectedCategory === '양식') {
-      return <TemplateForm onSubmit={submitItem} />
-    } else if (selectedCategory === '문서') {
-      return <DocumentForm onSubmit={submitItem} />
-    } else if (selectedCategory === '배포 기록') {
-      return <DeploymentForm onSubmit={submitItem} />
-    }
-    return null
-  }
+  // 현재 카테고리 설정
+  const currentCategory = getCategoryByLabel(selectedCategory)
+  const FormComponent = currentCategory?.FormComponent
 
   // 필터링된 항목들
   const filteredItems = items
     .filter((item) => item.category === selectedCategory)
     .filter((item) => {
-      if (!deferredSearchTerm) return true
-
-      const searchLower = deferredSearchTerm.toLowerCase()
-
-      if (item.title?.toLowerCase().includes(searchLower)) return true
-      if (item.content?.toLowerCase().includes(searchLower)) return true
-      if (item.contactInfo?.toLowerCase().includes(searchLower)) return true
-      if (item.requester?.dealerCode?.toLowerCase().includes(searchLower)) return true
-      if (item.requester?.dealerName?.toLowerCase().includes(searchLower)) return true
-      if (item.requester?.name?.toLowerCase().includes(searchLower)) return true
-      if (item.requester?.team?.toLowerCase().includes(searchLower)) return true
-      if (item.requester?.freeText?.toLowerCase().includes(searchLower)) return true
-
-      return false
+      // 검색 필터
+      return matchesSearch(item, deferredSearchTerm, currentCategory?.searchFields || [])
     })
     .filter((item) => {
+      // 날짜 필터
       if (dateFilter.type === 'all') return true
-
       const itemDate = parseKoreanDate(item.date)
-
       return itemDate >= dateFilter.start && itemDate <= dateFilter.end
     })
     .filter((item) => {
+      // 문의 방식 필터
       if (inquiryTypeFilter === '전체') return true
       return item.requestMethod === inquiryTypeFilter
     })
@@ -205,22 +166,22 @@ function App() {
           {categoryLabels[selectedCategory]}
         </h2>
 
-        {categoryConfig.hasSearch && (
+        {currentCategory?.hasSearch && (
           <SearchBar
             value={searchTerm}
             onSearch={setSearchTerm}
-            placeholder={searchPlaceholders[selectedCategory] || '검색...'}
+            placeholder={currentCategory.searchPlaceholder || '검색...'}
           />
         )}
 
-        {categoryConfig.hasAdvancedFilter && (
+        {currentCategory?.hasAdvancedFilter && (
           <CompletedFilters
             onDateFilterChange={setDateFilter}
             onInquiryTypeChange={setInquiryTypeFilter}
           />
         )}
 
-        {categoryConfig.hasInputForm && (
+        {currentCategory?.hasInputForm && FormComponent && (
           <form
             ref={inputFormRef}
             className="input-form"
@@ -229,7 +190,7 @@ function App() {
               submitItem()
             }}
           >
-            {renderInputForm()}
+            <FormComponent onSubmit={submitItem} />
           </form>
         )}
 

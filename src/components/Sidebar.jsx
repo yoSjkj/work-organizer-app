@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useItemsStore } from '../stores/useItemsStore'
 import { useUIStore } from '../stores/useUIStore'
 import SettingsModal from './SettingsModal'
+import { CATEGORY_LIST } from '../config/categories'
 
-const categories = ['메모', '완료', '양식', '문서', '배포 기록']
-
+// 영문 라벨 매핑 (나중에 config로 통합 가능)
 export const categoryLabels = {
   '메모': 'Notes',
   '완료': 'Done',
@@ -28,16 +28,16 @@ function Sidebar() {
       </div>
 
       <nav className="categories">
-        {categories.map((cat) => (
+        {CATEGORY_LIST.map((category) => (
           <button
-            key={cat}
-            className={`category-btn ${selectedCategory === cat ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(cat)}
+            key={category.id}
+            className={`category-btn ${selectedCategory === category.label ? 'active' : ''}`}
+            onClick={() => setSelectedCategory(category.label)}
           >
             <span className="category-icon">
-              {selectedCategory === cat ? '●' : '○'}
+              {selectedCategory === category.label ? '●' : '○'}
             </span>
-            <span>{categoryLabels[cat]}</span>
+            <span>{categoryLabels[category.label]}</span>
           </button>
         ))}
       </nav>
