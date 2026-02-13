@@ -1,4 +1,18 @@
+import { revealItemInDir } from '@tauri-apps/plugin-opener'
+
 function DeploymentCard({ item, onDelete, onEdit }) {
+  const handleOpenFolder = async (path) => {
+    if (!path) return
+
+    try {
+      // 탐색기에서 폴더 열기
+      await revealItemInDir(path)
+    } catch (error) {
+      console.error('Failed to open folder:', error)
+      alert(`폴더 열기 실패\n${path}\n\n에러: ${error.message || error}`)
+    }
+  }
+
   return (
     <div className={`item-card deployment-card category-${item.category.replace(/\s+/g, '-')}`}>
       <div className="item-header">
@@ -29,7 +43,9 @@ function DeploymentCard({ item, onDelete, onEdit }) {
             {item.backupPath && (
               <div className="path-item">
                 <code className="path-value">{item.backupPath}</code>
+                <button onClick={() => handleOpenFolder(item.backupPath)}>열기</button>
                 <code className="path-value">{item.newPath}</code>
+                <button onClick={() => handleOpenFolder(item.newPath)}>열기</button>
               </div>
             )}
           </div>

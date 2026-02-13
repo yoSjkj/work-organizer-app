@@ -37,7 +37,9 @@
             "core:event:allow-emit",
             "core:event:allow-unlisten",
             "dialog:allow-message",
-            "dialog:default"
+            "dialog:default",
+            "opener:default",
+            "opener:allow-reveal-item-in-dir"
           ]
         }
       ]

@@ -8,6 +8,10 @@
   "permissions": [
     "core:default",
     "dialog:allow-message",
-    "dialog:default"
+    "dialog:default",
+    "shell:allow-open",
+    "shell:allow-execute",
+    "opener:default",
+    "opener:allow-reveal-item-in-dir"
   ]
 }
