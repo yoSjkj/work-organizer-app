@@ -10,6 +10,7 @@ import { useItemsStore } from './stores/useItemsStore'
 import { useUIStore } from './stores/useUIStore'
 import { getCategoryByLabel } from './config/categories'
 import { useFilteredItems } from './hooks/useFilteredItems'
+import { useItemActions } from './hooks/useItemActions'
 
 function App() {
   const inputFormRef = useRef(null)
@@ -19,10 +20,8 @@ function App() {
 
   // Items store
   const items = useItemsStore((state) => state.items)
-  const submitItem = useItemsStore((state) => state.submitItem)
   const deleteItem = useItemsStore((state) => state.deleteItem)
   const changeStatus = useItemsStore((state) => state.changeStatus)
-  const startEdit = useItemsStore((state) => state.startEdit)
 
   // UI store
   const selectedCategory = useUIStore((state) => state.selectedCategory)
@@ -35,6 +34,9 @@ function App() {
 
   // 검색어를 지연시켜서 클릭 이벤트가 먼저 처리되도록
   const deferredSearchTerm = useDeferredValue(searchTerm)
+
+  // 아이템 액션
+  const { submitItem, handleEdit } = useItemActions(inputFormRef)
 
   // 테마 적용
   useEffect(() => {
@@ -119,16 +121,6 @@ function App() {
     setSearchTerm('')
   }, [selectedCategory, setSearchTerm])
 
-  // 수정 시 스크롤
-  const handleEdit = (item) => {
-    startEdit(item)
-    setTimeout(() => {
-      inputFormRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      })
-    }, 100)
-  }
 
   // 현재 카테고리 설정
   const currentCategory = getCategoryByLabel(selectedCategory)
