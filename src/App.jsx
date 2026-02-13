@@ -5,10 +5,7 @@ import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { isTauri } from './stores/tauriStorage'
 import { useThemeStore } from './stores/useThemeStore'
 import './App.css'
-import Sidebar, { categoryLabels } from './components/Sidebar'
-import ItemList from './components/ItemList'
-import SearchBar from './components/SearchBar'
-import CompletedFilters from './components/CompletedFilters'
+import AppLayout from './layouts/AppLayout'
 import { useItemsStore } from './stores/useItemsStore'
 import { useUIStore } from './stores/useUIStore'
 import { parseKoreanDate } from './utils/dateUtils'
@@ -158,51 +155,21 @@ function App() {
     })
 
   return (
-    <div className="app-container">
-      <Sidebar />
-
-      <main className="main-content">
-        <h2 className={`category-title category-${selectedCategory.replace(/\s+/g, '-')}`}>
-          {categoryLabels[selectedCategory]}
-        </h2>
-
-        {currentCategory?.hasSearch && (
-          <SearchBar
-            value={searchTerm}
-            onSearch={setSearchTerm}
-            placeholder={currentCategory.searchPlaceholder || '검색...'}
-          />
-        )}
-
-        {currentCategory?.hasAdvancedFilter && (
-          <CompletedFilters
-            onDateFilterChange={setDateFilter}
-            onInquiryTypeChange={setInquiryTypeFilter}
-          />
-        )}
-
-        {currentCategory?.hasInputForm && FormComponent && (
-          <form
-            ref={inputFormRef}
-            className="input-form"
-            onSubmit={(e) => {
-              e.preventDefault()
-              submitItem()
-            }}
-          >
-            <FormComponent onSubmit={submitItem} />
-          </form>
-        )}
-
-        <ItemList
-          items={filteredItems}
-          onDelete={deleteItem}
-          onStatusChange={changeStatus}
-          onEdit={handleEdit}
-          category={selectedCategory}
-        />
-      </main>
-    </div>
+    <AppLayout
+      selectedCategory={selectedCategory}
+      currentCategory={currentCategory}
+      searchTerm={searchTerm}
+      onSearchChange={setSearchTerm}
+      onDateFilterChange={setDateFilter}
+      onInquiryTypeChange={setInquiryTypeFilter}
+      FormComponent={FormComponent}
+      inputFormRef={inputFormRef}
+      onSubmit={submitItem}
+      items={filteredItems}
+      onDelete={deleteItem}
+      onStatusChange={changeStatus}
+      onEdit={handleEdit}
+    />
   )
 }
 
