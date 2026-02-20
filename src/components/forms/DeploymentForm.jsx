@@ -85,7 +85,7 @@ function DeploymentForm({ onSubmit }) {
         />
         <input
           type="text"
-          placeholder="배포 설명 (예: 쪽지대량발송)"
+          placeholder="배포 내용 (예: 쪽지대량발송)"
           value={deployment.description}
           onChange={(e) => setDeploymentField('description', e.target.value)}
           required
@@ -150,7 +150,7 @@ function DeploymentForm({ onSubmit }) {
 
       {/* 파일 목록 */}
       <textarea
-        placeholder="수정한 파일명 (한 줄씩 입력)&#10;예: ha0106SaveCmd.class&#10;    UserController.java"
+        placeholder="수정한 파일명&#10; 예: ha0106SaveCmd.class"
         value={deployment.fileList}
         onChange={(e) => setDeploymentField('fileList', e.target.value)}
         rows="4"
@@ -158,7 +158,7 @@ function DeploymentForm({ onSubmit }) {
 
       {/* 변경사항 */}
       <textarea
-        placeholder="변경사항 요약&#10;예: 쪽지 대량발송 기능 수정&#10;    로그인 임계값 보안 패치"
+        placeholder="변경사항 요약&#10;예: 쪽지 대량발송 기능 수정"
         value={deployment.changes}
         onChange={(e) => setDeploymentField('changes', e.target.value)}
         rows="3"

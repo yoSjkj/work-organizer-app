@@ -121,7 +121,7 @@ function MemoForm({ onSubmit }) {
 
       {/* 내용 */}
       <TextArea
-        placeholder="문의 내용을 입력하세요"
+        placeholder="내용을 입력하세요"
         value={memo.content}
         onChange={(val) => setMemoField('content', val)}
         rows={4}

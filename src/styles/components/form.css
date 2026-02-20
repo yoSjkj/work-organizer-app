@@ -39,8 +39,7 @@
 }
 
 .input-form textarea {
-  height: auto;
-  min-height: 200px;
+  min-height: 100px;
   padding: var(--space-md);
   resize: vertical;
   line-height: var(--line-height-normal);

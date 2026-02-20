@@ -54,7 +54,7 @@ function DocumentForm({ onSubmit }) {
         placeholder="내용을 입력하세요"
         value={document.content}
         onChange={(e) => setDocumentField('content', e.target.value)}
-        style={{ minHeight: '400px' }}
+        style={{ minHeight: '200px' }}
         required
       />
 

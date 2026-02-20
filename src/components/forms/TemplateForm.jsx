@@ -17,14 +17,14 @@ function TemplateForm({ onSubmit }) {
     <>
       <input
         type="text"
-        placeholder="양식 제목 (예: 비밀번호 초기화)"
+        placeholder="제목"
         value={template.title}
         onChange={(e) => setTemplateField('title', e.target.value)}
         required
       />
 
       <textarea
-        placeholder="양식 내용을 입력하세요"
+        placeholder="내용을 입력하세요"
         value={template.content}
         onChange={(e) => setTemplateField('content', e.target.value)}
         rows="10"
