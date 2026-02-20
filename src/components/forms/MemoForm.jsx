@@ -12,14 +12,15 @@ import {
 const OPTIONS = {
   requestMethods: ['전화', '이메일', 'CSR', '메신저', '직접방문'],
   inquiryTypes: [
-    '계정 문의',
+    '암호 초기화',
     '시스템 문의',
     'PC환경 문의',
-    '조직이관 문의',
+    '계정 문의',
     '주문 문의',
+    '조직이관 문의',
+    '기능 CSR',
     '통제자재 등록 요청',
     '부자재코드 생성 요청',
-    '기능 CSR',
     '기타'
   ],
   requesterTypes: ['대리점', '현업', '시공사', 'IT담당자', '기타'],
@@ -48,6 +49,9 @@ function MemoForm({ onSubmit }) {
       setMemoField('team', '창호.지인스퀘어 수원')
       setMemoField('name', '장동희')
       setMemoField('position', '책임')
+    } else if (value === '암호 초기화') {
+      setMemoField('title', '대리점 마스터 계정 비밀번호 초기화 요청')
+      setMemoField('content', '대리점 : [대리점명] (0000)\n마스터 계정 비밀번호 초기화 요청')
     } else if (value === '통제자재 등록 요청') {
       setMemoField('requestMethod', '메신저')
       setMemoField('requesterType', '현업')
