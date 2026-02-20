@@ -1,122 +1,203 @@
 /* 사이드바 */
 .sidebar {
-  width: 240px;
+  width: 220px;
   background-color: var(--bg-sidebar);
   color: var(--text-primary);
-  padding: 32px 20px;
+  padding: 20px 12px;
   overflow-y: auto;
   border-right: 1px solid var(--border-primary);
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
-.sidebar h1 {
+/* 헤더 */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px 12px;
+}
+
+.sidebar-logo {
   font-size: 18px;
-  margin-bottom: 32px;
-  padding: 0;
-  color: var(--text-primary);
+  opacity: 0.7;
+}
+
+.sidebar-header h1 {
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-/* 통계 - 숨김 */
-.stats {
-  display: none;
+/* 구분선 */
+.sidebar-divider {
+  height: 1px;
+  background-color: var(--border-primary);
+  margin: 4px 0;
+  flex-shrink: 0;
 }
 
-/* 카테고리 버튼 */
+/* 섹션 타이틀 */
+.nav-section-title {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  padding: 4px 12px 2px;
+  margin: 0;
+}
+
+/* 카테고리 */
 .categories {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-bottom: auto;
+  gap: 1px;
 }
 
 .category-btn {
-  padding: 10px 16px;
+  width: 100%;
+  padding: 9px 12px;
   background-color: transparent;
   color: var(--text-secondary);
   border: none;
-  border-left: 3px solid transparent;
-  border-radius: 0;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.15s ease;
-  text-align: left;
+  font-size: 13.5px;
   font-weight: 500;
   letter-spacing: -0.2px;
+  text-align: left;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  gap: 10px;
+  transition: background-color 0.12s ease, color 0.12s ease;
   position: relative;
 }
 
+.category-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  font-size: 14px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.category-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.category-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background-color: var(--bg-hover);
+  padding: 1px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: background-color 0.12s ease;
+}
+
+/* hover */
 .category-btn:hover {
+  background-color: var(--bg-hover);
   color: var(--text-primary);
+}
+
+.category-btn:hover .category-icon {
+  opacity: 1;
 }
 
 .category-btn:active {
   transform: scale(0.98);
 }
 
+/* active 상태 - 카테고리별 색상 */
 .category-btn.active {
   color: var(--text-primary);
   font-weight: 600;
 }
 
-/* 아이콘 숨김 */
-.category-icon {
-  display: none;
+.category-btn.active .category-icon {
+  opacity: 1;
 }
 
-/* 카테고리별 색상 - hover */
-.category-btn:nth-child(1):hover {
-  background-color: rgba(147, 197, 253, 0.08);
+.category-btn.active .category-count {
+  color: var(--text-primary);
 }
 
-.category-btn:nth-child(2):hover {
-  background-color: rgba(110, 231, 183, 0.08);
-}
-
-.category-btn:nth-child(3):hover {
-  background-color: rgba(196, 181, 253, 0.08);
-}
-
-.category-btn:nth-child(4):hover {
-  background-color: rgba(252, 211, 77, 0.08);
-}
-
-.category-btn:nth-child(5):hover {
-  background-color: rgba(252, 165, 165, 0.08);
-}
-
-/* 카테고리별 색상 - active */
-.category-btn.active:nth-child(1) {
+/* 카테고리별 active 배경색 */
+.category-btn.active.color-blue {
   background-color: rgba(147, 197, 253, 0.12);
-  border-left-color: #93c5fd;
 }
-
-.category-btn.active:nth-child(2) {
+.category-btn.active.color-green {
   background-color: rgba(110, 231, 183, 0.12);
-  border-left-color: #6ee7b7;
 }
-
-.category-btn.active:nth-child(3) {
+.category-btn.active.color-purple {
   background-color: rgba(196, 181, 253, 0.12);
-  border-left-color: #c4b5fd;
 }
-
-.category-btn.active:nth-child(4) {
+.category-btn.active.color-orange {
   background-color: rgba(252, 211, 77, 0.12);
-  border-left-color: #fcd34d;
 }
-
-.category-btn.active:nth-child(5) {
+.category-btn.active.color-red {
   background-color: rgba(252, 165, 165, 0.12);
-  border-left-color: #fca5a5;
 }
 
-/* 접을 수 있는 섹션 */
+/* 카테고리별 hover 배경색 */
+.category-btn.color-blue:hover { background-color: rgba(147, 197, 253, 0.07); }
+.category-btn.color-green:hover { background-color: rgba(110, 231, 183, 0.07); }
+.category-btn.color-purple:hover { background-color: rgba(196, 181, 253, 0.07); }
+.category-btn.color-orange:hover { background-color: rgba(252, 211, 77, 0.07); }
+.category-btn.color-red:hover { background-color: rgba(252, 165, 165, 0.07); }
+
+/* 카테고리별 아이콘 색상 (active) */
+.category-btn.active.color-blue .category-icon { color: #93c5fd; }
+.category-btn.active.color-green .category-icon { color: #6ee7b7; }
+.category-btn.active.color-purple .category-icon { color: #c4b5fd; }
+.category-btn.active.color-orange .category-icon { color: #fcd34d; }
+.category-btn.active.color-red .category-icon { color: #fca5a5; }
+
+/* 하단 설정 */
+.sidebar-footer {
+  margin-top: auto;
+  align-self: stretch;
+}
+
+.settings-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 9px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+  text-align: left;
+}
+
+.settings-button:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.settings-button:active {
+  transform: scale(0.98);
+}
+
+/* --- 아래는 SettingsModal에서 쓰는 CSS (sidebar.css에 있던 것 유지) --- */
+
 .backup-section {
   margin-top: 16px;
   padding-top: 0;
@@ -202,7 +283,6 @@
   font-weight: var(--font-weight-medium);
 }
 
-/* 설정 탭 */
 .settings-tabs {
   display: flex;
   gap: var(--space-xs);
@@ -265,7 +345,6 @@
   }
 }
 
-/* 설정 섹션 */
 .settings {
   padding-top: 12px;
 }
@@ -322,39 +401,6 @@
   color: var(--text-secondary);
   font-size: var(--text-base);
   font-weight: var(--font-weight-normal);
-}
-
-/* 설정 버튼 */
-.settings-button-container {
-  margin-top: auto;
-  padding-top: 24px;
-}
-
-.settings-button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
-  background: transparent;
-  border: none;
-  border-top: 1px solid var(--border-primary);
-  color: var(--text-tertiary);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: -0.2px;
-  cursor: pointer;
-  border-radius: 0;
-  transition: var(--transition-fast);
-}
-
-.settings-button:hover {
-  color: var(--text-primary);
-  background: transparent;
-}
-
-.settings-button:active {
-  transform: scale(0.98);
 }
 
 @media (max-width: 768px) {
