@@ -40,23 +40,23 @@
 }
 
 /* Category Title Colors */
-.category-title.category-메모 {
+.category-title.category-tasks {
   color: var(--color-blue-400);
 }
 
-.category-title.category-완료 {
+.category-title.category-completed {
   color: var(--color-green-400);
 }
 
-.category-title.category-양식 {
+.category-title.category-templates {
   color: var(--color-purple-400);
 }
 
-.category-title.category-문서 {
+.category-title.category-documents {
   color: var(--color-orange-400);
 }
 
-.category-title.category-배포-기록 {
+.category-title.category-releases {
   color: var(--color-pink-400);
 }
 

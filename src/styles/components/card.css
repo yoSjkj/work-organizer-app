@@ -175,68 +175,68 @@
    카드에만 적용 - 제목에는 적용 안 됨
    ============================================ */
 
-/* 메모 - 파랑 */
-.item-card.category-메모,
-.template-card.category-메모,
-.document-card.category-메모 {
+/* Tasks - Blue */
+.item-card.category-tasks,
+.template-card.category-tasks,
+.document-card.category-tasks {
   border-left: 3px solid var(--color-blue-400);
 }
 
-.item-card.category-메모:hover,
-.template-card.category-메모:hover,
-.document-card.category-메모:hover {
+.item-card.category-tasks:hover,
+.template-card.category-tasks:hover,
+.document-card.category-tasks:hover {
   background: linear-gradient(to right, var(--color-blue-alpha-5), var(--bg-primary));
 }
 
-/* 완료 - 초록 */
-.item-card.category-완료,
-.template-card.category-완료,
-.document-card.category-완료 {
+/* Completed - Green */
+.item-card.category-completed,
+.template-card.category-completed,
+.document-card.category-completed {
   border-left: 3px solid var(--color-green-400);
 }
 
-.item-card.category-완료:hover,
-.template-card.category-완료:hover,
-.document-card.category-완료:hover {
+.item-card.category-completed:hover,
+.template-card.category-completed:hover,
+.document-card.category-completed:hover {
   background: linear-gradient(to right, var(--color-green-alpha-5), var(--bg-primary));
 }
 
-/* 양식 - 보라 */
-.item-card.category-양식,
-.template-card.category-양식,
-.document-card.category-양식 {
+/* Templates - Purple */
+.item-card.category-templates,
+.template-card.category-templates,
+.document-card.category-templates {
   border-left: 3px solid var(--color-purple-400);
 }
 
-.item-card.category-양식:hover,
-.template-card.category-양식:hover,
-.document-card.category-양식:hover {
+.item-card.category-templates:hover,
+.template-card.category-templates:hover,
+.document-card.category-templates:hover {
   background: linear-gradient(to right, var(--color-purple-alpha-5), var(--bg-primary));
 }
 
-/* 문서 - 주황 */
-.item-card.category-문서,
-.template-card.category-문서,
-.document-card.category-문서 {
+/* Documents - Orange */
+.item-card.category-documents,
+.template-card.category-documents,
+.document-card.category-documents {
   border-left: 3px solid var(--color-orange-400);
 }
 
-.item-card.category-문서:hover,
-.template-card.category-문서:hover,
-.document-card.category-문서:hover {
+.item-card.category-documents:hover,
+.template-card.category-documents:hover,
+.document-card.category-documents:hover {
   background: linear-gradient(to right, var(--color-orange-alpha-5), var(--bg-primary));
 }
 
-/* 배포 기록 - 핑크 */
-.item-card.category-배포-기록,
-.template-card.category-배포-기록,
-.document-card.category-배포-기록 {
+/* Releases - Pink */
+.item-card.category-releases,
+.template-card.category-releases,
+.document-card.category-releases {
   border-left: 3px solid var(--color-pink-400);
 }
 
-.item-card.category-배포-기록:hover,
-.template-card.category-배포-기록:hover,
-.document-card.category-배포-기록:hover {
+.item-card.category-releases:hover,
+.template-card.category-releases:hover,
+.document-card.category-releases:hover {
   background: linear-gradient(to right, var(--color-pink-alpha-5), var(--bg-primary));
 }
 
@@ -340,4 +340,11 @@
   border-radius: var(--radius-md);
   font-size: var(--text-xs);
   font-weight: var(--font-weight-semibold);
+}
+
+/* 라이트 모드에서 진한 초록색 사용 */
+:root[data-theme="light"] .check-done {
+  color: var(--color-green-600);
+  background: var(--color-green-alpha-20);
+  border-color: var(--color-green-500);
 }

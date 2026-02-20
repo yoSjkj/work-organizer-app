@@ -4,15 +4,6 @@ import { useUIStore } from '../stores/useUIStore'
 import SettingsModal from './SettingsModal'
 import { CATEGORY_LIST } from '../config/categories'
 
-// 영문 라벨 매핑 (나중에 config로 통합 가능)
-export const categoryLabels = {
-  '메모': 'Notes',
-  '완료': 'Done',
-  '양식': 'Forms',
-  '문서': 'Docs',
-  '배포 기록': 'Releases'
-}
-
 function Sidebar() {
   const items = useItemsStore((state) => state.items)
   const selectedCategory = useUIStore((state) => state.selectedCategory)
@@ -21,23 +12,23 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <h1>업무 정리</h1>
+      <h1>Work Organizer</h1>
 
       <div className="stats">
-        <p>총 {items.length}개 항목</p>
+        <p>Total {items.length} items</p>
       </div>
 
       <nav className="categories">
         {CATEGORY_LIST.map((category) => (
           <button
             key={category.id}
-            className={`category-btn ${selectedCategory === category.label ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(category.label)}
+            className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
+            onClick={() => setSelectedCategory(category.id)}
           >
             <span className="category-icon">
-              {selectedCategory === category.label ? '●' : '○'}
+              {selectedCategory === category.id ? '●' : '○'}
             </span>
-            <span>{categoryLabels[category.label]}</span>
+            <span>{category.label}</span>
           </button>
         ))}
       </nav>

@@ -8,7 +8,7 @@ import './App.css'
 import AppLayout from './layouts/AppLayout'
 import { useItemsStore } from './stores/useItemsStore'
 import { useUIStore } from './stores/useUIStore'
-import { getCategoryByLabel } from './config/categories'
+import { getCategoryById } from './config/categories'
 import { useFilteredItems } from './hooks/useFilteredItems'
 import { useItemActions } from './hooks/useItemActions'
 
@@ -95,7 +95,7 @@ function App() {
       // 메모 추가
       const newItem = {
         id: Date.now(),
-        category: '메모',
+        category: 'tasks',
         status: '진행',
         requestMethod: 'POST',
         url: '',
@@ -123,7 +123,7 @@ function App() {
 
 
   // 현재 카테고리 설정
-  const currentCategory = getCategoryByLabel(selectedCategory)
+  const currentCategory = getCategoryById(selectedCategory)
   const FormComponent = currentCategory?.FormComponent
 
   // 필터링된 항목들

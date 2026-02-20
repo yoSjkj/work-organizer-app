@@ -15,15 +15,15 @@ import {
  * - 새 카테고리 추가 시 이 파일만 수정하면 됨
  */
 export const CATEGORIES = {
-  MEMO: {
-    id: 'memo',
-    label: '메모',
-    displayName: '📝 메모',
+  TASKS: {
+    id: 'tasks',
+    label: 'Tasks',
+    displayName: 'Tasks',
     FormComponent: MemoForm,
     CardComponent: MemoCard,
     hasSearch: true,
     searchFields: ['title', 'content', 'contactInfo', 'requester.dealerCode', 'requester.dealerName', 'requester.name', 'requester.team', 'requester.freeText'],
-    searchPlaceholder: '검색... (제목, 내용, 연락처, 대리점, 담당자)',
+    searchPlaceholder: 'Search... (title, content, contact, dealer, person)',
     hasAdvancedFilter: false,
     hasInputForm: true,
     color: 'blue'
@@ -31,50 +31,50 @@ export const CATEGORIES = {
 
   COMPLETED: {
     id: 'completed',
-    label: '완료',
-    displayName: '✅ 완료',
+    label: 'Completed',
+    displayName: 'Completed',
     FormComponent: MemoForm,
     CardComponent: CompletedCard,
     hasSearch: true,
     searchFields: ['title', 'content', 'contactInfo', 'requester.dealerCode', 'requester.dealerName', 'requester.name', 'requester.team', 'requester.freeText'],
-    searchPlaceholder: '검색... (제목, 내용, 연락처, 대리점, 담당자)',
+    searchPlaceholder: 'Search... (title, content, contact, dealer, person)',
     hasAdvancedFilter: true,  // 날짜/방식 필터
     hasInputForm: true,
     color: 'green'
   },
 
-  TEMPLATE: {
-    id: 'template',
-    label: '양식',
-    displayName: '📋 양식',
+  TEMPLATES: {
+    id: 'templates',
+    label: 'Templates',
+    displayName: 'Templates',
     FormComponent: TemplateForm,
     CardComponent: TemplateCard,
     hasSearch: true,
     searchFields: ['title', 'content'],
-    searchPlaceholder: '양식 검색...',
+    searchPlaceholder: 'Search templates...',
     hasAdvancedFilter: false,
     hasInputForm: true,
     color: 'purple'
   },
 
-  DOCUMENT: {
-    id: 'document',
-    label: '문서',
-    displayName: '📄 문서',
+  DOCUMENTS: {
+    id: 'documents',
+    label: 'Documents',
+    displayName: 'Documents',
     FormComponent: DocumentForm,
     CardComponent: DocumentCard,
     hasSearch: true,
     searchFields: ['title', 'content'],
-    searchPlaceholder: '문서 검색...',
+    searchPlaceholder: 'Search documents...',
     hasAdvancedFilter: false,
     hasInputForm: true,
     color: 'orange'
   },
 
-  DEPLOYMENT: {
-    id: 'deployment',
-    label: '배포 기록',
-    displayName: '🚀 배포 기록',
+  RELEASES: {
+    id: 'releases',
+    label: 'Releases',
+    displayName: 'Releases',
     FormComponent: DeploymentForm,
     CardComponent: DeploymentCard,
     hasSearch: false,
@@ -90,11 +90,11 @@ export const CATEGORIES = {
  * 카테고리 배열 (순서 유지)
  */
 export const CATEGORY_LIST = [
-  CATEGORIES.MEMO,
+  CATEGORIES.TASKS,
   CATEGORIES.COMPLETED,
-  CATEGORIES.TEMPLATE,
-  CATEGORIES.DOCUMENT,
-  CATEGORIES.DEPLOYMENT
+  CATEGORIES.TEMPLATES,
+  CATEGORIES.DOCUMENTS,
+  CATEGORIES.RELEASES
 ]
 
 /**

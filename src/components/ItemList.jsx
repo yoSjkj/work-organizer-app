@@ -1,22 +1,22 @@
-import { getCategoryByLabel } from '../config/categories'
+import { getCategoryById } from '../config/categories'
 
 function ItemList({ items, onDelete, onStatusChange, onEdit, category }) {
   if (items.length === 0) {
-    return <p className="empty">등록된 항목이 없습니다</p>
+    return <p className="empty">No items yet</p>
   }
 
-  const categoryConfig = getCategoryByLabel(category)
+  const categoryConfig = getCategoryById(category)
   const CardComponent = categoryConfig?.CardComponent
 
   if (!CardComponent) {
-    return <p className="empty">카테고리 설정을 찾을 수 없습니다</p>
+    return <p className="empty">Category configuration not found</p>
   }
 
   return (
     <div className="items-list">
       {items.map(item => {
         // 문서 카드는 document prop 사용 (기존 인터페이스 유지)
-        if (categoryConfig.id === 'document') {
+        if (categoryConfig.id === 'documents') {
           return (
             <CardComponent
               key={item.id}
@@ -28,7 +28,7 @@ function ItemList({ items, onDelete, onStatusChange, onEdit, category }) {
         }
 
         // 양식 카드는 template prop 사용 (기존 인터페이스 유지)
-        if (categoryConfig.id === 'template') {
+        if (categoryConfig.id === 'templates') {
           return (
             <CardComponent
               key={item.id}

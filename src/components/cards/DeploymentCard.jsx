@@ -1,12 +1,12 @@
-import { revealItemInDir } from '@tauri-apps/plugin-opener'
+import { openPath } from '@tauri-apps/plugin-opener'
 
-function DeploymentCard({ item, onDelete, onEdit }) {
+function DeploymentCard({ item, onDelete, onStatusChange, onEdit }) {
   const handleOpenFolder = async (path) => {
     if (!path) return
 
     try {
-      // 탐색기에서 폴더 열기
-      await revealItemInDir(path)
+      // 폴더 열기 (폴더 안으로 진입)
+      await openPath(path)
     } catch (error) {
       console.error('Failed to open folder:', error)
       alert(`폴더 열기 실패\n${path}\n\n에러: ${error.message || error}`)
@@ -43,9 +43,9 @@ function DeploymentCard({ item, onDelete, onEdit }) {
             {item.backupPath && (
               <div className="path-item">
                 <code className="path-value">{item.backupPath}</code>
-                <button onClick={() => handleOpenFolder(item.backupPath)}>열기</button>
+                <button className="btn-open-path" onClick={() => handleOpenFolder(item.backupPath)}>열기</button>
                 <code className="path-value">{item.newPath}</code>
-                <button onClick={() => handleOpenFolder(item.newPath)}>열기</button>
+                <button className="btn-open-path" onClick={() => handleOpenFolder(item.newPath)}>열기</button>
               </div>
             )}
           </div>
@@ -80,6 +80,14 @@ function DeploymentCard({ item, onDelete, onEdit }) {
         >
           수정
         </button>
+        {item.status !== '완료' && (
+          <button
+            className="status-change-btn"
+            onClick={() => onStatusChange(item.id, item.status === '임시' ? '진행' : '완료')}
+          >
+            {item.status === '임시' ? '진행으로 변경' : '완료 처리'}
+          </button>
+        )}
         <button
           className="delete-btn"
           onClick={() => onDelete(item.id)}

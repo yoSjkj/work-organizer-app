@@ -1,4 +1,9 @@
 function TemplateCard({ template, onEdit, onDelete }) {
+  // 데이터 검증
+  if (!template) {
+    return null
+  }
+
   const handleCopy = () => {
     navigator.clipboard.writeText(template.content)
       .catch(err => {
@@ -7,8 +12,11 @@ function TemplateCard({ template, onEdit, onDelete }) {
       })
   }
 
+  // category 기본값 설정
+  const category = template.category || 'templates'
+
   return (
-    <div className={`template-card category-${template.category.replace(/\s+/g, '-')}`}>
+    <div className={`template-card category-${category}`}>
       <div className="template-header">
         <h3 className="template-title">{template.title}</h3>
       </div>

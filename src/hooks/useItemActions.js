@@ -24,8 +24,8 @@ export function useItemActions(inputFormRef) {
    * 폼 제출 (추가/수정)
    */
   const submitItem = useCallback(() => {
-    // 메모/완료
-    if (selectedCategory === '메모' || selectedCategory === '완료') {
+    // Tasks/Completed
+    if (selectedCategory === 'tasks' || selectedCategory === 'completed') {
       if (!memo.content.trim()) {
         return // HTML5 validation이 처리
       }
@@ -33,9 +33,9 @@ export function useItemActions(inputFormRef) {
       const formData = getFormData('memo')
       let targetCategory
       if (formData.status === '완료') {
-        targetCategory = '완료'
+        targetCategory = 'completed'
       } else if (formData.status === '임시' || formData.status === '진행') {
-        targetCategory = '메모'
+        targetCategory = 'tasks'
       } else {
         targetCategory = selectedCategory
       }
@@ -61,8 +61,8 @@ export function useItemActions(inputFormRef) {
       resetForm('memo')
       setSelectedCategory(targetCategory)
     }
-    // 양식
-    else if (selectedCategory === '양식') {
+    // Templates
+    else if (selectedCategory === 'templates') {
       if (!template.title.trim() || !template.content.trim()) {
         return // HTML5 validation이 처리
       }
@@ -84,8 +84,8 @@ export function useItemActions(inputFormRef) {
 
       resetForm('template')
     }
-    // 문서
-    else if (selectedCategory === '문서') {
+    // Documents
+    else if (selectedCategory === 'documents') {
       if (!document.title.trim() || !document.content.trim()) {
         return // HTML5 validation이 처리
       }
@@ -107,8 +107,8 @@ export function useItemActions(inputFormRef) {
 
       resetForm('document')
     }
-    // 배포 기록
-    else if (selectedCategory === '배포 기록') {
+    // Releases
+    else if (selectedCategory === 'releases') {
       const newItem = {
         id: editingId || Date.now(),
         ...getFormData('deployment'),

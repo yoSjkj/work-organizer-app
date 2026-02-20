@@ -57,10 +57,12 @@ export const useItemsStore = create(
         set((state) => ({
           items: state.items.map(item => {
             if (item.id === id) {
+              // Tasks만 완료 시 카테고리 이동, 나머지는 카테고리 유지
+              const shouldMoveToCompleted = newStatus === '완료' && item.category === 'tasks'
               return {
                 ...item,
                 status: newStatus,
-                category: newStatus === '완료' ? '완료' : item.category
+                category: shouldMoveToCompleted ? 'completed' : item.category
               }
             }
             return item

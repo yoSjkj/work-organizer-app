@@ -1,4 +1,3 @@
-import { categoryLabels } from '../components/Sidebar'
 import SearchBar from '../components/SearchBar'
 import CompletedFilters from '../components/CompletedFilters'
 import ItemList from '../components/ItemList'
@@ -37,8 +36,8 @@ function MainContent({
 }) {
   return (
     <main className="main-content">
-      <h2 className={`category-title category-${selectedCategory.replace(/\s+/g, '-')}`}>
-        {categoryLabels[selectedCategory]}
+      <h2 className={`category-title category-${selectedCategory}`}>
+        {currentCategory?.label || selectedCategory}
       </h2>
 
       {currentCategory?.hasSearch && (

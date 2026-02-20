@@ -3,20 +3,28 @@ import remarkGfm from 'remark-gfm'
 import { useUIStore } from '../../stores/useUIStore'
 
 function DocumentCard({ document, onEdit, onDelete }) {
+  // 데이터 검증
+  if (!document) {
+    return null
+  }
+
   const expandedDocuments = useUIStore((state) => state.expandedDocuments)
   const toggleDocumentExpanded = useUIStore((state) => state.toggleDocumentExpanded)
 
   const isExpanded = expandedDocuments.has(document.id)
-  
+
   const getPreview = () => {
     const lines = document.content.split('\n')
     return lines.slice(0, 3).join('\n')
   }
-  
+
   const hasMore = document.content.split('\n').length > 3
 
+  // category 기본값 설정
+  const category = document.category || 'documents'
+
   return (
-    <div className={`document-card category-${document.category.replace(/\s+/g, '-')}`}>
+    <div className={`document-card category-${category}`}>
       <div className="document-header">
         <div className="document-title-section">
           {/* 배지들을 item-badges-top으로 감싸서 일관성 유지 */}
