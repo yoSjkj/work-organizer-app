@@ -11,4 +11,39 @@
 /* 양식 카드는 기본 card.css의 .template-card를 사용하므로
    추가적인 고유 스타일이 필요한 경우에만 여기에 작성 */
 
-/* 현재는 card.css로 충분히 커버됨 */
+/* 즐겨찾기 버튼 */
+.favorite-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-muted);
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.15s ease, transform 0.1s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.favorite-btn:hover {
+  color: #fcd34d;
+}
+
+.favorite-btn.active {
+  color: #fcd34d;
+}
+
+.favorite-btn:active {
+  transform: scale(0.85);
+}
+
+/* 섹션 타이틀 */
+.list-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  padding: 4px 0 8px;
+  margin: 8px 0 0;
+}

@@ -24,7 +24,7 @@ export const CATEGORIES = {
     CardComponent: MemoCard,
     hasSearch: true,
     searchFields: ['title', 'content', 'contactInfo', 'requester.dealerCode', 'requester.dealerName', 'requester.name', 'requester.team', 'requester.freeText'],
-    searchPlaceholder: 'Search... (title, content, contact, dealer, person)',
+    searchPlaceholder: '검색',
     hasAdvancedFilter: false,
     hasInputForm: true,
     color: 'blue'
@@ -39,7 +39,7 @@ export const CATEGORIES = {
     CardComponent: CompletedCard,
     hasSearch: true,
     searchFields: ['title', 'content', 'contactInfo', 'requester.dealerCode', 'requester.dealerName', 'requester.name', 'requester.team', 'requester.freeText'],
-    searchPlaceholder: 'Search... (title, content, contact, dealer, person)',
+    searchPlaceholder: '검색',
     hasAdvancedFilter: true,  // 날짜/방식 필터
     hasInputForm: true,
     color: 'green'
@@ -54,7 +54,7 @@ export const CATEGORIES = {
     CardComponent: TemplateCard,
     hasSearch: true,
     searchFields: ['title', 'content'],
-    searchPlaceholder: 'Search templates...',
+    searchPlaceholder: '검색',
     hasAdvancedFilter: false,
     hasInputForm: true,
     color: 'purple'
@@ -69,7 +69,7 @@ export const CATEGORIES = {
     CardComponent: DocumentCard,
     hasSearch: true,
     searchFields: ['title', 'content'],
-    searchPlaceholder: 'Search documents...',
+    searchPlaceholder: '검색',
     hasAdvancedFilter: false,
     hasInputForm: true,
     color: 'orange'

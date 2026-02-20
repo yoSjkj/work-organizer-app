@@ -52,6 +52,15 @@ export const useItemsStore = create(
         setSelectedCategory(item.category)
       },
 
+      // 즐겨찾기 토글
+      toggleFavorite: (id) => {
+        set((state) => ({
+          items: state.items.map(item =>
+            item.id === id ? { ...item, favorite: !item.favorite } : item
+          )
+        }))
+      },
+
       // 상태 변경
       changeStatus: (id, newStatus) => {
         set((state) => ({

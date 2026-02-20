@@ -12,10 +12,44 @@ function ItemList({ items, onDelete, onStatusChange, onEdit, category }) {
     return <p className="empty">Category configuration not found</p>
   }
 
+  // 템플릿: Pinned / All 분리
+  if (categoryConfig.id === 'templates') {
+    const pinned = items.filter(item => item.favorite)
+    const rest = items.filter(item => !item.favorite)
+
+    return (
+      <div className="items-list">
+        {pinned.length > 0 && (
+          <>
+            <p className="list-section-title">★ Pinned ({pinned.length})</p>
+            {pinned.map(item => (
+              <CardComponent
+                key={item.id}
+                template={item}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))}
+            {rest.length > 0 && (
+              <p className="list-section-title">All Templates ({rest.length})</p>
+            )}
+          </>
+        )}
+        {rest.map(item => (
+          <CardComponent
+            key={item.id}
+            template={item}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="items-list">
       {items.map(item => {
-        // 문서 카드는 document prop 사용 (기존 인터페이스 유지)
         if (categoryConfig.id === 'documents') {
           return (
             <CardComponent
@@ -27,19 +61,6 @@ function ItemList({ items, onDelete, onStatusChange, onEdit, category }) {
           )
         }
 
-        // 양식 카드는 template prop 사용 (기존 인터페이스 유지)
-        if (categoryConfig.id === 'templates') {
-          return (
-            <CardComponent
-              key={item.id}
-              template={item}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          )
-        }
-
-        // 나머지는 item prop 사용
         return (
           <CardComponent
             key={item.id}
