@@ -5,11 +5,67 @@
  */
 
 /* ============================================
+   App Wrapper (타이틀바 포함 전체)
+   ============================================ */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ============================================
+   Title Bar
+   ============================================ */
+.titlebar {
+  height: 32px;
+  min-height: 32px;
+  background-color: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px;
+  user-select: none;
+}
+
+.titlebar-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.titlebar-btn {
+  width: 28px;
+  height: 22px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.titlebar-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.titlebar-close:hover {
+  background-color: rgba(204, 68, 68, 0.2);
+  color: #cc4444;
+}
+
+/* ============================================
    App Container
    ============================================ */
 .app-container {
   display: flex;
-  height: 100vh;
+  flex: 1;
+  overflow: hidden;
   background-color: var(--bg-secondary);
 }
 

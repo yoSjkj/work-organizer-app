@@ -1,5 +1,6 @@
 import Sidebar from '../components/Sidebar'
 import MainContent from './MainContent'
+import TitleBar from '../components/TitleBar'
 
 /**
  * 앱 전체 레이아웃
@@ -23,8 +24,10 @@ function AppLayout({
   onEdit
 }) {
   return (
-    <div className="app-container">
-      <Sidebar />
+    <div className="app-wrapper">
+      <TitleBar />
+      <div className="app-container">
+        <Sidebar />
 
       <MainContent
         selectedCategory={selectedCategory}
@@ -41,6 +44,7 @@ function AppLayout({
         onStatusChange={onStatusChange}
         onEdit={onEdit}
       />
+      </div>
     </div>
   )
 }
