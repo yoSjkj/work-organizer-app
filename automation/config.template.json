@@ -1,0 +1,72 @@
+{
+  "itsm": {
+    "url": "https://your-itsm-url.com",
+    "username": "your-id",
+    "password": "your-password",
+    "otpSecret": "YOUR_OTP_SECRET_KEY",
+    "selectors": {
+      "username": "input[name='user_name']",
+      "password": "input[name='user_password']",
+      "loginButton": "#sysverb_login",
+      "otpInput": "input[name='otp']",
+      "otpButton": "button[type='submit']"
+    }
+  },
+  "sso": {
+    "url": "https://your-sso-url.com",
+    "username": "your-id",
+    "password": "your-password",
+    "selectors": {
+      "username": "input[name='username']",
+      "password": "input[name='password']",
+      "loginButton": "button[type='submit']"
+    }
+  },
+  "aws": {
+    "url": "https://your-aws-mgmt-url.com",
+    "username": "your-id",
+    "password": "your-password",
+    "selectors": {
+      "username": "input[name='username']",
+      "password": "input[name='password']",
+      "loginButton": "button[type='submit']",
+      "devServerButton": "button:has-text('시작')"
+    }
+  },
+  "external": {
+    "url": "https://your-external-url.com",
+    "username": "your-id",
+    "password": "your-password",
+    "selectors": {
+      "username": "input[name='username']",
+      "password": "input[name='password']",
+      "loginButton": "button[type='submit']"
+    }
+  },
+  "csr": {
+    "loginUrl": "https://your-itsm-url.com",
+    "listUrl": "https://your-itsm-url.com/nav_to.do?uri=sc_req_item_list.do",
+    "username": "your-id",
+    "password": "your-password",
+    "selectors": {
+      "username": "input[name='ID']",
+      "password": "input[name='Password']",
+      "loginButton": "button[type='submit']",
+      "row": "tr[data-record]",
+      "title": "td.col-short_description",
+      "status": "td.col-state",
+      "assignee": "td.col-assigned_to"
+    }
+  },
+  "mail": {
+    "url": "https://your-webmail-url.com",
+    "keywords": [],
+    "selectors": {
+      "row": "tr.mail-row",
+      "from": ".mail-from",
+      "subject": ".mail-subject",
+      "time": ".mail-time",
+      "unread": ".unread-count"
+    }
+  }
+}

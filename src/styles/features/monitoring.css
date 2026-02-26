@@ -1,0 +1,596 @@
+/* ===================================================
+   Monitoring Feature Styles
+   =================================================== */
+
+/* --- Layout --- */
+.monitoring-view {
+  /* inherits .main-content */
+}
+
+.monitoring-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+.monitoring-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.monitoring-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.monitoring-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monitoring-section-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Running indicator --- */
+.running-badge {
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+
+.running-badge.active {
+  color: #4ade80;
+}
+
+/* --- Buttons --- */
+.btn-run-all {
+  padding: 5px 12px;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.btn-run-all:hover    { opacity: 0.85; }
+.btn-run-all:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-monitor-start {
+  padding: 5px 12px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.btn-monitor-start:hover { opacity: 0.85; }
+
+.btn-monitor-stop {
+  padding: 5px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.btn-monitor-stop:hover { opacity: 0.85; }
+
+.btn-clear {
+  padding: 5px 10px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.btn-clear:hover    { color: var(--text-secondary); border-color: var(--border-secondary); }
+.btn-clear:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-task-run {
+  padding: 4px 10px;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.1s;
+}
+.btn-task-run:hover    { opacity: 0.85; }
+.btn-task-run:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-task-stop {
+  padding: 4px 10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.btn-task-stop:hover { opacity: 0.85; }
+
+/* --- Task list (Dashboard) --- */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.automation-task-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  transition: border-color 0.15s;
+}
+.automation-task-card.status-running { border-color: var(--accent-primary); }
+.automation-task-card.status-done    { border-color: rgba(34, 197, 94, 0.3); }
+.automation-task-card.status-error   { border-color: rgba(239, 68, 68, 0.3); }
+
+.task-status-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.task-status-icon.status-idle    { color: var(--text-muted); }
+.task-status-icon.status-running { color: var(--accent-primary); display: inline-block; animation: spin 1.2s linear infinite; }
+.task-status-icon.status-done    { color: #22c55e; }
+.task-status-icon.status-error   { color: #ef4444; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.task-label {
+  flex: 1;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.task-last-run {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* --- Summary list (Dashboard) --- */
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.1s, border-color 0.1s;
+}
+.summary-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+}
+
+.summary-icon { font-size: 15px; flex-shrink: 0; }
+.summary-label {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.summary-values { display: flex; align-items: center; gap: 6px; }
+.summary-total { font-size: 12px; color: var(--text-muted); }
+.summary-arrow { font-size: 12px; color: var(--text-muted); }
+
+/* --- Badges --- */
+.badge-new {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-unread {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  background: rgba(96, 165, 250, 0.15);
+  color: var(--accent-primary);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.unread-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: #ef4444;
+  color: white;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.last-run-time {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* --- Log area --- */
+.log-area {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.log-area.compact {
+  max-height: 130px;
+}
+
+.log-line {
+  display: flex;
+  gap: 8px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.log-time {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.log-label {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.log-message { word-break: break-all; }
+
+.log-empty {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* --- Empty state --- */
+.empty-state {
+  padding: 28px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  border: 1px dashed var(--border-primary);
+  border-radius: 8px;
+}
+
+/* --- CSR list --- */
+.csr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 440px;
+  overflow-y: auto;
+}
+
+.csr-item {
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-left: 3px solid var(--border-primary);
+  border-radius: 8px;
+  transition: border-left-color 0.1s;
+}
+.csr-item.is-new { border-left-color: #ef4444; }
+
+.csr-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.csr-ritm {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  font-family: monospace;
+}
+
+.csr-status {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: var(--bg-hover);
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+
+.csr-item-title {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.csr-item-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* --- Mail list --- */
+.mail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 440px;
+  overflow-y: auto;
+}
+
+.mail-item {
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-left: 3px solid transparent;
+  border-radius: 8px;
+}
+.mail-item.unread { border-left-color: var(--accent-primary); }
+.mail-item.matched { background: rgba(96, 165, 250, 0.04); }
+
+.mail-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.mail-from {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.mail-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.mail-subject {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.mail-keyword-badge {
+  display: inline-flex;
+  margin-top: 4px;
+  padding: 2px 7px;
+  background: rgba(96, 165, 250, 0.15);
+  color: var(--accent-primary);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* --- Keyword filter --- */
+.keyword-form {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.keyword-input {
+  flex: 1;
+  padding: 6px 10px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.1s;
+}
+.keyword-input:focus { border-color: var(--accent-primary); }
+
+.btn-keyword-add {
+  padding: 6px 12px;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.btn-keyword-add:hover { opacity: 0.85; }
+
+.keyword-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.keyword-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 10px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.keyword-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 10px;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.1s;
+}
+.keyword-remove:hover { color: #ef4444; }
+
+.keyword-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* --- Automation panel cards --- */
+.automation-panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.automation-panel-card {
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.automation-panel-card.status-running { border-color: var(--accent-primary); }
+.automation-panel-card.status-done    { border-color: rgba(34, 197, 94, 0.3); }
+.automation-panel-card.status-error   { border-color: rgba(239, 68, 68, 0.3); }
+
+.panel-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-primary);
+}
+
+.panel-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.panel-card-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.panel-card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.panel-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-status-label {
+  font-size: 12px;
+  font-weight: 500;
+}
+.task-status-label.status-idle    { color: var(--text-muted); }
+.task-status-label.status-running { color: var(--accent-primary); }
+.task-status-label.status-done    { color: #22c55e; }
+.task-status-label.status-error   { color: #ef4444; }
+
+.panel-card-log {
+  border-top: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+}
+
+.btn-clear-log {
+  display: block;
+  width: 100%;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--border-primary);
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.1s;
+}
+.btn-clear-log:hover { background: var(--bg-hover); }
+
+/* --- Sidebar teal color (monitoring categories) --- */
+.category-btn.active.color-teal {
+  background-color: rgba(45, 212, 191, 0.12);
+}
+.category-btn.color-teal:hover {
+  background-color: rgba(45, 212, 191, 0.07);
+}
+.category-btn.active.color-teal .category-icon {
+  color: #2dd4bf;
+}
+
+/* --- Category title colors --- */
+.category-dashboard,
+.category-csr-monitor,
+.category-mail-monitor,
+.category-automation {
+  color: #2dd4bf;
+}

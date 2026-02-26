@@ -1,0 +1,16 @@
+{
+  "name": "work-automation",
+  "version": "1.0.0",
+  "description": "업무 자동화 스크립트",
+  "scripts": {
+    "itsm": "node scripts/itsm-daily.js",
+    "sso": "node scripts/sso-login.js",
+    "aws": "node scripts/aws-dev-server.js",
+    "external": "node scripts/external-net.js",
+    "all": "node run-all.js"
+  },
+  "dependencies": {
+    "playwright": "^1.41.0",
+    "otplib": "^12.0.1"
+  }
+}

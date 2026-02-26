@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 export const useUIStore = create((set) => ({
-  selectedCategory: 'tasks',
+  selectedCategory: 'dashboard',
   searchTerm: '',
   editingId: null,
   dateFilter: { type: 'all' },

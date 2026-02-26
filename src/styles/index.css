@@ -38,6 +38,7 @@
 @import './features/document-card.css';
 @import './features/deployment-card.css';
 @import './features/completed-filters.css';
+@import './features/monitoring.css';
 
 /* ============================================
    5. CSS Modules (컴포넌트 스코프)
