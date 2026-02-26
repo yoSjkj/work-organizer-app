@@ -34,7 +34,7 @@ pub fn run() {
             let quit_i = MenuItem::with_id(app, "quit", "종료", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_i, &quit_i])?;
 
-            // 트레이 아이콘 생성
+            // 트레이 아이콘 생성 (icon2)
             let _tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
                 .menu(&menu)

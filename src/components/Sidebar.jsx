@@ -17,7 +17,6 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <span className="sidebar-logo">⊞</span>
         <h1>Work Organizer</h1>
       </div>
 
