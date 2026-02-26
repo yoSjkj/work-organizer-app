@@ -9,6 +9,7 @@ import { useFormStore } from '../stores/useFormStore'
  * - handleEdit: 아이템 수정 시작
  */
 export function useItemActions(inputFormRef) {
+  const items = useItemsStore((state) => state.items)
   const addItem = useItemsStore((state) => state.addItem)
   const updateItem = useItemsStore((state) => state.updateItem)
   const startEdit = useItemsStore((state) => state.startEdit)
@@ -67,12 +68,14 @@ export function useItemActions(inputFormRef) {
         return // HTML5 validation이 처리
       }
 
+      const existingItem = editingId ? items.find(item => item.id === editingId) : null
       const newItem = {
         id: editingId || Date.now(),
         ...getFormData('template'),
         category: selectedCategory,
         date: new Date().toLocaleDateString('ko-KR'),
-        time: new Date().toLocaleTimeString('ko-KR')
+        time: new Date().toLocaleTimeString('ko-KR'),
+        ...(existingItem?.favorite !== undefined && { favorite: existingItem.favorite })
       }
 
       if (editingId) {
@@ -131,6 +134,7 @@ export function useItemActions(inputFormRef) {
     editingId,
     setEditingId,
     setSelectedCategory,
+    items,
     memo,
     template,
     document,
