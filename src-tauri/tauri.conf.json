@@ -52,7 +52,19 @@
                   "path": "/**"
                 }
               ]
-            }
+            },
+            {
+              "identifier": "shell:allow-spawn",
+              "allow": [
+                {
+                  "name": "node",
+                  "cmd": "node",
+                  "args": true,
+                  "sidecar": false
+                }
+              ]
+            },
+            "shell:allow-kill"
           ]
         }
       ]
