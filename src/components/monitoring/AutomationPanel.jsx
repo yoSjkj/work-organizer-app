@@ -1,76 +1,97 @@
+import { useEffect, useState } from 'react'
+import { invoke } from '@tauri-apps/api/core'
+import { listen } from '@tauri-apps/api/event'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
 const TASK_META = {
-  sso:      { label: 'SSO 로그인',     script: 'automation/scripts/sso-login.js',      desc: 'SSO 포털 로그인 및 세션 저장' },
-  itsm:     { label: 'ITSM 일일 체크', script: 'automation/scripts/itsm-daily.js',     desc: 'ITSM 일일 업무 처리' },
-  aws:      { label: 'AWS 개발서버',   script: 'automation/scripts/aws-dev-server.js', desc: 'AWS 개발 서버 시작' },
-  external: { label: '외부망 로그인',  script: 'automation/scripts/external-net.js',   desc: '외부망 포털 로그인' },
+  sso:      { label: 'SSO 로그인',     desc: 'SSO 포털 로그인 및 세션 저장' },
+  itsm:     { label: 'ITSM 일일 체크', desc: 'ITSM 일일 업무 처리 (OTP 포함)' },
+  aws:      { label: 'AWS 개발서버',   desc: 'AWS 개발 서버 시작' },
+  external: { label: '내부망 로그인',  desc: '내부망 포털 로그인' },
 }
 
 const STATUS_LABEL = { idle: '대기', running: '실행 중', done: '완료', error: '오류' }
 
-async function spawnTask(taskId, store) {
-  const { updateTask, addTaskLog, registerProcess, unregisterProcess } = store
+async function loadAutomationConfig() {
+  return invoke('get_automation_config')
+}
+
+async function openConfigFile() {
+  if (!isTauri()) return
+  try {
+    await invoke('open_automation_config_file')
+  } catch (err) {
+    alert(String(err))
+  }
+}
+
+
+async function runTask(taskId, store, debug = false) {
+  const { updateTask, addTaskLog } = store
   if (!isTauri()) {
     addTaskLog(taskId, 'Tauri 환경에서만 실행 가능합니다')
     return
   }
+
+  updateTask(taskId, { status: 'running', lastRun: Date.now() })
+  addTaskLog(taskId, `${TASK_META[taskId].label} 시작${debug ? ' [디버그]' : ''}`)
+
   try {
-    const { Command } = await import('@tauri-apps/plugin-shell')
-    const meta = TASK_META[taskId]
-    updateTask(taskId, { status: 'running', lastRun: Date.now() })
-    addTaskLog(taskId, `${meta.label} 시작`)
-
-    const cmd = Command.create('node', [meta.script])
-    cmd.stdout.on('data', (line) => {
-      if (!line.trim()) return
-      try {
-        const ev = JSON.parse(line)
-        addTaskLog(taskId, ev.message || line.trim())
-      } catch {
-        addTaskLog(taskId, line.trim())
-      }
-    })
-    cmd.stderr.on('data', (line) => {
-      if (line.trim()) addTaskLog(taskId, `[오류] ${line.trim()}`)
-    })
-    cmd.on('close', ({ code }) => {
-      updateTask(taskId, { status: code === 0 ? 'done' : 'error' })
-      addTaskLog(taskId, `완료 (종료코드 ${code})`)
-      unregisterProcess(taskId)
-    })
-
-    const child = await cmd.spawn()
-    registerProcess(taskId, child)
+    const config = await loadAutomationConfig()
+    await invoke('run_automation', { task: taskId, config, debug })
   } catch (err) {
     updateTask(taskId, { status: 'error' })
-    addTaskLog(taskId, `실행 오류: ${err.message}`)
+    const msg = String(err)
+    if (msg.includes('automation-config.json')) {
+      addTaskLog(taskId, '⚠️ automation-config.json 파일이 필요합니다')
+      addTaskLog(taskId, '%APPDATA%\\work-organizer\\automation-config.json')
+    } else {
+      addTaskLog(taskId, `오류: ${msg}`)
+    }
   }
 }
 
-function TaskPanel({ taskId, task }) {
-  const updateTask        = useMonitoringStore((s) => s.updateTask)
-  const addTaskLog        = useMonitoringStore((s) => s.addTaskLog)
-  const clearTaskLog      = useMonitoringStore((s) => s.clearTaskLog)
-  const registerProcess   = useMonitoringStore((s) => s.registerProcess)
-  const unregisterProcess = useMonitoringStore((s) => s.unregisterProcess)
-  const getProcess        = useMonitoringStore((s) => s.getProcess)
-
-  const meta = TASK_META[taskId]
-  const store = { updateTask, addTaskLog, registerProcess, unregisterProcess }
-
-  const handleRun = () => spawnTask(taskId, store)
-
-  const handleStop = async () => {
-    const child = getProcess(taskId)
-    if (child) {
-      try { await child.kill() } catch { /* ignore */ }
-    }
-    updateTask(taskId, { status: 'idle' })
-    unregisterProcess(taskId)
-    addTaskLog(taskId, '중지됨')
+async function stopTask(taskId, store) {
+  const { updateTask, addTaskLog } = store
+  try {
+    await invoke('stop_automation', { task: taskId })
+  } catch (err) {
+    addTaskLog(taskId, `중지 오류: ${err}`)
   }
+  updateTask(taskId, { status: 'idle' })
+  addTaskLog(taskId, '중지됨')
+}
+
+// ── 로그 이벤트 리스너 ──────────────────────────────────────────
+let _unlistenFn = null
+let _listenerSetup = false // React StrictMode 이중 실행 방지 (동기 플래그)
+
+async function ensureLogListener(store) {
+  if (_listenerSetup || !isTauri()) return
+  _listenerSetup = true // 비동기 호출 전에 즉시 잠금
+  const { updateTask, addTaskLog } = store
+
+  _unlistenFn = await listen('automation-log', (event) => {
+    const { task, level, message } = event.payload || {}
+    if (!task) return
+    addTaskLog(task, message)
+    if (level === 'success') updateTask(task, { status: 'done' })
+    else if (level === 'error') updateTask(task, { status: 'error' })
+  })
+}
+
+// ── TaskPanel ────────────────────────────────────────────────────
+function TaskPanel({ taskId, task, debugMode }) {
+  const updateTask   = useMonitoringStore((s) => s.updateTask)
+  const addTaskLog   = useMonitoringStore((s) => s.addTaskLog)
+  const clearTaskLog = useMonitoringStore((s) => s.clearTaskLog)
+  const store = { updateTask, addTaskLog }
+  const meta = TASK_META[taskId]
+
+  const handleRun      = () => runTask(taskId, store, false)
+  const handleRunDebug = () => runTask(taskId, store, true)
+  const handleStop     = () => stopTask(taskId, store)
 
   return (
     <div className={`automation-panel-card status-${task.status}`}>
@@ -89,9 +110,16 @@ function TaskPanel({ taskId, task }) {
             </span>
           )}
           {task.status !== 'running' ? (
-            <button className="btn-task-run" onClick={handleRun}>
-              {task.status === 'done' ? '재실행' : '실행'}
-            </button>
+            <>
+<button className="btn-task-run" onClick={handleRun}>
+                {task.status === 'done' ? '재실행' : '실행'}
+              </button>
+              {debugMode && (
+                <button className="btn-task-debug" onClick={handleRunDebug} title="창 표시 + DevTools">
+                  🔍 디버그
+                </button>
+              )}
+            </>
           ) : (
             <button className="btn-task-stop" onClick={handleStop}>중지</button>
           )}
@@ -101,7 +129,7 @@ function TaskPanel({ taskId, task }) {
       {task.log.length > 0 && (
         <div className="panel-card-log">
           <div className="log-area compact">
-            {task.log.slice(-20).map((entry, i) => (
+            {task.log.slice(-30).map((entry, i) => (
               <div key={i} className="log-line">
                 <span className="log-time">
                   {new Date(entry.ts).toLocaleTimeString('ko-KR', {
@@ -119,19 +147,28 @@ function TaskPanel({ taskId, task }) {
   )
 }
 
+// ── AutomationPanel ──────────────────────────────────────────────
 function AutomationPanel() {
-  const tasks             = useMonitoringStore((s) => s.tasks)
-  const updateTask        = useMonitoringStore((s) => s.updateTask)
-  const addTaskLog        = useMonitoringStore((s) => s.addTaskLog)
-  const registerProcess   = useMonitoringStore((s) => s.registerProcess)
-  const unregisterProcess = useMonitoringStore((s) => s.unregisterProcess)
+  const tasks      = useMonitoringStore((s) => s.tasks)
+  const updateTask = useMonitoringStore((s) => s.updateTask)
+  const addTaskLog = useMonitoringStore((s) => s.addTaskLog)
+  const store      = { updateTask, addTaskLog }
 
-  const store = { updateTask, addTaskLog, registerProcess, unregisterProcess }
+  const [debugMode, setDebugMode] = useState(false)
+
+  useEffect(() => {
+    ensureLogListener(store)
+    return () => {
+      if (_unlistenFn) { _unlistenFn(); _unlistenFn = null; }
+      _listenerSetup = false // cleanup 시 리셋 → 재마운트 시 listener 재생성 가능
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const anyRunning = Object.values(tasks).some((t) => t.status === 'running')
 
   const handleRunAll = () => {
     Object.keys(tasks).forEach((id) => {
-      if (tasks[id].status !== 'running') spawnTask(id, store)
+      if (tasks[id].status !== 'running') runTask(id, store)
     })
   }
 
@@ -143,13 +180,26 @@ function AutomationPanel() {
         <div className="monitoring-section">
           <div className="monitoring-section-header">
             <h3 className="monitoring-section-title">자동화 스크립트</h3>
-            <button className="btn-run-all" onClick={handleRunAll} disabled={anyRunning}>
-              전체 실행
-            </button>
+            <div className="monitoring-header-actions">
+              <label className="debug-toggle">
+                <input
+                  type="checkbox"
+                  checked={debugMode}
+                  onChange={(e) => setDebugMode(e.target.checked)}
+                />
+                디버그 모드
+              </label>
+              <button className="btn-open-config" onClick={openConfigFile} title="automation-config.json 열기">
+                ⚙ 설정 파일
+              </button>
+              <button className="btn-run-all" onClick={handleRunAll} disabled={anyRunning}>
+                전체 실행
+              </button>
+            </div>
           </div>
           <div className="automation-panel-list">
             {Object.entries(tasks).map(([id, task]) => (
-              <TaskPanel key={id} taskId={id} task={task} />
+              <TaskPanel key={id} taskId={id} task={task} debugMode={debugMode} />
             ))}
           </div>
         </div>

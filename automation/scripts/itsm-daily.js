@@ -3,13 +3,16 @@ const { authenticator } = require('otplib')
 const fs = require('fs')
 const path = require('path')
 
-const config = require('../config.json')
+// Tauri에서 실행 시 FULL_CONFIG 환경변수로 설정 전달, 없으면 config.json 사용
+const config = process.env.FULL_CONFIG
+  ? JSON.parse(process.env.FULL_CONFIG)
+  : require('../config.json')
 const SESSION_PATH = path.join(__dirname, '../sessions/itsm-session.json')
 
 async function itsmDaily() {
   console.log('🚀 === ITSM 일일 Task 자동화 시작 ===')
 
-  const browser = await chromium.launch({ headless: false, slowMo: 100 })
+  const browser = await chromium.launch({ channel: 'msedge', headless: false, slowMo: 100 })
 
   const sessionExists = fs.existsSync(SESSION_PATH)
   const context = await browser.newContext(

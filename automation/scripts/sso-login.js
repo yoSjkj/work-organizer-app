@@ -2,13 +2,16 @@ const { chromium } = require('playwright')
 const fs = require('fs')
 const path = require('path')
 
-const config = require('../config.json')
+// Tauri에서 실행 시 FULL_CONFIG 환경변수로 설정 전달, 없으면 config.json 사용
+const config = process.env.FULL_CONFIG
+  ? JSON.parse(process.env.FULL_CONFIG)
+  : require('../config.json')
 const SESSION_PATH = path.join(__dirname, '../sessions/sso-session.json')
 
 async function ssoLogin() {
   console.log('🔐 SSO 로그인 시작...')
 
-  const browser = await chromium.launch({ headless: false })
+  const browser = await chromium.launch({ channel: 'msedge', headless: false })
 
   const sessionExists = fs.existsSync(SESSION_PATH)
   const context = await browser.newContext(

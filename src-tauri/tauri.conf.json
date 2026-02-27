@@ -45,6 +45,7 @@
             "opener:allow-open-url",
             "core:window:allow-minimize",
             "core:window:allow-hide",
+            "core:window:allow-start-dragging",
             {
               "identifier": "opener:allow-open-path",
               "allow": [
@@ -61,6 +62,18 @@
                   "cmd": "node",
                   "args": true,
                   "sidecar": false
+                },
+                {
+                  "name": "powershell",
+                  "cmd": "powershell",
+                  "args": true,
+                  "sidecar": false
+                },
+                {
+                  "name": "schtasks",
+                  "cmd": "schtasks",
+                  "args": true,
+                  "sidecar": false
                 }
               ]
             },
@@ -73,6 +86,11 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "windows": {
+      "nsis": {
+        "installMode": "perMachine"
+      }
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

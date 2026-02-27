@@ -2,13 +2,17 @@ const { chromium } = require('playwright')
 const fs = require('fs')
 const path = require('path')
 
-const config = require('../config.json')
+// Tauri에서 실행 시 FULL_CONFIG 환경변수로 설정 전달, 없으면 config.json 사용
+const config = process.env.FULL_CONFIG
+  ? JSON.parse(process.env.FULL_CONFIG)
+  : require('../config.json')
+
 const SESSION_PATH = path.join(__dirname, '../sessions/external-session.json')
 
 async function externalNetLogin() {
   console.log('🌐 외부망 로그인 시작...')
 
-  const browser = await chromium.launch({ headless: false })
+  const browser = await chromium.launch({ channel: 'msedge', headless: false })
 
   const sessionExists = fs.existsSync(SESSION_PATH)
   const context = await browser.newContext(
@@ -20,13 +24,24 @@ async function externalNetLogin() {
   try {
     await page.goto(config.external.url, { waitUntil: 'networkidle' })
 
-    const sel = config.external.selectors
-    const needLogin = await page.locator(sel.username).isVisible().catch(() => false)
+    const sel = config.external.selectors || {}
+    const needLogin = await page.locator(sel.username || '#LoginID').isVisible().catch(() => false)
 
     if (needLogin) {
-      await page.fill(sel.username, config.external.username)
-      await page.fill(sel.password, config.external.password)
-      await page.click(sel.loginButton)
+      // U-Cloud 자동 접속 체크박스
+      const cbSelector = sel.ucloudCheckbox || '#CHECKED_VM_AUTO_CONNECT'
+      const checkbox = page.locator(cbSelector)
+      if (await checkbox.isVisible().catch(() => false)) {
+        const isChecked = await checkbox.isChecked().catch(() => false)
+        if (!isChecked) {
+          await checkbox.click()
+          console.log('☑ U-Cloud 자동 접속 체크')
+        }
+      }
+
+      await page.fill(sel.username || '#LoginID', config.external.username)
+      await page.fill(sel.password || '#LoginPassword', config.external.password)
+      await page.click(sel.loginButton || 'button.login-btn')
       await page.waitForLoadState('networkidle')
       console.log('✅ 외부망 로그인 완료')
     } else {
