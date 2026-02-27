@@ -8,9 +8,7 @@ const makeTaskState = () => ({
 
 export const useMonitoringStore = create((set, get) => ({
   tasks: {
-    sso:      makeTaskState(),
     itsm:     makeTaskState(),
-    aws:      makeTaskState(),
     external: makeTaskState(),
   },
 

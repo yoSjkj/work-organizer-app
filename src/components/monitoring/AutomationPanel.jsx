@@ -5,10 +5,8 @@ import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
 const TASK_META = {
-  sso:      { label: 'SSO 로그인',     desc: 'SSO 포털 로그인 및 세션 저장' },
   itsm:     { label: 'ITSM 일일 체크', desc: 'ITSM 일일 업무 처리 (OTP 포함)' },
-  aws:      { label: 'AWS 개발서버',   desc: 'AWS 개발 서버 시작' },
-  external: { label: '내부망 로그인',  desc: '내부망 포털 로그인' },
+  external: { label: '내부망 VM',      desc: '내부망 포털 로그인 + U-Cloud VM 자동 접속' },
 }
 
 const STATUS_LABEL = { idle: '대기', running: '실행 중', done: '완료', error: '오류' }

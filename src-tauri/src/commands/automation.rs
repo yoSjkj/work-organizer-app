@@ -250,9 +250,7 @@ fn get_automation_dir(_app: &AppHandle) -> Result<PathBuf, String> {
 
 fn get_script_path(automation_dir: &PathBuf, task: &str) -> Result<PathBuf, String> {
     let filename = match task {
-        "sso"      => "sso-login.js",
         "itsm"     => "itsm-daily.js",
-        "aws"      => "aws-dev-server.js",
         "external" => "external-net.js",
         _ => return Err(format!("알 수 없는 task: {}", task)),
     };

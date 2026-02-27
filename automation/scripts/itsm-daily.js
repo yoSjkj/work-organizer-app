@@ -1,35 +1,25 @@
 const { chromium } = require('playwright')
 const { authenticator } = require('otplib')
 const path = require('path')
+const fs = require('fs')
 
 // Tauri에서 실행 시 FULL_CONFIG 환경변수로 설정 전달, 없으면 config.json 사용
 const config = process.env.FULL_CONFIG
   ? JSON.parse(process.env.FULL_CONFIG)
   : require('../config.json')
 
-const CHROME_USER_DATA = config.chromeUserData
-  || process.env.CHROME_USER_DATA
-  || path.join(process.env.LOCALAPPDATA || '', 'Google', 'Chrome', 'User Data')
+const SESSION_PATH = path.join(__dirname, '../sessions/itsm-session.json')
 
 async function itsmDaily() {
   console.log('🚀 === ITSM 일일 Task 자동화 시작 ===')
 
-  let context
-  try {
-    context = await chromium.launchPersistentContext(CHROME_USER_DATA, {
-      channel: 'chrome',
-      headless: false,
-      slowMo: 100,
-    })
-  } catch (e) {
-    if (e.message.includes('user data directory is already in use')) {
-      console.error('❌ Chrome이 이미 실행 중입니다. Chrome을 닫고 다시 시도하세요.')
-      return
-    }
-    throw e
-  }
+  const browser = await chromium.launch({ headless: false, slowMo: 100 })
 
-  const page = context.pages()[0] || await context.newPage()
+  const sessionExists = fs.existsSync(SESSION_PATH)
+  const context = await browser.newContext(
+    sessionExists ? { storageState: SESSION_PATH } : {}
+  )
+  const page = await context.newPage()
 
   try {
     await page.goto(config.itsm.url, { waitUntil: 'networkidle' })
@@ -41,13 +31,15 @@ async function itsmDaily() {
     }
 
     await processTasks(page)
-    console.log('💾 완료')
+
+    await context.storageState({ path: SESSION_PATH })
+    console.log('💾 세션 저장 완료')
 
   } catch (error) {
     console.error('❌ 오류 발생:', error.message)
-    await page.screenshot({ path: 'sessions/error-screenshot.png' })
+    await page.screenshot({ path: 'sessions/error-screenshot.png' }).catch(() => {})
   } finally {
-    await context.close()
+    await browser.close()
   }
 }
 
@@ -116,14 +108,13 @@ async function processTaskDetail(iframe, page, taskName) {
 
   try {
     const effortHour = iframe.locator('input[name="ni.u_daily_operational_task.u_effortdur_hour"]')
-    const effortMin = iframe.locator('input[name="ni.u_daily_operational_task.u_effortdur_min"]')
+    const effortMin  = iframe.locator('input[name="ni.u_daily_operational_task.u_effortdur_min"]')
 
     await setServiceNowValue(effortHour, '0')
     await setServiceNowValue(effortMin, '20')
     console.log('✅ Effort 입력 완료 (0시간 20분)')
 
     const resultSelect = iframe.locator('select[name="u_daily_operational_task.u_check_result"]')
-
     const normalValue = await resultSelect.evaluate(select => {
       const opt = Array.from(select.options).find(o => o.text.includes('정상'))
       return opt?.value ?? null
@@ -136,9 +127,7 @@ async function processTaskDetail(iframe, page, taskName) {
           el.dispatchEvent(new Event(type, { bubbles: true }))
         )
         const win = el.ownerDocument.defaultView
-        if (win?.angular) {
-          win.angular.element(el).scope()?.$apply()
-        }
+        if (win?.angular) win.angular.element(el).scope()?.$apply()
       })
       console.log('✅ 진행결과 "정상" 선택 완료')
     } else {
@@ -169,9 +158,7 @@ async function setServiceNowValue(locator, value) {
       el.dispatchEvent(new Event(type, { bubbles: true, cancelable: true }))
     )
     const win = el.ownerDocument.defaultView
-    if (win?.angular) {
-      win.angular.element(el).scope()?.$apply()
-    }
+    if (win?.angular) win.angular.element(el).scope()?.$apply()
   }, value)
 }
 
