@@ -12,7 +12,7 @@ const SESSION_PATH = path.join(__dirname, '../sessions/external-session.json')
 async function externalNetLogin() {
   console.log('🌐 외부망 로그인 시작...')
 
-  const browser = await chromium.launch({ channel: 'msedge', headless: false })
+  const browser = await chromium.launch({ headless: false })
 
   const sessionExists = fs.existsSync(SESSION_PATH)
   const context = await browser.newContext(
@@ -43,7 +43,16 @@ async function externalNetLogin() {
       await page.fill(sel.password || '#LoginPassword', config.external.password)
       await page.click(sel.loginButton || 'button.login-btn')
       await page.waitForLoadState('networkidle')
-      console.log('✅ 외부망 로그인 완료')
+
+      // 로그인 성공 여부 확인 (로그인 폼이 사라졌으면 성공)
+      const loginFailed = await page.locator(sel.username || '#LoginID').isVisible().catch(() => false)
+      if (loginFailed) {
+        console.error('❌ 로그인 실패 (아이디/비밀번호 확인 필요)')
+        await page.waitForTimeout(5000) // 실패 화면 확인용 대기
+        return
+      }
+      console.log('✅ 외부망 로그인 완료 — VM 시작 대기 중...')
+      await page.waitForTimeout(3000) // VM 클라이언트 실행 대기
     } else {
       console.log('✅ 기존 세션 유효, 로그인 스킵')
     }

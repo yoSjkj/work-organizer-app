@@ -12,7 +12,7 @@ const SESSION_PATH = path.join(__dirname, '../sessions/itsm-session.json')
 async function itsmDaily() {
   console.log('🚀 === ITSM 일일 Task 자동화 시작 ===')
 
-  const browser = await chromium.launch({ channel: 'msedge', headless: false, slowMo: 100 })
+  const browser = await chromium.launch({ headless: false, slowMo: 100 })
 
   const sessionExists = fs.existsSync(SESSION_PATH)
   const context = await browser.newContext(

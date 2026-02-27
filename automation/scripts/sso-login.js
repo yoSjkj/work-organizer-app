@@ -11,7 +11,7 @@ const SESSION_PATH = path.join(__dirname, '../sessions/sso-session.json')
 async function ssoLogin() {
   console.log('🔐 SSO 로그인 시작...')
 
-  const browser = await chromium.launch({ channel: 'msedge', headless: false })
+  const browser = await chromium.launch({ headless: false })
 
   const sessionExists = fs.existsSync(SESSION_PATH)
   const context = await browser.newContext(

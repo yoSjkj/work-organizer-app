@@ -72,13 +72,20 @@ async function ensureLogListener(store) {
   _listenerSetup = true // 비동기 호출 전에 즉시 잠금
   const { updateTask, addTaskLog } = store
 
-  _unlistenFn = await listen('automation-log', (event) => {
+  const unlisten = await listen('automation-log', (event) => {
     const { task, level, message } = event.payload || {}
     if (!task) return
     addTaskLog(task, message)
     if (level === 'success') updateTask(task, { status: 'done' })
     else if (level === 'error') updateTask(task, { status: 'error' })
   })
+
+  // await 완료 전에 cleanup이 실행됐으면 즉시 해제 (StrictMode race 방지)
+  if (!_listenerSetup || _unlistenFn) {
+    unlisten()
+    return
+  }
+  _unlistenFn = unlisten
 }
 
 // ── TaskPanel ────────────────────────────────────────────────────
