@@ -1,25 +1,35 @@
 const { chromium } = require('playwright')
 const { authenticator } = require('otplib')
-const fs = require('fs')
 const path = require('path')
 
 // Tauri에서 실행 시 FULL_CONFIG 환경변수로 설정 전달, 없으면 config.json 사용
 const config = process.env.FULL_CONFIG
   ? JSON.parse(process.env.FULL_CONFIG)
   : require('../config.json')
-const SESSION_PATH = path.join(__dirname, '../sessions/itsm-session.json')
+
+const CHROME_USER_DATA = config.chromeUserData
+  || process.env.CHROME_USER_DATA
+  || path.join(process.env.LOCALAPPDATA || '', 'Google', 'Chrome', 'User Data')
 
 async function itsmDaily() {
   console.log('🚀 === ITSM 일일 Task 자동화 시작 ===')
 
-  const browser = await chromium.launch({ headless: false, slowMo: 100 })
+  let context
+  try {
+    context = await chromium.launchPersistentContext(CHROME_USER_DATA, {
+      channel: 'chrome',
+      headless: false,
+      slowMo: 100,
+    })
+  } catch (e) {
+    if (e.message.includes('user data directory is already in use')) {
+      console.error('❌ Chrome이 이미 실행 중입니다. Chrome을 닫고 다시 시도하세요.')
+      return
+    }
+    throw e
+  }
 
-  const sessionExists = fs.existsSync(SESSION_PATH)
-  const context = await browser.newContext(
-    sessionExists ? { storageState: SESSION_PATH } : {}
-  )
-
-  const page = await context.newPage()
+  const page = context.pages()[0] || await context.newPage()
 
   try {
     await page.goto(config.itsm.url, { waitUntil: 'networkidle' })
@@ -31,16 +41,13 @@ async function itsmDaily() {
     }
 
     await processTasks(page)
-
-    // 세션 저장 (다음 실행 시 OTP 재입력 스킵)
-    await context.storageState({ path: SESSION_PATH })
-    console.log('💾 세션 저장 완료')
+    console.log('💾 완료')
 
   } catch (error) {
     console.error('❌ 오류 발생:', error.message)
     await page.screenshot({ path: 'sessions/error-screenshot.png' })
   } finally {
-    await browser.close()
+    await context.close()
   }
 }
 
@@ -57,7 +64,6 @@ async function login(page) {
   await page.fill(sel.password, config.itsm.password)
   await page.click(sel.loginButton)
 
-  // OTP 입력 화면 대기
   await page.waitForSelector(sel.otpInput, { timeout: 15000 })
 
   const otp = authenticator.generate(config.itsm.otpSecret)
@@ -109,7 +115,6 @@ async function processTaskDetail(iframe, page, taskName) {
   console.log(`\n⚡ === ${taskName} 상세 처리 ===`)
 
   try {
-    // 1. Effort 입력 (0시간 20분)
     const effortHour = iframe.locator('input[name="ni.u_daily_operational_task.u_effortdur_hour"]')
     const effortMin = iframe.locator('input[name="ni.u_daily_operational_task.u_effortdur_min"]')
 
@@ -117,10 +122,8 @@ async function processTaskDetail(iframe, page, taskName) {
     await setServiceNowValue(effortMin, '20')
     console.log('✅ Effort 입력 완료 (0시간 20분)')
 
-    // 2. 진행결과 - 정상 선택
     const resultSelect = iframe.locator('select[name="u_daily_operational_task.u_check_result"]')
 
-    // options에서 '정상' 포함 항목 찾기 (부분 매칭)
     const normalValue = await resultSelect.evaluate(select => {
       const opt = Array.from(select.options).find(o => o.text.includes('정상'))
       return opt?.value ?? null
@@ -128,7 +131,6 @@ async function processTaskDetail(iframe, page, taskName) {
 
     if (normalValue !== null) {
       await resultSelect.selectOption(normalValue)
-      // ServiceNow Angular 바인딩 재트리거
       await resultSelect.evaluate(el => {
         ;['change', 'blur'].forEach(type =>
           el.dispatchEvent(new Event(type, { bubbles: true }))
@@ -145,7 +147,6 @@ async function processTaskDetail(iframe, page, taskName) {
 
     await page.waitForTimeout(1000)
 
-    // 3. 작업 완료 버튼 클릭
     const completeBtn = iframe.locator('button:has-text("작업 완료")')
     if (await completeBtn.isVisible()) {
       await completeBtn.click()
@@ -160,7 +161,6 @@ async function processTaskDetail(iframe, page, taskName) {
   }
 }
 
-// ServiceNow/Angular 폼 값 설정 (이벤트 강제 트리거 포함)
 async function setServiceNowValue(locator, value) {
   await locator.fill(value)
   await locator.evaluate((el, val) => {

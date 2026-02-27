@@ -161,6 +161,9 @@ pub fn open_automation_config_file(app: AppHandle) -> Result<(), String> {
         fs::create_dir_all(&app_dir).map_err(|e| e.to_string())?;
         let template = r##"{
   "_설명": "자동화 설정 파일. 실제 값을 채워서 사용하세요.",
+  "_주의": "자동화 실행 전 Chrome을 완전히 종료해야 합니다.",
+  "chromeUserData": "",
+  "_chromeUserData_설명": "비워두면 기본 경로 사용 (C:/Users/{사용자}/AppData/Local/Google/Chrome/User Data)",
   "sso":      { "url": "", "username": "", "password": "", "selectors": { "username": "input[name='username']", "password": "input[name='password']", "loginButton": "button[type='submit']" } },
   "itsm":     { "url": "", "username": "", "password": "", "otpSecret": "", "selectors": { "username": "input[name='user_name']", "password": "input[name='user_password']", "loginButton": "#sysverb_login", "otpInput": "input[name='answer']", "otpButton": "button[type='submit']" } },
   "aws":      { "url": "", "username": "", "password": "", "selectors": { "username": "input[name='username']", "password": "input[name='password']", "loginButton": "button[type='submit']" } },
