@@ -13,6 +13,7 @@ async function externalNetLogin() {
   console.log('🌐 외부망 로그인 시작...')
 
   const browser = await chromium.launch({ headless: false })
+  let keepOpen = false
 
   const sessionExists = fs.existsSync(SESSION_PATH)
   const context = await browser.newContext(
@@ -47,8 +48,8 @@ async function externalNetLogin() {
       // 로그인 성공 여부 확인 (로그인 폼이 사라졌으면 성공)
       const loginFailed = await page.locator(sel.username || '#LoginID').isVisible().catch(() => false)
       if (loginFailed) {
-        console.error('❌ 로그인 실패 (아이디/비밀번호 확인 필요)')
-        await page.waitForTimeout(5000) // 실패 화면 확인용 대기
+        console.error('❌ 로그인 실패 (아이디/비밀번호 확인 필요) — 창을 직접 닫아주세요')
+        keepOpen = true
         return
       }
       console.log('✅ 외부망 로그인 완료 — VM 시작 대기 중...')
@@ -61,8 +62,9 @@ async function externalNetLogin() {
 
   } catch (error) {
     console.error('❌ 외부망 오류:', error.message)
+    keepOpen = true
   } finally {
-    await browser.close()
+    if (!keepOpen) await browser.close()
   }
 }
 
