@@ -10,6 +10,7 @@ function CsrMonitor() {
   const csrLogs           = useMonitoringStore((s) => s.csrLogs)
   const setCsrRunning     = useMonitoringStore((s) => s.setCsrRunning)
   const upsertCsrItem     = useMonitoringStore((s) => s.upsertCsrItem)
+  const syncCsrItems      = useMonitoringStore((s) => s.syncCsrItems)
   const addCsrLog         = useMonitoringStore((s) => s.addCsrLog)
   const clearCsr          = useMonitoringStore((s) => s.clearCsr)
   const registerProcess   = useMonitoringStore((s) => s.registerProcess)
@@ -25,7 +26,6 @@ function CsrMonitor() {
       const { Command } = await import('@tauri-apps/plugin-shell')
       const { invoke } = await import('@tauri-apps/api/core')
       setCsrRunning(true)
-      addCsrLog('CSR 모니터링 시작')
 
       const automationDir = await invoke('get_automation_dir_path')
       const cmd = Command.create('node', [CSR_SCRIPT], { cwd: automationDir })
@@ -41,6 +41,7 @@ function CsrMonitor() {
               sendNotification({ title: 'CSR 신규 접수', body: ev.data.title || ev.data.ritm }).catch(() => {})
               break
             case 'csr_update': upsertCsrItem(ev.data); break
+            case 'csr_sync':   syncCsrItems(ev.data.ritms); break
           }
         } catch {
           addCsrLog(line.trim())

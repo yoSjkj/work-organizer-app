@@ -66,6 +66,11 @@ export const useMonitoringStore = create((set, get) => ({
       return { csrItems: [{ ...item, isNew: true }, ...state.csrItems] }
     }),
 
+  syncCsrItems: (ritms) =>
+    set((state) => ({
+      csrItems: state.csrItems.filter((i) => ritms.includes(i.ritm)),
+    })),
+
   addCsrLog: (message) =>
     set((state) => ({
       csrLogs: [...state.csrLogs.slice(-199), { message, ts: Date.now() }],

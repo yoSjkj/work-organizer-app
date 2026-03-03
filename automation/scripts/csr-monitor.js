@@ -110,6 +110,14 @@ async function main() {
           emit('csr_update', item)
         }
       }
+
+      // 사라진 항목 제거: 현재 목록 기준으로 동기화
+      for (const ritm of knownItems.keys()) {
+        if (!items.find((i) => i.ritm === ritm)) {
+          knownItems.delete(ritm)
+        }
+      }
+      emit('csr_sync', { ritms: items.map((i) => i.ritm) })
     } catch (err) {
       emit('log', `폴링 오류: ${err.message}`)
     }

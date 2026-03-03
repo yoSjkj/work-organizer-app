@@ -32,7 +32,6 @@ function MailMonitor() {
       const { Command } = await import('@tauri-apps/plugin-shell')
       const { invoke } = await import('@tauri-apps/api/core')
       setMailRunning(true)
-      addMailLog('메일 모니터링 시작')
 
       const automationDir = await invoke('get_automation_dir_path')
       const cmd = Command.create('node', [MAIL_SCRIPT], { cwd: automationDir })
