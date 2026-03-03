@@ -10,6 +10,8 @@
  */
 
 const { chromium } = require('playwright')
+const fs = require('fs')
+const path = require('path')
 
 let config
 try {
@@ -19,6 +21,7 @@ try {
   process.exit(1)
 }
 
+const SESSION_PATH = path.join(__dirname, '../sessions/browser-session.json')
 const POLL_INTERVAL_MS = 5 * 60 * 1000  // 5분
 
 /** JSON Lines 이벤트 출력 */
@@ -79,11 +82,13 @@ async function main() {
     process.exit(1)
   }
 
-  const cdpUrl = config.cdpUrl || 'http://localhost:9222'
-  emit('log', `Chrome 연결 중... (${cdpUrl})`)
+  if (!fs.existsSync(SESSION_PATH)) {
+    emit('log', '⚠️ 세션 파일 없음. 먼저 세션 갱신을 실행하세요.')
+    process.exit(1)
+  }
 
-  const browser = await chromium.connectOverCDP(cdpUrl)
-  const context = browser.contexts()[0]
+  const browser = await chromium.launch({ headless: true })
+  const context = await browser.newContext({ storageState: SESSION_PATH })
   const page = await context.newPage()
 
   const knownItems = new Map()
@@ -119,8 +124,7 @@ async function main() {
   const cleanup = async () => {
     clearInterval(timer)
     emit('log', 'CSR 모니터링 종료')
-    await page.close().catch(() => {})
-    await browser.close()  // CDP 연결 해제 (Chrome 종료 아님)
+    await browser.close()
     process.exit(0)
   }
 

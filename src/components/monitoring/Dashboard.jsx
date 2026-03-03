@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { useUIStore } from '../../stores/useUIStore'
 import { isTauri } from '../../stores/tauriStorage'
@@ -74,6 +75,28 @@ function TaskCard({ taskId, task, onRun }) {
   )
 }
 
+async function extractSessions(setStatus) {
+  if (!isTauri()) return
+  setStatus('running')
+  try {
+    const { Command } = await import('@tauri-apps/plugin-shell')
+    const { invoke } = await import('@tauri-apps/api/core')
+    const automationDir = await invoke('get_automation_dir_path')
+    const cmd = Command.create('node', ['scripts/extract-sessions.js'], { cwd: automationDir })
+    let output = ''
+    cmd.stdout.on('data', (line) => { output += line })
+    cmd.stderr.on('data', (line) => { output += line })
+    await new Promise((resolve, reject) => {
+      cmd.on('close', ({ code }) => code === 0 ? resolve() : reject(new Error(output)))
+      cmd.spawn().catch(reject)
+    })
+    setStatus('done')
+  } catch (err) {
+    console.error(err)
+    setStatus('error')
+  }
+}
+
 function Dashboard() {
   const tasks             = useMonitoringStore((s) => s.tasks)
   const csrItems          = useMonitoringStore((s) => s.csrItems)
@@ -83,6 +106,7 @@ function Dashboard() {
   const registerProcess   = useMonitoringStore((s) => s.registerProcess)
   const unregisterProcess = useMonitoringStore((s) => s.unregisterProcess)
   const setSelectedCategory = useUIStore((s) => s.setSelectedCategory)
+  const [sessionStatus, setSessionStatus] = useState('idle') // idle | running | done | error
 
   const store = { updateTask, addTaskLog, registerProcess, unregisterProcess }
 
@@ -128,6 +152,26 @@ function Dashboard() {
             {Object.entries(tasks).map(([id, task]) => (
               <TaskCard key={id} taskId={id} task={task} onRun={handleRun} />
             ))}
+          </div>
+        </div>
+
+        {/* 세션 설정 */}
+        <div className="monitoring-section">
+          <div className="monitoring-section-header">
+            <h3 className="monitoring-section-title">모니터링 세션</h3>
+          </div>
+          <div className="session-setup">
+            <p className="session-desc">Chrome이 열려 있는 상태에서 세션을 추출하면, 이후 모니터링이 백그라운드에서 자동 실행됩니다.</p>
+            <button
+              className={`btn-session-extract status-${sessionStatus}`}
+              onClick={() => extractSessions(setSessionStatus)}
+              disabled={sessionStatus === 'running'}
+            >
+              {sessionStatus === 'running' ? '추출 중...'
+                : sessionStatus === 'done' ? '✓ 세션 갱신 완료'
+                : sessionStatus === 'error' ? '✕ 실패 (재시도)'
+                : '세션 갱신'}
+            </button>
           </div>
         </div>
 
