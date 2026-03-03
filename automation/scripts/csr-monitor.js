@@ -43,8 +43,8 @@ async function fetchCsrList(page) {
 
   await page.goto(csrConfig.listUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
-  // ServiceNow 클래식 UI: iframe 없이 메인 페이지에 직접 렌더링
-  await page.locator('tr.list_row').first().waitFor({ timeout: 15000 }).catch(() => {})
+  // RITM 텍스트가 실제로 렌더링될 때까지 대기 (비동기 렌더링 대응)
+  await page.locator('a').filter({ hasText: /^RITM/ }).first().waitFor({ timeout: 20000 }).catch(() => {})
 
   const rows = await page.locator('tr.list_row').all()
   const items = []
@@ -52,13 +52,21 @@ async function fetchCsrList(page) {
   for (const row of rows) {
     try {
       const sysId = await row.getAttribute('sys_id') || ''
-      const ritm  = (await row.locator('a[href*="sc_req_item.do"]').first().textContent({ timeout: 1000 }).catch(() => ''))?.trim()
-      const title = (await row.locator('td[field="short_description"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
-      const status = (await row.locator('td[field="state"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
-      const assignee = (await row.locator('td[field="assigned_to"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
+      const ritmLink = row.locator('a').filter({ hasText: /^RITM/ }).first()
+      const ritm = (await ritmLink.textContent({ timeout: 2000 }).catch(() => ''))?.trim()
+
+      // td.vt 셀은 위치 기반: [0]=RITM, [1]=고객사, [2]=제목, [3]=담당자, [4]=그룹
+      const vtCells = await row.evaluate(tr =>
+        Array.from(tr.querySelectorAll('td.vt')).map(td => td.textContent.trim())
+      )
 
       if (sysId && ritm) {
-        items.push({ ritm, title: title || '', status: status || '', assignee: assignee || '' })
+        items.push({
+          ritm,
+          title: vtCells[2] || '',
+          assignee: vtCells[3] || '',
+          status: '',
+        })
       }
     } catch { /* 행 파싱 오류 무시 */ }
   }
