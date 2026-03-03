@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
@@ -22,6 +22,14 @@ function MailMonitor() {
   const getProcess        = useMonitoringStore((s) => s.getProcess)
 
   const [newKeyword, setNewKeyword] = useState('')
+
+  const logRef = useRef(null)
+  useEffect(() => {
+    const el = logRef.current
+    if (!el) return
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50
+    if (isNearBottom) el.scrollTop = el.scrollHeight
+  }, [mailLogs])
 
   const handleStart = async () => {
     if (!isTauri()) {
@@ -182,7 +190,7 @@ function MailMonitor() {
         {/* 실행 로그 */}
         <div className="monitoring-section">
           <h3 className="monitoring-section-title">실행 로그</h3>
-          <div className="log-area">
+          <div className="log-area" ref={logRef}>
             {mailLogs.length === 0 ? (
               <span className="log-empty">로그 없음</span>
             ) : (

@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react'
 import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
@@ -91,6 +92,14 @@ function CsrMonitor() {
     addCsrLog('모니터링 중지')
   }
 
+  const logRef = useRef(null)
+  useEffect(() => {
+    const el = logRef.current
+    if (!el) return
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50
+    if (isNearBottom) el.scrollTop = el.scrollHeight
+  }, [csrLogs])
+
   const newCount = csrItems.filter((i) => i.isNew).length
 
   return (
@@ -146,7 +155,7 @@ function CsrMonitor() {
         {/* 실행 로그 */}
         <div className="monitoring-section">
           <h3 className="monitoring-section-title">실행 로그</h3>
-          <div className="log-area">
+          <div className="log-area" ref={logRef}>
             {csrLogs.length === 0 ? (
               <span className="log-empty">로그 없음</span>
             ) : (
