@@ -10,10 +10,7 @@
  */
 
 const { chromium } = require('playwright')
-const fs = require('fs')
-const path = require('path')
 
-// config.json이 없으면 template으로 대체
 let config
 try {
   config = require('../config.json')
@@ -22,11 +19,7 @@ try {
   process.exit(1)
 }
 
-const SESSION_PATH = path.join(__dirname, '../sessions/csr-session.json')
 const POLL_INTERVAL_MS = 5 * 60 * 1000  // 5분
-
-// sessions 디렉토리 생성
-fs.mkdirSync(path.dirname(SESSION_PATH), { recursive: true })
 
 /** JSON Lines 이벤트 출력 */
 function emit(type, messageOrData) {
@@ -86,36 +79,12 @@ async function main() {
     process.exit(1)
   }
 
-  const sessionExists = fs.existsSync(SESSION_PATH)
-  const browser = await chromium.launch({ headless: true })
-  const context = await browser.newContext(
-    sessionExists ? { storageState: SESSION_PATH } : {}
-  )
+  const cdpUrl = config.cdpUrl || 'http://localhost:9222'
+  emit('log', `Chrome 연결 중... (${cdpUrl})`)
+
+  const browser = await chromium.connectOverCDP(cdpUrl)
+  const context = browser.contexts()[0]
   const page = await context.newPage()
-
-  // 로그인 처리
-  const loginUrl = csrConfig.loginUrl || csrConfig.url
-  if (loginUrl) {
-    emit('log', `${loginUrl} 접속 중`)
-    await page.goto(loginUrl, { waitUntil: 'networkidle', timeout: 30000 })
-
-    const sel = csrConfig.selectors || {}
-    const needLogin = sel.username
-      ? await page.locator(sel.username).isVisible().catch(() => false)
-      : false
-
-    if (needLogin) {
-      emit('log', '로그인 시도')
-      await page.fill(sel.username, csrConfig.username || '')
-      await page.fill(sel.password || 'input[type="password"]', csrConfig.password || '')
-      await page.click(sel.loginButton || 'button[type="submit"]')
-      await page.waitForLoadState('networkidle')
-      await context.storageState({ path: SESSION_PATH })
-      emit('log', '로그인 완료, 세션 저장됨')
-    } else {
-      emit('log', '기존 세션 사용')
-    }
-  }
 
   const knownItems = new Map()
 
@@ -150,7 +119,8 @@ async function main() {
   const cleanup = async () => {
     clearInterval(timer)
     emit('log', 'CSR 모니터링 종료')
-    await browser.close()
+    await page.close().catch(() => {})
+    await browser.close()  // CDP 연결 해제 (Chrome 종료 아님)
     process.exit(0)
   }
 

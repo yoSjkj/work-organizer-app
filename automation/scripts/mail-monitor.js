@@ -10,8 +10,6 @@
  */
 
 const { chromium } = require('playwright')
-const fs = require('fs')
-const path = require('path')
 
 let config
 try {
@@ -21,10 +19,7 @@ try {
   process.exit(1)
 }
 
-const SSO_SESSION_PATH = path.join(__dirname, '../sessions/sso-session.json')
 const POLL_INTERVAL_MS = 3 * 60 * 1000  // 3분
-
-fs.mkdirSync(path.dirname(SSO_SESSION_PATH), { recursive: true })
 
 /** JSON Lines 이벤트 출력 */
 function emit(type, messageOrData) {
@@ -103,39 +98,13 @@ async function main() {
     process.exit(1)
   }
 
-  // SSO 세션 재사용
-  const sessionExists = fs.existsSync(SSO_SESSION_PATH)
-  const browser = await chromium.launch({ headless: true })
-  const context = await browser.newContext(
-    sessionExists ? { storageState: SSO_SESSION_PATH } : {}
-  )
+  const cdpUrl = config.cdpUrl || 'http://localhost:9222'
+  emit('log', `Chrome 연결 중... (${cdpUrl})`)
+
+  const browser = await chromium.connectOverCDP(cdpUrl)
+  const context = browser.contexts()[0]
   const page = await context.newPage()
 
-  // SSO 세션 없을 경우 SSO 로그인 시도
-  if (!sessionExists && config.sso?.url) {
-    emit('log', 'SSO 로그인 시도')
-    try {
-      await page.goto(config.sso.url, { waitUntil: 'networkidle', timeout: 30000 })
-      const sel = config.sso.selectors || {}
-      const needLogin = sel.username
-        ? await page.locator(sel.username).isVisible().catch(() => false)
-        : false
-
-      if (needLogin) {
-        await page.fill(sel.username, config.sso.username || '')
-        await page.fill(sel.password || 'input[type="password"]', config.sso.password || '')
-        await page.click(sel.loginButton || 'button[type="submit"]')
-        await page.waitForLoadState('networkidle')
-        await context.storageState({ path: SSO_SESSION_PATH })
-        emit('log', 'SSO 로그인 완료')
-      }
-    } catch (err) {
-      emit('log', `SSO 로그인 오류: ${err.message}`)
-    }
-  }
-
-  // 키워드는 localStorage에 저장되어 있지만 Node.js에서는 접근 불가
-  // config.json에서 키워드 읽기 (옵션)
   const keywords = mailConfig.keywords || []
 
   const seenIds = new Set()
@@ -163,7 +132,8 @@ async function main() {
   const cleanup = async () => {
     clearInterval(timer)
     emit('log', '메일 모니터링 종료')
-    await browser.close()
+    await page.close().catch(() => {})
+    await browser.close()  // CDP 연결 해제 (Chrome 종료 아님)
     process.exit(0)
   }
 

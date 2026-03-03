@@ -1,4 +1,5 @@
 {
+  "cdpUrl": "http://localhost:9222",
   "itsm": {
     "url": "https://your-itsm-url.com",
     "username": "your-id",
