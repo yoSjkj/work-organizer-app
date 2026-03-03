@@ -89,7 +89,6 @@ function CsrMonitor() {
     <main className="main-content monitoring-view">
       <h2 className="category-title category-csr-monitor">
         CSR 모니터링
-        {newCount > 0 && <span className="unread-badge">{newCount}</span>}
       </h2>
 
       <div className="monitoring-container">

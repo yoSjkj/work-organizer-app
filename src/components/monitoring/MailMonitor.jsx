@@ -101,7 +101,6 @@ function MailMonitor() {
     <main className="main-content monitoring-view">
       <h2 className="category-title category-mail-monitor">
         메일 모니터링
-        {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
       </h2>
 
       <div className="monitoring-container">
@@ -110,7 +109,6 @@ function MailMonitor() {
           <div className="monitoring-section-header">
             <h3 className="monitoring-section-title">
               메일 목록
-              {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
               <span className={`running-badge ${mailRunning ? 'active' : ''}`}>
                 {mailRunning ? '● 모니터링 중' : '○ 중지'}
               </span>
@@ -145,33 +143,6 @@ function MailMonitor() {
               ))}
             </div>
           )}
-        </div>
-
-        {/* 키워드 필터 */}
-        <div className="monitoring-section">
-          <h3 className="monitoring-section-title">키워드 필터</h3>
-          <form className="keyword-form" onSubmit={handleAddKeyword}>
-            <input
-              type="text"
-              className="keyword-input"
-              value={newKeyword}
-              onChange={(e) => setNewKeyword(e.target.value)}
-              placeholder="키워드 추가 (Enter)"
-            />
-            <button type="submit" className="btn-keyword-add">추가</button>
-          </form>
-          <div className="keyword-list">
-            {mailKeywords.length === 0 ? (
-              <span className="keyword-empty">등록된 키워드 없음</span>
-            ) : (
-              mailKeywords.map((kw) => (
-                <span key={kw} className="keyword-tag">
-                  {kw}
-                  <button className="keyword-remove" onClick={() => removeMailKeyword(kw)}>✕</button>
-                </span>
-              ))
-            )}
-          </div>
         </div>
 
         {/* 실행 로그 */}

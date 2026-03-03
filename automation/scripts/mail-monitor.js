@@ -120,7 +120,7 @@ async function main() {
     emit('log', '메일 확인 중')
     try {
       const { items, unread } = await fetchMailList(page, mailConfig, keywords)
-      emit('log', `총 ${items.length}건, 미읽음 ${unread}건`)
+      emit('log', `미읽음 ${unread}건`)
       emit('mail_count', { unread })
 
       for (const item of items) {
