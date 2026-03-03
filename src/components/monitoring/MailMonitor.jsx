@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
@@ -39,7 +40,10 @@ function MailMonitor() {
           const ev = JSON.parse(line)
           switch (ev.type) {
             case 'log':        addMailLog(ev.message); break
-            case 'mail_new':   upsertMailItem(ev.data); break
+            case 'mail_new':
+              upsertMailItem(ev.data)
+              sendNotification({ title: '새 메일', body: ev.data.subject || ev.data.from }).catch(() => {})
+              break
             case 'mail_count': setUnreadCount(ev.data.unread); break
           }
         } catch {

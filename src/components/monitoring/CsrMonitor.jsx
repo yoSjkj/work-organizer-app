@@ -1,3 +1,4 @@
+import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
@@ -32,7 +33,11 @@ function CsrMonitor() {
           const ev = JSON.parse(line)
           switch (ev.type) {
             case 'log':        addCsrLog(ev.message); break
-            case 'csr_new':    upsertCsrItem(ev.data); addCsrLog(`신규 CSR: ${ev.data.ritm}`); break
+            case 'csr_new':
+              upsertCsrItem(ev.data)
+              addCsrLog(`신규 CSR: ${ev.data.ritm}`)
+              sendNotification({ title: 'CSR 신규 접수', body: ev.data.title || ev.data.ritm }).catch(() => {})
+              break
             case 'csr_update': upsertCsrItem(ev.data); break
           }
         } catch {
