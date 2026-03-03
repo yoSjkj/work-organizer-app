@@ -95,6 +95,8 @@ export const useMonitoringStore = create((set, get) => ({
       mailLogs: [...state.mailLogs.slice(-199), { message, ts: Date.now() }],
     })),
 
+  clearMail: () => set({ mailItems: [], mailLogs: [], unreadCount: 0 }),
+
   addMailKeyword: (keyword) =>
     set((state) => {
       const next = [...new Set([...state.mailKeywords, keyword.trim()])].filter(Boolean)

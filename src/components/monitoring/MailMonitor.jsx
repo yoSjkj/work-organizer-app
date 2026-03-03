@@ -16,6 +16,7 @@ function MailMonitor() {
   const syncMailItems     = useMonitoringStore((s) => s.syncMailItems)
   const setUnreadCount    = useMonitoringStore((s) => s.setUnreadCount)
   const addMailLog        = useMonitoringStore((s) => s.addMailLog)
+  const clearMail         = useMonitoringStore((s) => s.clearMail)
   const addMailKeyword    = useMonitoringStore((s) => s.addMailKeyword)
   const removeMailKeyword = useMonitoringStore((s) => s.removeMailKeyword)
   const registerProcess   = useMonitoringStore((s) => s.registerProcess)
@@ -119,7 +120,7 @@ function MailMonitor() {
                 ? <button className="btn-monitor-start" onClick={handleStart}>▶ 시작</button>
                 : <button className="btn-monitor-stop" onClick={handleStop}>■ 중지</button>
               }
-
+              <button className="btn-clear" onClick={clearMail} disabled={mailRunning}>초기화</button>
             </div>
           </div>
 
