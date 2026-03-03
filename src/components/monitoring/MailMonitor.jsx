@@ -43,21 +43,21 @@ function MailMonitor() {
 
       const automationDir = await invoke('get_automation_dir_path')
       const cmd = Command.create('node', [MAIL_SCRIPT], { cwd: automationDir })
-      cmd.stdout.on('data', (line) => {
-        if (!line.trim()) return
-        try {
-          const ev = JSON.parse(line)
-          switch (ev.type) {
-            case 'log':        addMailLog(ev.message); break
-            case 'mail_new':
-              upsertMailItem(ev.data)
-              sendNotification({ title: '새 메일', body: ev.data.subject || ev.data.from }).catch(() => {})
-              break
-            case 'mail_count': setUnreadCount(ev.data.unread); break
-          }
-        } catch {
-          addMailLog(line.trim())
-        }
+      cmd.stdout.on('data', (chunk) => {
+        chunk.split('\n').forEach((line) => {
+          if (!line.trim()) return
+          try {
+            const ev = JSON.parse(line)
+            switch (ev.type) {
+              case 'log':        addMailLog(ev.message); break
+              case 'mail_new':
+                upsertMailItem(ev.data)
+                sendNotification({ title: '새 메일', body: ev.data.subject || ev.data.from }).catch(() => {})
+                break
+              case 'mail_count': setUnreadCount(ev.data.unread); break
+            }
+          } catch { /* JSON 파싱 실패 무시 */ }
+        })
       })
       cmd.stderr.on('data', (line) => {
         if (line.trim()) addMailLog(`[오류] ${line.trim()}`)
@@ -72,23 +72,6 @@ function MailMonitor() {
       registerProcess('mail', child)
     } catch (err) {
       setMailRunning(false)
-      addMailLog(`실행 오류: ${err.message}`)
-    }
-  }
-
-  const handleDebug = async () => {
-    if (!isTauri()) return
-    try {
-      const { Command } = await import('@tauri-apps/plugin-shell')
-      const { invoke } = await import('@tauri-apps/api/core')
-      addMailLog('DOM 진단 시작...')
-      const automationDir = await invoke('get_automation_dir_path')
-      const cmd = Command.create('node', ['scripts/debug-mail.js'], { cwd: automationDir })
-      cmd.stdout.on('data', (line) => { if (line.trim()) addMailLog(line.trim()) })
-      cmd.stderr.on('data', (line) => { if (line.trim()) addMailLog(`[오류] ${line.trim()}`) })
-      cmd.on('close', ({ code }) => addMailLog(code === 0 ? '✅ 진단 완료' : `❌ 종료 (코드 ${code})`))
-      await cmd.spawn()
-    } catch (err) {
       addMailLog(`실행 오류: ${err.message}`)
     }
   }
@@ -133,7 +116,7 @@ function MailMonitor() {
                 ? <button className="btn-monitor-start" onClick={handleStart}>▶ 시작</button>
                 : <button className="btn-monitor-stop" onClick={handleStop}>■ 중지</button>
               }
-              <button className="btn-monitor-debug" onClick={handleDebug} disabled={mailRunning}>🔍 DOM 진단</button>
+
             </div>
           </div>
 
