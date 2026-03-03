@@ -43,24 +43,21 @@ async function fetchCsrList(page) {
 
   await page.goto(csrConfig.listUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
-  // ServiceNow는 컨텐츠가 iframe 안에 있음
-  const iframe = page.frameLocator('iframe[name="gsft_main"]')
-  await iframe.locator('table.list_table, tr.list_row').first().waitFor({ timeout: 15000 }).catch(() => {})
+  // ServiceNow 클래식 UI: iframe 없이 메인 페이지에 직접 렌더링
+  await page.locator('tr.list_row').first().waitFor({ timeout: 15000 }).catch(() => {})
 
-  const sel = csrConfig.selectors || {}
-  const rowSelector = sel.row || 'tr.list_row'
-
-  const rows = await iframe.locator(rowSelector).all()
+  const rows = await page.locator('tr.list_row').all()
   const items = []
 
   for (const row of rows) {
     try {
-      const ritm = (await row.locator('td[field="number"] a').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
+      const sysId = await row.getAttribute('sys_id') || ''
+      const ritm  = (await row.locator('a[href*="sc_req_item.do"]').first().textContent({ timeout: 1000 }).catch(() => ''))?.trim()
       const title = (await row.locator('td[field="short_description"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
       const status = (await row.locator('td[field="state"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
       const assignee = (await row.locator('td[field="assigned_to"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
 
-      if (ritm) {
+      if (sysId && ritm) {
         items.push({ ritm, title: title || '', status: status || '', assignee: assignee || '' })
       }
     } catch { /* 행 파싱 오류 무시 */ }
