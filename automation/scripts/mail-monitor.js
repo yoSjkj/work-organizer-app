@@ -40,9 +40,13 @@ function matchKeyword(text, keywords) {
   return keywords.find((kw) => lower.includes(kw.toLowerCase())) || null
 }
 
-/** 메일 목록 파싱 */
+/** 메일 목록 파싱
+ *
+ * tmail.lxhausys.com 구조:
+ *   tr[name="trMailItem"] 행마다 input.input_check에 모든 정보가 속성값으로 저장됨
+ *   mid, subject, sender, senderemail, receivedate, isread 속성 사용
+ */
 async function fetchMailList(page, mailConfig, keywords) {
-  const sel = mailConfig.selectors || {}
   const mailUrl = mailConfig.url
   if (!mailUrl) {
     emit('log', 'config.mail.url이 설정되지 않았습니다')
@@ -51,39 +55,37 @@ async function fetchMailList(page, mailConfig, keywords) {
 
   await page.goto(mailUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
-  const rowSelector = sel.row || 'tr.mail-row, li.mail-item'
-  const fromSelector = sel.from || '.mail-from, .sender'
-  const subjectSelector = sel.subject || '.mail-subject, .subject'
-  const timeSelector = sel.time || '.mail-time, .date'
-  const unreadSelector = sel.unread || '.unread-count'
+  // 메일 행 렌더링 대기
+  await page.locator('tr[name="trMailItem"]').first().waitFor({ timeout: 20000 }).catch(() => {})
 
-  // 미읽음 카운트
-  let unread = 0
-  try {
-    const unreadEl = page.locator(unreadSelector).first()
-    const text = await unreadEl.textContent({ timeout: 3000 }).catch(() => '0')
-    unread = parseInt(text.replace(/\D/g, '') || '0', 10)
-  } catch { /* ignore */ }
-
-  const rows = await page.locator(rowSelector).all()
+  const rows = await page.locator('tr[name="trMailItem"]').all()
   const items = []
+  let unread = 0
 
-  for (let i = 0; i < Math.min(rows.length, 50); i++) {
-    const row = rows[i]
+  for (const row of rows.slice(0, 50)) {
     try {
-      const from    = await row.locator(fromSelector).textContent({ timeout: 1000 }).catch(() => '')
-      const subject = await row.locator(subjectSelector).textContent({ timeout: 1000 }).catch(() => '')
-      const time    = await row.locator(timeSelector).textContent({ timeout: 1000 }).catch(() => '')
-      const isRead  = await row.getAttribute('data-read').catch(() => null)
+      // input.input_check 속성에 모든 메타데이터 포함
+      const input = row.locator('input.input_check').first()
+      const mid         = await input.getAttribute('mid').catch(() => '')
+      if (!mid) continue
 
-      const matchedKeyword = matchKeyword(from + ' ' + subject, keywords)
+      const subject     = await input.getAttribute('subject')     || ''
+      const sender      = await input.getAttribute('sender')      || ''
+      const senderEmail = await input.getAttribute('senderemail') || ''
+      const receivedate = await input.getAttribute('receivedate') || ''
+      const isRead      = (await input.getAttribute('isread').catch(() => '1')) === '1'
+
+      if (!isRead) unread++
+
+      const matchedKeyword = matchKeyword(sender + ' ' + subject, keywords)
 
       items.push({
-        id: `mail-${Date.now()}-${i}`,
-        from: from.trim(),
-        subject: subject.trim(),
-        time: time.trim(),
-        isRead: isRead === 'true',
+        id: mid,
+        from: sender,
+        fromEmail: senderEmail,
+        subject,
+        time: receivedate,
+        isRead,
         matchedKeyword,
       })
     } catch { /* 행 파싱 오류 무시 */ }
@@ -118,12 +120,14 @@ async function main() {
     emit('log', '메일 확인 중')
     try {
       const { items, unread } = await fetchMailList(page, mailConfig, keywords)
+      emit('log', `총 ${items.length}건, 미읽음 ${unread}건`)
       emit('mail_count', { unread })
 
       for (const item of items) {
         if (!seenIds.has(item.id)) {
           seenIds.add(item.id)
-          emit('mail_new', item)
+          // 미읽은 메일만 알림
+          if (!item.isRead) emit('mail_new', item)
         }
       }
     } catch (err) {

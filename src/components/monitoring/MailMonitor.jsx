@@ -69,6 +69,23 @@ function MailMonitor() {
     }
   }
 
+  const handleDebug = async () => {
+    if (!isTauri()) return
+    try {
+      const { Command } = await import('@tauri-apps/plugin-shell')
+      const { invoke } = await import('@tauri-apps/api/core')
+      addMailLog('DOM 진단 시작...')
+      const automationDir = await invoke('get_automation_dir_path')
+      const cmd = Command.create('node', ['scripts/debug-mail.js'], { cwd: automationDir })
+      cmd.stdout.on('data', (line) => { if (line.trim()) addMailLog(line.trim()) })
+      cmd.stderr.on('data', (line) => { if (line.trim()) addMailLog(`[오류] ${line.trim()}`) })
+      cmd.on('close', ({ code }) => addMailLog(code === 0 ? '✅ 진단 완료' : `❌ 종료 (코드 ${code})`))
+      await cmd.spawn()
+    } catch (err) {
+      addMailLog(`실행 오류: ${err.message}`)
+    }
+  }
+
   const handleStop = async () => {
     const child = getProcess('mail')
     if (child) {
@@ -109,6 +126,7 @@ function MailMonitor() {
                 ? <button className="btn-monitor-start" onClick={handleStart}>▶ 시작</button>
                 : <button className="btn-monitor-stop" onClick={handleStop}>■ 중지</button>
               }
+              <button className="btn-monitor-debug" onClick={handleDebug} disabled={mailRunning}>🔍 DOM 진단</button>
             </div>
           </div>
 
