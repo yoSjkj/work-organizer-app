@@ -13,6 +13,7 @@ function MailMonitor() {
   const mailKeywords      = useMonitoringStore((s) => s.mailKeywords)
   const setMailRunning    = useMonitoringStore((s) => s.setMailRunning)
   const upsertMailItem    = useMonitoringStore((s) => s.upsertMailItem)
+  const syncMailItems     = useMonitoringStore((s) => s.syncMailItems)
   const setUnreadCount    = useMonitoringStore((s) => s.setUnreadCount)
   const addMailLog        = useMonitoringStore((s) => s.addMailLog)
   const addMailKeyword    = useMonitoringStore((s) => s.addMailKeyword)
@@ -55,6 +56,7 @@ function MailMonitor() {
                 sendNotification({ title: '새 메일', body: ev.data.subject || ev.data.from }).catch(() => {})
                 break
               case 'mail_count': setUnreadCount(ev.data.unread); break
+              case 'mail_sync':  syncMailItems(ev.data.items); break
             }
           } catch { /* JSON 파싱 실패 무시 */ }
         })
@@ -107,6 +109,7 @@ function MailMonitor() {
           <div className="monitoring-section-header">
             <h3 className="monitoring-section-title">
               메일 목록
+              {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
               <span className={`running-badge ${mailRunning ? 'active' : ''}`}>
                 {mailRunning ? '● 모니터링 중' : '○ 중지'}
               </span>

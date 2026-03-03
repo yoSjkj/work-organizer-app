@@ -86,6 +86,8 @@ export const useMonitoringStore = create((set, get) => ({
       mailItems: [item, ...state.mailItems.filter((i) => i.id !== item.id)].slice(0, 200),
     })),
 
+  syncMailItems: (items) => set({ mailItems: items }),
+
   setUnreadCount: (count) => set({ unreadCount: count }),
 
   addMailLog: (message) =>

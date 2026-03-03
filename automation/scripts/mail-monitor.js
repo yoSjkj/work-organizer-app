@@ -126,10 +126,13 @@ async function main() {
       for (const item of items) {
         if (!seenIds.has(item.id)) {
           seenIds.add(item.id)
-          // 미읽은 메일만 알림
           if (!item.isRead) emit('mail_new', item)
         }
       }
+
+      // 현재 미읽음 목록 기준으로 동기화
+      const unreadItems = items.filter((i) => !i.isRead)
+      emit('mail_sync', { items: unreadItems })
     } catch (err) {
       emit('log', `폴링 오류: ${err.message}`)
     }
