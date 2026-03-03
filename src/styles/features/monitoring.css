@@ -40,7 +40,8 @@
   gap: 8px;
 }
 
-.monitoring-section-actions {
+.monitoring-section-actions,
+.monitoring-header-actions {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -55,11 +56,39 @@
   color: var(--text-muted);
 }
 
-.running-badge.active {
-  color: #4ade80;
+:root[data-theme="dark"] .running-badge.active  { color: var(--color-green-300); }
+:root[data-theme="light"] .running-badge.active { color: var(--color-green-600); }
+
+/* --- Session setup (Dashboard) --- */
+.session-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* --- Buttons --- */
+.session-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* --- Debug toggle (AutomationPanel) --- */
+.debug-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ===================================================
+   Buttons — 공통 구조 먼저 정의, 색상만 테마 분기
+   =================================================== */
+
+/* btn-run-all (전체 실행) */
 .btn-run-all {
   padding: 5px 12px;
   background: var(--accent-primary);
@@ -74,32 +103,46 @@
 .btn-run-all:hover    { opacity: 0.85; }
 .btn-run-all:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn-monitor-start {
-  padding: 5px 12px;
-  background: #22c55e;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: opacity 0.1s;
-}
-.btn-monitor-start:hover { opacity: 0.85; }
-
+/* btn-monitor-start / btn-monitor-stop — 공통 구조 */
+.btn-monitor-start,
 .btn-monitor-stop {
   padding: 5px 12px;
-  background: #ef4444;
-  color: white;
-  border: none;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.1s;
+  transition: background 0.1s;
 }
-.btn-monitor-stop:hover { opacity: 0.85; }
 
+:root[data-theme="dark"] .btn-monitor-start {
+  background: var(--color-green-alpha-15);
+  color: var(--color-green-300);
+  border: 1px solid var(--color-green-alpha-30);
+}
+:root[data-theme="dark"] .btn-monitor-start:hover { background: var(--color-green-alpha-25); }
+
+:root[data-theme="light"] .btn-monitor-start {
+  background: var(--color-green-alpha-10);
+  color: var(--color-green-600);
+  border: 1px solid var(--color-green-alpha-30);
+}
+:root[data-theme="light"] .btn-monitor-start:hover { background: var(--color-green-alpha-20); }
+
+:root[data-theme="dark"] .btn-monitor-stop {
+  background: var(--color-red-alpha-15);
+  color: var(--color-red-300);
+  border: 1px solid var(--color-red-alpha-30);
+}
+:root[data-theme="dark"] .btn-monitor-stop:hover { background: var(--color-red-alpha-25); }
+
+:root[data-theme="light"] .btn-monitor-stop {
+  background: var(--color-red-alpha-10);
+  color: var(--color-red-600);
+  border: 1px solid var(--color-red-alpha-30);
+}
+:root[data-theme="light"] .btn-monitor-stop:hover { background: var(--color-red-alpha-20); }
+
+/* btn-clear (초기화) */
 .btn-clear {
   padding: 5px 10px;
   background: transparent;
@@ -113,33 +156,124 @@
 .btn-clear:hover    { color: var(--text-secondary); border-color: var(--border-secondary); }
 .btn-clear:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn-task-run {
+/* btn-task-run / btn-task-stop — 공통 구조 */
+.btn-task-run,
+.btn-task-stop {
   padding: 4px 10px;
-  background: var(--accent-primary);
-  color: white;
-  border: none;
   border-radius: 5px;
   font-size: 12px;
   cursor: pointer;
   white-space: nowrap;
+  transition: background 0.1s;
+}
+
+.btn-task-run {
+  background: var(--accent-primary);
+  color: white;
+  border: none;
   transition: opacity 0.1s;
 }
 .btn-task-run:hover    { opacity: 0.85; }
 .btn-task-run:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn-task-stop {
+:root[data-theme="dark"] .btn-task-stop {
+  background: var(--color-red-alpha-15);
+  color: var(--color-red-300);
+  border: 1px solid var(--color-red-alpha-30);
+}
+:root[data-theme="dark"] .btn-task-stop:hover { background: var(--color-red-alpha-25); }
+
+:root[data-theme="light"] .btn-task-stop {
+  background: var(--color-red-alpha-10);
+  color: var(--color-red-600);
+  border: 1px solid var(--color-red-alpha-30);
+}
+:root[data-theme="light"] .btn-task-stop:hover { background: var(--color-red-alpha-20); }
+
+/* btn-session-extract (세션 갱신) */
+.btn-session-extract {
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.btn-session-extract:disabled { opacity: 0.5; cursor: not-allowed; }
+
+:root[data-theme="dark"] .btn-session-extract {
+  background: var(--color-green-alpha-15);
+  color: var(--color-green-300);
+  border: 1px solid var(--color-green-alpha-30);
+}
+:root[data-theme="dark"] .btn-session-extract:hover:not(:disabled) { background: var(--color-green-alpha-25); }
+
+:root[data-theme="light"] .btn-session-extract {
+  background: var(--color-green-alpha-10);
+  color: var(--color-green-600);
+  border: 1px solid var(--color-green-alpha-30);
+}
+:root[data-theme="light"] .btn-session-extract:hover:not(:disabled) { background: var(--color-green-alpha-20); }
+
+/* btn-open-config (설정 파일) */
+.btn-open-config {
+  padding: 5px 10px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.btn-open-config:hover { color: var(--text-secondary); border-color: var(--border-secondary); }
+
+/* btn-task-debug (디버그 실행) */
+.btn-task-debug {
   padding: 4px 10px;
-  background: #ef4444;
-  color: white;
-  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-primary);
   border-radius: 5px;
   font-size: 12px;
   cursor: pointer;
+  transition: all 0.1s;
+}
+.btn-task-debug:hover { color: var(--text-secondary); border-color: var(--border-secondary); }
+
+/* btn-keyword-add */
+.btn-keyword-add {
+  padding: 6px 12px;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
   transition: opacity 0.1s;
 }
-.btn-task-stop:hover { opacity: 0.85; }
+.btn-keyword-add:hover { opacity: 0.85; }
 
-/* --- Task list (Dashboard) --- */
+/* btn-clear-log */
+.btn-clear-log {
+  display: block;
+  width: 100%;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--border-primary);
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.1s;
+}
+.btn-clear-log:hover { background: var(--bg-hover); }
+
+/* ===================================================
+   Task list (Dashboard)
+   =================================================== */
 .task-list {
   display: flex;
   flex-direction: column;
@@ -157,8 +291,8 @@
   transition: border-color 0.15s;
 }
 .automation-task-card.status-running { border-color: var(--accent-primary); }
-.automation-task-card.status-done    { border-color: rgba(34, 197, 94, 0.3); }
-.automation-task-card.status-error   { border-color: rgba(239, 68, 68, 0.3); }
+.automation-task-card.status-done    { border-color: var(--color-green-alpha-30); }
+.automation-task-card.status-error   { border-color: var(--color-red-alpha-30); }
 
 .task-status-icon {
   width: 18px;
@@ -168,8 +302,11 @@
 }
 .task-status-icon.status-idle    { color: var(--text-muted); }
 .task-status-icon.status-running { color: var(--accent-primary); display: inline-block; animation: spin 1.2s linear infinite; }
-.task-status-icon.status-done    { color: #22c55e; }
-.task-status-icon.status-error   { color: #ef4444; }
+
+:root[data-theme="dark"] .task-status-icon.status-done   { color: var(--color-green-300); }
+:root[data-theme="light"] .task-status-icon.status-done  { color: var(--color-green-600); }
+:root[data-theme="dark"] .task-status-icon.status-error  { color: var(--color-red-300); }
+:root[data-theme="light"] .task-status-icon.status-error { color: var(--color-red-600); }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -188,7 +325,9 @@
   color: var(--text-muted);
 }
 
-/* --- Summary list (Dashboard) --- */
+/* ===================================================
+   Summary list (Dashboard)
+   =================================================== */
 .summary-list {
   display: flex;
   flex-direction: column;
@@ -213,40 +352,32 @@
   border-color: var(--border-hover);
 }
 
-.summary-icon { font-size: 15px; flex-shrink: 0; }
-.summary-label {
-  flex: 1;
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
+.summary-icon  { font-size: 15px; flex-shrink: 0; }
+.summary-label { flex: 1; font-size: 13.5px; font-weight: 500; color: var(--text-primary); }
 .summary-values { display: flex; align-items: center; gap: 6px; }
-.summary-total { font-size: 12px; color: var(--text-muted); }
-.summary-arrow { font-size: 12px; color: var(--text-muted); }
+.summary-total  { font-size: 12px; color: var(--text-muted); }
+.summary-arrow  { font-size: 12px; color: var(--text-muted); }
 
-/* --- Badges --- */
-.badge-new {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 7px;
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
-}
-
+/* ===================================================
+   Badges
+   =================================================== */
+.badge-new,
 .badge-unread {
   display: inline-flex;
   align-items: center;
   padding: 2px 7px;
-  background: rgba(96, 165, 250, 0.15);
-  color: var(--accent-primary);
   border-radius: 10px;
   font-size: 11px;
   font-weight: 600;
 }
 
+:root[data-theme="dark"] .badge-new  { background: var(--color-red-alpha-15);  color: var(--color-red-300); }
+:root[data-theme="light"] .badge-new { background: var(--color-red-alpha-10);  color: var(--color-red-600); }
+
+:root[data-theme="dark"] .badge-unread  { background: var(--color-blue-alpha-15); color: var(--accent-primary); }
+:root[data-theme="light"] .badge-unread { background: var(--color-blue-alpha-10); color: var(--accent-primary); }
+
+/* unread-badge: h2 옆 숫자 알림 배지 */
 .unread-badge {
   display: inline-flex;
   align-items: center;
@@ -255,7 +386,7 @@
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  background: #ef4444;
+  background: var(--color-red-500);
   color: white;
   border-radius: 10px;
   font-size: 11px;
@@ -268,7 +399,9 @@
   color: var(--text-muted);
 }
 
-/* --- Log area --- */
+/* ===================================================
+   Log area
+   =================================================== */
 .log-area {
   background: var(--bg-primary);
   border: 1px solid var(--border-primary);
@@ -283,9 +416,7 @@
   gap: 1px;
 }
 
-.log-area.compact {
-  max-height: 130px;
-}
+.log-area.compact { max-height: 130px; }
 
 .log-line {
   display: flex;
@@ -294,18 +425,8 @@
   color: var(--text-secondary);
 }
 
-.log-time {
-  color: var(--text-muted);
-  flex-shrink: 0;
-  font-size: 11px;
-}
-
-.log-label {
-  color: var(--accent-primary);
-  flex-shrink: 0;
-  font-size: 11px;
-}
-
+.log-time    { color: var(--text-muted); flex-shrink: 0; font-size: 11px; }
+.log-label   { color: var(--accent-primary); flex-shrink: 0; font-size: 11px; }
 .log-message { word-break: break-all; }
 
 .log-empty {
@@ -314,7 +435,9 @@
   font-style: italic;
 }
 
-/* --- Empty state --- */
+/* ===================================================
+   Empty state
+   =================================================== */
 .empty-state {
   padding: 28px;
   text-align: center;
@@ -324,7 +447,9 @@
   border-radius: 8px;
 }
 
-/* --- CSR list --- */
+/* ===================================================
+   CSR list
+   =================================================== */
 .csr-list {
   display: flex;
   flex-direction: column;
@@ -341,7 +466,7 @@
   border-radius: 8px;
   transition: border-left-color 0.1s;
 }
-.csr-item.is-new { border-left-color: #ef4444; }
+.csr-item.is-new { border-left-color: var(--color-red-500); }
 
 .csr-item-header {
   display: flex;
@@ -365,19 +490,12 @@
   color: var(--text-muted);
 }
 
-.csr-item-title {
-  font-size: 13px;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
+.csr-item-title { font-size: 13px; color: var(--text-primary); line-height: 1.4; }
+.csr-item-meta  { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
-.csr-item-meta {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-/* --- Mail list --- */
+/* ===================================================
+   Mail list
+   =================================================== */
 .mail-list {
   display: flex;
   flex-direction: column;
@@ -393,8 +511,8 @@
   border-left: 3px solid transparent;
   border-radius: 8px;
 }
-.mail-item.unread { border-left-color: var(--accent-primary); }
-.mail-item.matched { background: rgba(96, 165, 250, 0.04); }
+.mail-item.unread  { border-left-color: var(--accent-primary); }
+.mail-item.matched { background: var(--color-blue-alpha-5); }
 
 .mail-item-header {
   display: flex;
@@ -403,34 +521,24 @@
   margin-bottom: 4px;
 }
 
-.mail-from {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.mail-time {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.mail-subject {
-  font-size: 13px;
-  color: var(--text-primary);
-}
+.mail-from    { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.mail-time    { font-size: 11px; color: var(--text-muted); }
+.mail-subject { font-size: 13px; color: var(--text-primary); }
 
 .mail-keyword-badge {
   display: inline-flex;
   margin-top: 4px;
   padding: 2px 7px;
-  background: rgba(96, 165, 250, 0.15);
+  background: var(--color-blue-alpha-15);
   color: var(--accent-primary);
   border-radius: 4px;
   font-size: 11px;
   font-weight: 500;
 }
 
-/* --- Keyword filter --- */
+/* ===================================================
+   Keyword filter
+   =================================================== */
 .keyword-form {
   display: flex;
   gap: 6px;
@@ -449,18 +557,6 @@
   transition: border-color 0.1s;
 }
 .keyword-input:focus { border-color: var(--accent-primary); }
-
-.btn-keyword-add {
-  padding: 6px 12px;
-  background: var(--accent-primary);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: opacity 0.1s;
-}
-.btn-keyword-add:hover { opacity: 0.85; }
 
 .keyword-list {
   display: flex;
@@ -491,7 +587,7 @@
   line-height: 1;
   transition: color 0.1s;
 }
-.keyword-remove:hover { color: #ef4444; }
+.keyword-remove:hover { color: var(--color-red-500); }
 
 .keyword-empty {
   font-size: 12px;
@@ -499,7 +595,9 @@
   font-style: italic;
 }
 
-/* --- Automation panel cards --- */
+/* ===================================================
+   Automation panel cards
+   =================================================== */
 .automation-panel-list {
   display: flex;
   flex-direction: column;
@@ -513,8 +611,8 @@
   transition: border-color 0.15s;
 }
 .automation-panel-card.status-running { border-color: var(--accent-primary); }
-.automation-panel-card.status-done    { border-color: rgba(34, 197, 94, 0.3); }
-.automation-panel-card.status-error   { border-color: rgba(239, 68, 68, 0.3); }
+.automation-panel-card.status-done    { border-color: var(--color-green-alpha-30); }
+.automation-panel-card.status-error   { border-color: var(--color-red-alpha-30); }
 
 .panel-card-header {
   display: flex;
@@ -524,73 +622,42 @@
   background: var(--bg-primary);
 }
 
-.panel-card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+.panel-card-info    { display: flex; flex-direction: column; gap: 2px; }
+.panel-card-title   { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+.panel-card-desc    { font-size: 12px; color: var(--text-muted); }
+.panel-card-actions { display: flex; align-items: center; gap: 8px; }
 
-.panel-card-title {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.panel-card-desc {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.panel-card-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.task-status-label {
-  font-size: 12px;
-  font-weight: 500;
-}
+.task-status-label { font-size: 12px; font-weight: 500; }
 .task-status-label.status-idle    { color: var(--text-muted); }
 .task-status-label.status-running { color: var(--accent-primary); }
-.task-status-label.status-done    { color: #22c55e; }
-.task-status-label.status-error   { color: #ef4444; }
+
+:root[data-theme="dark"] .task-status-label.status-done   { color: var(--color-green-300); }
+:root[data-theme="light"] .task-status-label.status-done  { color: var(--color-green-600); }
+:root[data-theme="dark"] .task-status-label.status-error  { color: var(--color-red-300); }
+:root[data-theme="light"] .task-status-label.status-error { color: var(--color-red-600); }
 
 .panel-card-log {
   border-top: 1px solid var(--border-primary);
   background: var(--bg-secondary);
 }
 
-.btn-clear-log {
-  display: block;
-  width: 100%;
-  padding: 6px;
-  background: transparent;
-  border: none;
-  border-top: 1px solid var(--border-primary);
-  color: var(--text-muted);
-  font-size: 11px;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.1s;
-}
-.btn-clear-log:hover { background: var(--bg-hover); }
-
-/* --- Sidebar teal color (monitoring categories) --- */
+/* ===================================================
+   Sidebar — teal accent (모니터링 카테고리)
+   =================================================== */
 .category-btn.active.color-teal {
-  background-color: rgba(45, 212, 191, 0.12);
+  background-color: var(--color-teal-alpha-12);
 }
 .category-btn.color-teal:hover {
-  background-color: rgba(45, 212, 191, 0.07);
+  background-color: var(--color-teal-alpha-07);
 }
 .category-btn.active.color-teal .category-icon {
-  color: #2dd4bf;
+  color: var(--color-teal-400);
 }
 
-/* --- Category title colors --- */
+/* Category title colors */
 .category-dashboard,
 .category-csr-monitor,
 .category-mail-monitor,
 .category-automation {
-  color: #2dd4bf;
+  color: var(--color-teal-400);
 }

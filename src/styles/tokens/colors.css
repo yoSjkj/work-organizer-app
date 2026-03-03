@@ -112,6 +112,20 @@
   --color-gray-alpha-30: rgba(107, 114, 128, 0.3);
 
   /* ============================================
+     Teal Colors (모니터링 액센트)
+     ============================================ */
+  --color-teal-300: #5eead4;
+  --color-teal-400: #2dd4bf;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+
+  /* Teal Alpha Variants */
+  --color-teal-alpha-07: rgba(45, 212, 191, 0.07);
+  --color-teal-alpha-12: rgba(45, 212, 191, 0.12);
+  --color-teal-alpha-15: rgba(45, 212, 191, 0.15);
+  --color-teal-alpha-20: rgba(45, 212, 191, 0.2);
+
+  /* ============================================
      White/Black Alpha (투명도)
      ============================================ */
   --color-white-alpha-3: rgba(255, 255, 255, 0.03);
