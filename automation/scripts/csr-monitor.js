@@ -38,7 +38,7 @@ async function fetchCsrList(page) {
     return []
   }
 
-  await page.goto(csrConfig.listUrl, { waitUntil: 'networkidle', timeout: 30000 })
+  await page.goto(csrConfig.listUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
   const sel = csrConfig.selectors || {}
   const rowSelector = sel.row || 'tr[data-record]'

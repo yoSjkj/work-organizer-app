@@ -46,7 +46,7 @@ async function fetchMailList(page, mailConfig, keywords) {
     return { items: [], unread: 0 }
   }
 
-  await page.goto(mailUrl, { waitUntil: 'networkidle', timeout: 30000 })
+  await page.goto(mailUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
   const rowSelector = sel.row || 'tr.mail-row, li.mail-item'
   const fromSelector = sel.from || '.mail-from, .sender'
