@@ -43,29 +43,25 @@ async function fetchCsrList(page) {
 
   await page.goto(csrConfig.listUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
-  const sel = csrConfig.selectors || {}
-  const rowSelector = sel.row || 'tr[data-record]'
-  const titleSelector = sel.title || 'td.col-short_description'
-  const statusSelector = sel.status || 'td.col-state'
-  const assigneeSelector = sel.assignee || 'td.col-assigned_to'
+  // ServiceNow는 컨텐츠가 iframe 안에 있음
+  const iframe = page.frameLocator('iframe[name="gsft_main"]')
+  await iframe.locator('table.list_table, tr.list_row').first().waitFor({ timeout: 15000 }).catch(() => {})
 
-  const rows = await page.locator(rowSelector).all()
+  const sel = csrConfig.selectors || {}
+  const rowSelector = sel.row || 'tr.list_row'
+
+  const rows = await iframe.locator(rowSelector).all()
   const items = []
 
   for (const row of rows) {
     try {
-      const ritm = await row.getAttribute('data-record') || await row.getAttribute('sys_id') || ''
-      const title = await row.locator(titleSelector).textContent().catch(() => '')
-      const status = await row.locator(statusSelector).textContent().catch(() => '')
-      const assignee = await row.locator(assigneeSelector).textContent().catch(() => '')
+      const ritm = (await row.locator('td[field="number"] a').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
+      const title = (await row.locator('td[field="short_description"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
+      const status = (await row.locator('td[field="state"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
+      const assignee = (await row.locator('td[field="assigned_to"]').textContent({ timeout: 1000 }).catch(() => ''))?.trim()
 
       if (ritm) {
-        items.push({
-          ritm: ritm.trim(),
-          title: title.trim(),
-          status: status.trim(),
-          assignee: assignee.trim(),
-        })
+        items.push({ ritm, title: title || '', status: status || '', assignee: assignee || '' })
       }
     } catch { /* 행 파싱 오류 무시 */ }
   }
