@@ -63,6 +63,23 @@ function CsrMonitor() {
     }
   }
 
+  const handleDebug = async () => {
+    if (!isTauri()) return
+    try {
+      const { Command } = await import('@tauri-apps/plugin-shell')
+      const { invoke } = await import('@tauri-apps/api/core')
+      addCsrLog('DOM 진단 시작...')
+      const automationDir = await invoke('get_automation_dir_path')
+      const cmd = Command.create('node', ['scripts/debug-csr.js'], { cwd: automationDir })
+      cmd.stdout.on('data', (line) => { if (line.trim()) addCsrLog(line.trim()) })
+      cmd.stderr.on('data', (line) => { if (line.trim()) addCsrLog(`[오류] ${line.trim()}`) })
+      cmd.on('close', ({ code }) => addCsrLog(code === 0 ? '✅ 진단 완료' : `❌ 종료 (코드 ${code})`))
+      await cmd.spawn()
+    } catch (err) {
+      addCsrLog(`실행 오류: ${err.message}`)
+    }
+  }
+
   const handleStop = async () => {
     const child = getProcess('csr')
     if (child) {
@@ -97,6 +114,7 @@ function CsrMonitor() {
                 ? <button className="btn-monitor-start" onClick={handleStart}>▶ 시작</button>
                 : <button className="btn-monitor-stop" onClick={handleStop}>■ 중지</button>
               }
+              <button className="btn-monitor-debug" onClick={handleDebug} disabled={csrRunning}>🔍 DOM 진단</button>
               <button className="btn-clear" onClick={clearCsr} disabled={csrRunning}>초기화</button>
             </div>
           </div>
