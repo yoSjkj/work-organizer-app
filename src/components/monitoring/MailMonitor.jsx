@@ -3,7 +3,7 @@ import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
-const MAIL_SCRIPT = 'automation/scripts/mail-monitor.js'
+const MAIL_SCRIPT = 'scripts/mail-monitor.js'
 
 function MailMonitor() {
   const mailRunning       = useMonitoringStore((s) => s.mailRunning)
@@ -30,10 +30,12 @@ function MailMonitor() {
     }
     try {
       const { Command } = await import('@tauri-apps/plugin-shell')
+      const { invoke } = await import('@tauri-apps/api/core')
       setMailRunning(true)
       addMailLog('메일 모니터링 시작')
 
-      const cmd = Command.create('node', [MAIL_SCRIPT])
+      const automationDir = await invoke('get_automation_dir_path')
+      const cmd = Command.create('node', [MAIL_SCRIPT], { cwd: automationDir })
       cmd.stdout.on('data', (line) => {
         if (!line.trim()) return
         try {

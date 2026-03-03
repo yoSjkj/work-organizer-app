@@ -417,6 +417,13 @@ pub async fn stop_automation(app: AppHandle, task: String) -> Result<(), String>
     Ok(())
 }
 
+/// automation 폴더 절대경로 반환 (JS에서 Command cwd로 사용)
+#[tauri::command]
+pub fn get_automation_dir_path(app: AppHandle) -> Result<String, String> {
+    let dir = get_automation_dir(&app)?;
+    Ok(dir.to_string_lossy().to_string())
+}
+
 /// 현재 실행 중인 task 목록 반환
 #[tauri::command]
 pub fn get_open_tasks(app: AppHandle) -> Vec<String> {

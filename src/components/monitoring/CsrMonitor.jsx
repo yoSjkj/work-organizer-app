@@ -2,7 +2,7 @@ import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
-const CSR_SCRIPT = 'automation/scripts/csr-monitor.js'
+const CSR_SCRIPT = 'scripts/csr-monitor.js'
 
 function CsrMonitor() {
   const csrRunning        = useMonitoringStore((s) => s.csrRunning)
@@ -23,10 +23,12 @@ function CsrMonitor() {
     }
     try {
       const { Command } = await import('@tauri-apps/plugin-shell')
+      const { invoke } = await import('@tauri-apps/api/core')
       setCsrRunning(true)
       addCsrLog('CSR 모니터링 시작')
 
-      const cmd = Command.create('node', [CSR_SCRIPT])
+      const automationDir = await invoke('get_automation_dir_path')
+      const cmd = Command.create('node', [CSR_SCRIPT], { cwd: automationDir })
       cmd.stdout.on('data', (line) => {
         if (!line.trim()) return
         try {
