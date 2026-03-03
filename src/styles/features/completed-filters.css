@@ -127,14 +127,13 @@
 }
 
 .apply-btn:hover {
-  background-color: var(--accent-primary);
-  color: var(--text-primary);
-  transform: translateY(-1px);
+  background-color: var(--color-blue-alpha-25);
+  border-color: var(--color-blue-alpha-40);
 }
 
 /* 초기화 버튼 */
 .reset-all-btn {
-  height: 30px;
+  height: 32px;
   padding: 0 14px;
   background-color: var(--error-bg);
   color: var(--error-text);
@@ -148,8 +147,7 @@
 }
 
 .reset-all-btn:hover {
-  background-color: var(--error-border);
-  color: var(--text-primary);
+  background-color: var(--color-red-alpha-25);
 }
 
 /* 반응형 */

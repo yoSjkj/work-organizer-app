@@ -379,8 +379,9 @@ select option {
 }
 
 .btn-copy-path:hover {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
+  background: var(--bg-active);
+  border-color: var(--border-focus);
+  color: var(--accent-light);
   transform: translateY(-1px);
 }
 

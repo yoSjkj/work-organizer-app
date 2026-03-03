@@ -26,11 +26,11 @@
 }
 
 .favorite-btn:hover {
-  color: #fcd34d;
+  color: var(--color-orange-300);
 }
 
 .favorite-btn.active {
-  color: #fcd34d;
+  color: var(--color-orange-300);
 }
 
 .favorite-btn:active {
