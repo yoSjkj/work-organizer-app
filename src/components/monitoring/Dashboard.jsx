@@ -1,7 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { useUIStore } from '../../stores/useUIStore'
 import { isTauri } from '../../stores/tauriStorage'
+
+function formatRelativeTime(date) {
+  if (!date) return null
+  const ms = Date.now() - (date instanceof Date ? date.getTime() : Number(date))
+  const min = Math.floor(ms / 60000)
+  const hr  = Math.floor(min / 60)
+  if (hr >= 24) return `${Math.floor(hr / 24)}일 전`
+  if (hr > 0)   return `${hr}시간 전`
+  if (min > 0)  return `${min}분 전`
+  return '방금 전'
+}
 
 const TASK_META = {
   sso:      { label: 'SSO 로그인',     script: 'automation/scripts/sso-login.js' },
@@ -101,12 +112,36 @@ function Dashboard() {
   const tasks             = useMonitoringStore((s) => s.tasks)
   const csrItems          = useMonitoringStore((s) => s.csrItems)
   const unreadCount       = useMonitoringStore((s) => s.unreadCount)
+  const csrRunning        = useMonitoringStore((s) => s.csrRunning)
+  const mailRunning       = useMonitoringStore((s) => s.mailRunning)
   const updateTask        = useMonitoringStore((s) => s.updateTask)
   const addTaskLog        = useMonitoringStore((s) => s.addTaskLog)
   const registerProcess   = useMonitoringStore((s) => s.registerProcess)
   const unregisterProcess = useMonitoringStore((s) => s.unregisterProcess)
   const setSelectedCategory = useUIStore((s) => s.setSelectedCategory)
   const [sessionStatus, setSessionStatus] = useState('idle') // idle | running | done | error
+  const [sessionMtime, setSessionMtime]   = useState(null)
+
+  const isMonitoring = csrRunning || mailRunning
+
+  // 세션 파일 마지막 갱신 시간 확인
+  useEffect(() => {
+    if (!isTauri()) return
+    let cancelled = false
+    const check = async () => {
+      try {
+        const { invoke }  = await import('@tauri-apps/api/core')
+        const { stat }    = await import('@tauri-apps/plugin-fs')
+        const automationDir = await invoke('get_automation_dir_path')
+        const info = await stat(`${automationDir}/sessions/browser-session.json`)
+        if (!cancelled) setSessionMtime(info.mtime)
+      } catch {
+        if (!cancelled) setSessionMtime(null)
+      }
+    }
+    check()
+    return () => { cancelled = true }
+  }, [sessionStatus])
 
   const store = { updateTask, addTaskLog, registerProcess, unregisterProcess }
 
@@ -159,13 +194,21 @@ function Dashboard() {
         <div className="monitoring-section">
           <div className="monitoring-section-header">
             <h3 className="monitoring-section-title">모니터링 세션</h3>
+            {sessionMtime && (
+              <span className="session-last-updated">
+                마지막 갱신: {formatRelativeTime(sessionMtime)}
+              </span>
+            )}
           </div>
           <div className="session-setup">
             <p className="session-desc">Chrome이 열려 있는 상태에서 세션을 추출하면, 이후 모니터링이 백그라운드에서 자동 실행됩니다.</p>
+            {isMonitoring && (
+              <p className="session-warning">⚠ 모니터링 실행 중에는 세션을 갱신할 수 없습니다. 먼저 모니터링을 중지하세요.</p>
+            )}
             <button
               className={`btn-session-extract status-${sessionStatus}`}
               onClick={() => extractSessions(setSessionStatus)}
-              disabled={sessionStatus === 'running'}
+              disabled={sessionStatus === 'running' || isMonitoring}
             >
               {sessionStatus === 'running' ? '추출 중...'
                 : sessionStatus === 'done' ? '✓ 세션 갱신 완료'
