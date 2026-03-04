@@ -1,156 +1,28 @@
-const { chromium } = require('playwright')
-const { authenticator } = require('otplib')
-const path = require('path')
-const fs = require('fs')
+/**
+ * ITSM 일일 Task 자동화
+ *
+ * 흐름:
+ *   1. browser-session.json 세션으로 홈 접속
+ *   2. gsft_main iframe에서 TASK 링크 목록 수집
+ *   3. 각 Task: Effort(0h 20m) → 진행결과 "정상" → 작업 완료
+ *
+ * 실행: node automation/scripts/itsm-daily.js
+ * Tauri: FULL_CONFIG 환경변수로 config 전달
+ */
 
-// Tauri에서 실행 시 FULL_CONFIG 환경변수로 설정 전달, 없으면 config.json 사용
+const { chromium } = require('playwright')
+const fs = require('fs')
+const path = require('path')
+
 const config = process.env.FULL_CONFIG
   ? JSON.parse(process.env.FULL_CONFIG)
   : require('../config.json')
 
-const SESSION_PATH = path.join(__dirname, '../sessions/itsm-session.json')
+const SESSION_PATH = path.join(__dirname, '../sessions/browser-session.json')
 
-async function itsmDaily() {
-  console.log('🚀 === ITSM 일일 Task 자동화 시작 ===')
-
-  const browser = await chromium.launch({ headless: false, slowMo: 100 })
-
-  const sessionExists = fs.existsSync(SESSION_PATH)
-  const context = await browser.newContext(
-    sessionExists ? { storageState: SESSION_PATH } : {}
-  )
-  const page = await context.newPage()
-
-  try {
-    await page.goto(config.itsm.url, { waitUntil: 'networkidle' })
-
-    if (await isLoginRequired(page)) {
-      await login(page)
-    } else {
-      console.log('✅ 기존 세션으로 자동 로그인됨')
-    }
-
-    await processTasks(page)
-
-    await context.storageState({ path: SESSION_PATH })
-    console.log('💾 세션 저장 완료')
-
-  } catch (error) {
-    console.error('❌ 오류 발생:', error.message)
-    await page.screenshot({ path: 'sessions/error-screenshot.png' }).catch(() => {})
-  } finally {
-    await browser.close()
-  }
-}
-
-async function isLoginRequired(page) {
-  const sel = config.itsm.selectors
-  return await page.locator(sel.username).isVisible().catch(() => false)
-}
-
-async function login(page) {
-  console.log('🔐 로그인 시작...')
-  const sel = config.itsm.selectors
-
-  await page.fill(sel.username, config.itsm.username)
-  await page.fill(sel.password, config.itsm.password)
-  await page.click(sel.loginButton)
-
-  await page.waitForSelector(sel.otpInput, { timeout: 15000 })
-
-  const otp = authenticator.generate(config.itsm.otpSecret)
-  console.log(`🔑 OTP 생성: ${otp}`)
-
-  await page.fill(sel.otpInput, otp)
-  await page.click(sel.otpButton)
-
-  await page.waitForLoadState('networkidle')
-  console.log('✅ 로그인 완료')
-}
-
-async function processTasks(page) {
-  const iframe = page.frameLocator('iframe[name="gsft_main"]')
-  let totalProcessed = 0
-
-  while (true) {
-    console.log('\n🔍 Task 목록 확인 중...')
-    await page.waitForTimeout(2000)
-
-    const taskLinks = iframe.locator('a').filter({ hasText: /^TASK/ })
-    const count = await taskLinks.count()
-    console.log(`📋 ${count}개 Task 발견`)
-
-    if (count === 0) {
-      console.log('🎉 모든 Task 처리 완료!')
-      break
-    }
-
-    const taskText = (await taskLinks.nth(0).textContent())?.trim()
-    console.log(`📌 처리 중: ${taskText}`)
-
-    await taskLinks.nth(0).click()
-    await page.waitForTimeout(4000)
-
-    await processTaskDetail(iframe, page, taskText || '')
-
-    totalProcessed++
-    console.log(`📈 완료 (총 ${totalProcessed}개)`)
-
-    await goHome(page)
-    await page.waitForTimeout(3000)
-  }
-
-  console.log(`\n📊 총 처리: ${totalProcessed}개`)
-}
-
-async function processTaskDetail(iframe, page, taskName) {
-  console.log(`\n⚡ === ${taskName} 상세 처리 ===`)
-
-  try {
-    const effortHour = iframe.locator('input[name="ni.u_daily_operational_task.u_effortdur_hour"]')
-    const effortMin  = iframe.locator('input[name="ni.u_daily_operational_task.u_effortdur_min"]')
-
-    await setServiceNowValue(effortHour, '0')
-    await setServiceNowValue(effortMin, '20')
-    console.log('✅ Effort 입력 완료 (0시간 20분)')
-
-    const resultSelect = iframe.locator('select[name="u_daily_operational_task.u_check_result"]')
-    const normalValue = await resultSelect.evaluate(select => {
-      const opt = Array.from(select.options).find(o => o.text.includes('정상'))
-      return opt?.value ?? null
-    })
-
-    if (normalValue !== null) {
-      await resultSelect.selectOption(normalValue)
-      await resultSelect.evaluate(el => {
-        ;['change', 'blur'].forEach(type =>
-          el.dispatchEvent(new Event(type, { bubbles: true }))
-        )
-        const win = el.ownerDocument.defaultView
-        if (win?.angular) win.angular.element(el).scope()?.$apply()
-      })
-      console.log('✅ 진행결과 "정상" 선택 완료')
-    } else {
-      console.warn('⚠️ "정상" 옵션 못 찾음')
-    }
-
-    await page.waitForTimeout(1000)
-
-    const completeBtn = iframe.locator('button:has-text("작업 완료")')
-    if (await completeBtn.isVisible()) {
-      await completeBtn.click()
-      console.log('✅ 작업 완료 버튼 클릭')
-      await page.waitForTimeout(3000)
-    } else {
-      console.warn('⚠️ "작업 완료" 버튼 못 찾음')
-    }
-
-  } catch (error) {
-    console.error(`❌ ${taskName} 처리 오류:`, error.message)
-  }
-}
-
-async function setServiceNowValue(locator, value) {
+// ServiceNow AngularJS 필드 값 설정 (fill + 이벤트 트리거 필수)
+async function setFieldValue(frame, selector, value) {
+  const locator = frame.locator(selector)
   await locator.fill(value)
   await locator.evaluate((el, val) => {
     el.value = val
@@ -162,14 +34,141 @@ async function setServiceNowValue(locator, value) {
   }, value)
 }
 
-async function goHome(page) {
-  const homeLink = page.locator('a[href*="home.do"], a[ng-href="home.do"]').first()
-  if (await homeLink.isVisible()) {
-    await homeLink.click()
-    console.log('🏠 홈으로 이동')
+// Task 상세 페이지 처리
+async function processTask(frame, taskName) {
+  // Effort: 0시간 20분
+  await setFieldValue(frame, 'input[name="ni.u_daily_operational_task.u_effortdur_hour"]', '0')
+  await setFieldValue(frame, 'input[name="ni.u_daily_operational_task.u_effortdur_min"]', '20')
+  console.log('  Effort 입력 완료 (0h 20m)')
+
+  // 진행결과 "정상" 선택
+  const resultSelect = frame.locator('select[name="u_daily_operational_task.u_check_result"]')
+  const normalValue = await resultSelect.evaluate(sel => {
+    const opt = Array.from(sel.options).find(o => o.text.includes('정상'))
+    return opt?.value ?? null
+  })
+
+  if (normalValue !== null) {
+    await resultSelect.selectOption(normalValue)
+    await resultSelect.evaluate(el => {
+      ;['change', 'blur'].forEach(type =>
+        el.dispatchEvent(new Event(type, { bubbles: true }))
+      )
+      const win = el.ownerDocument.defaultView
+      if (win?.angular) win.angular.element(el).scope()?.$apply()
+    })
+    console.log('  진행결과 "정상" 선택 완료')
   } else {
-    await page.goBack()
-    console.log('🏠 뒤로가기로 이동')
+    const options = await resultSelect.evaluate(sel =>
+      Array.from(sel.options).map(o => `${o.value}=${o.text}`).join(', ')
+    )
+    console.log(`  ⚠️ "정상" 옵션 없음. 사용 가능한 옵션: ${options}`)
+  }
+
+  await frame.waitForTimeout(500)
+
+  // 작업 완료 버튼 클릭
+  const completeBtn = frame.locator('button#close_sc_task')
+  const isVisible = await completeBtn.isVisible({ timeout: 3000 }).catch(() => false)
+  if (isVisible) {
+    await completeBtn.click()
+    await frame.waitForTimeout(2000)
+    console.log('  ✅ 작업 완료')
+  } else {
+    console.log('  ⚠️ 작업 완료 버튼 없음 (이미 처리됐거나 권한 없음)')
+  }
+}
+
+async function itsmDaily() {
+  console.log('=== ITSM 일일 Task 자동화 시작 ===')
+
+  if (!fs.existsSync(SESSION_PATH)) {
+    console.error('❌ 세션 파일 없음. 앱에서 "세션 갱신" 먼저 실행하세요.')
+    process.exit(1)
+  }
+
+  const homeUrl = config.itsm?.url
+  if (!homeUrl) {
+    console.error('❌ config.itsm.url 없음')
+    process.exit(1)
+  }
+
+  const browser = await chromium.launch({ headless: true })
+  const context  = await browser.newContext({ storageState: SESSION_PATH })
+  const page     = await context.newPage()
+
+  try {
+    // 홈 접속
+    console.log('홈화면 접속 중...')
+    await page.goto(homeUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
+
+    // gsft_main iframe DOM에 추가될 때까지 대기 (JS 동적 생성)
+    await page.waitForSelector('iframe[name="gsft_main"]', { timeout: 20000 })
+      .catch(() => { console.log('  iframe 대기 타임아웃 — 계속 시도') })
+
+    const gsftFrame = page.frames().find(f => f.name() === 'gsft_main')
+    if (!gsftFrame) {
+      console.error('❌ gsft_main iframe 없음')
+      return
+    }
+    await gsftFrame.waitForLoadState('domcontentloaded', { timeout: 20000 }).catch(() => {})
+
+    // TASK 링크가 렌더링될 때까지 대기 (AngularJS 비동기 렌더링)
+    await gsftFrame.locator('a').filter({ hasText: /^TASK/ }).first()
+      .waitFor({ timeout: 15000 }).catch(() => {})
+
+    // Task 목록 수집 (href 기반 — 클릭 후 DOM이 바뀌므로 미리 수집)
+    const baseUrl = new URL(homeUrl).origin
+    const taskItems = []
+    const taskLinks = await gsftFrame.locator('a').filter({ hasText: /^TASK/ }).all()
+
+    for (const link of taskLinks) {
+      const name = (await link.textContent().catch(() => '')).trim()
+      const href = await link.getAttribute('href').catch(() => null)
+      if (name && href) {
+        taskItems.push({
+          name,
+          url: baseUrl + (href.startsWith('/') ? href : '/' + href),
+        })
+      }
+    }
+
+    console.log(`📋 Task ${taskItems.length}개 발견`)
+    if (taskItems.length === 0) {
+      console.log('✅ 오늘 처리할 Task 없음')
+      return
+    }
+
+    taskItems.forEach((t, i) => console.log(`  [${i + 1}] ${t.name}`))
+
+    // 각 Task 처리
+    let processed = 0
+    let failed = 0
+
+    for (const task of taskItems) {
+      console.log(`\n[${processed + failed + 1}/${taskItems.length}] ${task.name}`)
+      try {
+        await gsftFrame.goto(task.url, { waitUntil: 'domcontentloaded', timeout: 20000 })
+        await gsftFrame.waitForTimeout(1500)
+
+        await processTask(gsftFrame, task.name)
+        processed++
+      } catch (err) {
+        console.error(`  ❌ 처리 실패: ${err.message}`)
+        failed++
+      }
+    }
+
+    if (failed === 0) {
+      console.log(`\n✅ 완료: ${processed}개 처리됨`)
+    } else {
+      console.log(`\n완료: ${processed}개 성공, ${failed}개 실패`)
+    }
+
+  } catch (err) {
+    console.error(`❌ 오류: ${err.message}`)
+  } finally {
+    await browser.close()
   }
 }
 
