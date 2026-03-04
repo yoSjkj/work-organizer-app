@@ -3,8 +3,6 @@ import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
-const MAIL_SCRIPT = 'scripts/mail-monitor.js'
-
 function MailMonitor() {
   const mailRunning       = useMonitoringStore((s) => s.mailRunning)
   const mailItems         = useMonitoringStore((s) => s.mailItems)
@@ -19,11 +17,43 @@ function MailMonitor() {
   const clearMail         = useMonitoringStore((s) => s.clearMail)
   const addMailKeyword    = useMonitoringStore((s) => s.addMailKeyword)
   const removeMailKeyword = useMonitoringStore((s) => s.removeMailKeyword)
-  const registerProcess   = useMonitoringStore((s) => s.registerProcess)
-  const unregisterProcess = useMonitoringStore((s) => s.unregisterProcess)
-  const getProcess        = useMonitoringStore((s) => s.getProcess)
 
   const [newKeyword, setNewKeyword] = useState('')
+
+  // monitoring-event 리스너 (컴포넌트 마운트 시 1회 등록)
+  useEffect(() => {
+    if (!isTauri()) return
+    let unlisten
+    import('@tauri-apps/api/event').then(({ listen }) => {
+      listen('monitoring-event', (event) => {
+        const { task, line } = event.payload
+        if (task !== 'mail') return
+        try {
+          const ev = JSON.parse(line)
+          switch (ev.type) {
+            case 'log':
+              addMailLog(ev.message)
+              break
+            case 'mail_new':
+              upsertMailItem(ev.data)
+              sendNotification({ title: '새 메일', body: ev.data.subject || ev.data.from }).catch(() => {})
+              break
+            case 'mail_count':
+              setUnreadCount(ev.data.unread)
+              break
+            case 'mail_sync':
+              syncMailItems(ev.data.items)
+              break
+            case 'done':
+              setMailRunning(false)
+              addMailLog(`모니터링 종료 (코드 ${ev.code})`)
+              break
+          }
+        } catch { /* JSON 파싱 실패 무시 */ }
+      }).then(fn => { unlisten = fn })
+    })
+    return () => { if (unlisten) unlisten() }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const logRef = useRef(null)
   useEffect(() => {
@@ -39,53 +69,24 @@ function MailMonitor() {
       return
     }
     try {
-      const { Command } = await import('@tauri-apps/plugin-shell')
       const { invoke } = await import('@tauri-apps/api/core')
       setMailRunning(true)
-
-      const automationDir = await invoke('get_automation_dir_path')
-      const cmd = Command.create('node', [MAIL_SCRIPT], { cwd: automationDir })
-      cmd.stdout.on('data', (chunk) => {
-        chunk.split('\n').forEach((line) => {
-          if (!line.trim()) return
-          try {
-            const ev = JSON.parse(line)
-            switch (ev.type) {
-              case 'log':        addMailLog(ev.message); break
-              case 'mail_new':
-                upsertMailItem(ev.data)
-                sendNotification({ title: '새 메일', body: ev.data.subject || ev.data.from }).catch(() => {})
-                break
-              case 'mail_count': setUnreadCount(ev.data.unread); break
-              case 'mail_sync':  syncMailItems(ev.data.items); break
-            }
-          } catch { /* JSON 파싱 실패 무시 */ }
-        })
-      })
-      cmd.stderr.on('data', (line) => {
-        if (line.trim()) addMailLog(`[오류] ${line.trim()}`)
-      })
-      cmd.on('close', ({ code }) => {
-        setMailRunning(false)
-        addMailLog(`프로세스 종료 (코드 ${code})`)
-        unregisterProcess('mail')
-      })
-
-      const child = await cmd.spawn()
-      registerProcess('mail', child)
+      addMailLog('모니터링 시작')
+      const config = await invoke('get_automation_config').catch(() => ({}))
+      await invoke('run_monitoring', { task: 'mail', config })
     } catch (err) {
       setMailRunning(false)
-      addMailLog(`실행 오류: ${err.message}`)
+      addMailLog(`실행 오류: ${String(err)}`)
     }
   }
 
   const handleStop = async () => {
-    const child = getProcess('mail')
-    if (child) {
-      try { await child.kill() } catch { /* ignore */ }
-    }
+    if (!isTauri()) return
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      await invoke('stop_monitoring', { task: 'mail' })
+    } catch { /* 무시 */ }
     setMailRunning(false)
-    unregisterProcess('mail')
     addMailLog('모니터링 중지')
   }
 

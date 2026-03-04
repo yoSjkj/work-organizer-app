@@ -262,6 +262,163 @@ fn get_script_path(automation_dir: &PathBuf, task: &str) -> Result<PathBuf, Stri
     }
 }
 
+fn get_monitoring_script_path(automation_dir: &PathBuf, task: &str) -> Result<PathBuf, String> {
+    let filename = match task {
+        "csr"  => "csr-monitor.js",
+        "mail" => "mail-monitor.js",
+        _ => return Err(format!("알 수 없는 모니터링 task: {}", task)),
+    };
+    let path = automation_dir.join("scripts").join(filename);
+    if path.exists() {
+        Ok(path)
+    } else {
+        Err(format!("스크립트 없음: {}", path.display()))
+    }
+}
+
+// ── 모니터링 실행/중지 ─────────────────────────────────────────────────────────
+
+#[derive(Clone, serde::Serialize)]
+pub struct MonitoringEvent {
+    pub task: String,
+    pub line: String, // csr-monitor.js / mail-monitor.js 의 JSON Lines 출력 그대로
+}
+
+/// CSR/메일 모니터링 프로세스 실행
+/// stdout(JSON Lines) → "monitoring-event" 이벤트로 프론트에 전달
+/// PID는 ProcessRegistry에 등록 → F5 새로고침 후에도 stop_monitoring으로 중지 가능
+#[tauri::command]
+pub async fn run_monitoring(
+    app: AppHandle,
+    task: String,
+    config: serde_json::Value,
+) -> Result<(), String> {
+    use tokio::io::AsyncBufReadExt;
+    use tokio::process::Command;
+
+    let automation_dir = get_automation_dir(&app)?;
+    let script_path = get_monitoring_script_path(&automation_dir, &task)?;
+    let full_config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+
+    let mut child = Command::new("node")
+        .arg(script_path.to_str().unwrap_or(""))
+        .env("FULL_CONFIG", &full_config_json)
+        .current_dir(&automation_dir)
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .map_err(|e| {
+            if e.kind() == std::io::ErrorKind::NotFound {
+                "Node.js를 찾을 수 없습니다. nodejs.org 에서 설치하세요.".to_string()
+            } else {
+                format!("프로세스 실행 실패: {}", e)
+            }
+        })?;
+
+    let pid = child.id().unwrap_or(0);
+    {
+        let registry = app.state::<ProcessRegistry>();
+        registry.0.lock().unwrap().insert(task.clone(), pid);
+    }
+
+    let stdout = child.stdout.take().unwrap();
+    let stderr = child.stderr.take().unwrap();
+
+    // stdout: JSON Lines 그대로 전달
+    let app_out = app.clone();
+    let task_out = task.clone();
+    tokio::spawn(async move {
+        let mut lines = tokio::io::BufReader::new(stdout).lines();
+        while let Ok(Some(line)) = lines.next_line().await {
+            let _ = app_out.emit("monitoring-event", MonitoringEvent {
+                task: task_out.clone(),
+                line,
+            });
+        }
+    });
+
+    // stderr: log 이벤트로 래핑
+    let app_err = app.clone();
+    let task_err = task.clone();
+    tokio::spawn(async move {
+        let mut lines = tokio::io::BufReader::new(stderr).lines();
+        while let Ok(Some(line)) = lines.next_line().await {
+            if !line.trim().is_empty() {
+                let ts = std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map(|d| d.as_millis() as u64)
+                    .unwrap_or(0);
+                let json = serde_json::json!({
+                    "type": "log",
+                    "message": format!("[오류] {}", line),
+                    "ts": ts
+                }).to_string();
+                let _ = app_err.emit("monitoring-event", MonitoringEvent {
+                    task: task_err.clone(),
+                    line: json,
+                });
+            }
+        }
+    });
+
+    // 종료 처리: done 이벤트 + ProcessRegistry 정리
+    let app_wait = app.clone();
+    let task_wait = task.clone();
+    tokio::spawn(async move {
+        if let Ok(status) = child.wait().await {
+            {
+                let registry = app_wait.state::<ProcessRegistry>();
+                registry.0.lock().unwrap().remove(&task_wait);
+            }
+            let ts = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_millis() as u64)
+                .unwrap_or(0);
+            let json = serde_json::json!({
+                "type": "done",
+                "code": status.code().unwrap_or(-1),
+                "ts": ts
+            }).to_string();
+            let _ = app_wait.emit("monitoring-event", MonitoringEvent {
+                task: task_wait,
+                line: json,
+            });
+        }
+    });
+
+    Ok(())
+}
+
+/// CSR/메일 모니터링 중지 (stop_automation과 동일 로직, ProcessRegistry 공유)
+#[tauri::command]
+pub async fn stop_monitoring(app: AppHandle, task: String) -> Result<(), String> {
+    let pid = {
+        let registry = app.state::<ProcessRegistry>();
+        let result = registry.0.lock().unwrap().remove(&task);
+        result
+    };
+
+    if let Some(pid) = pid {
+        kill_process_tree(pid);
+    }
+
+    let ts = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as u64)
+        .unwrap_or(0);
+    let json = serde_json::json!({
+        "type": "done",
+        "code": -1,
+        "ts": ts
+    }).to_string();
+    let _ = app.emit("monitoring-event", MonitoringEvent {
+        task,
+        line: json,
+    });
+
+    Ok(())
+}
+
 fn classify_log_level(line: &str) -> &'static str {
     if line.contains("✅") || line.contains("완료") || line.contains("성공") {
         "success"

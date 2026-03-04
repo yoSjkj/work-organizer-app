@@ -3,8 +3,6 @@ import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
-const CSR_SCRIPT = 'scripts/csr-monitor.js'
-
 function CsrMonitor() {
   const csrRunning        = useMonitoringStore((s) => s.csrRunning)
   const csrItems          = useMonitoringStore((s) => s.csrItems)
@@ -14,9 +12,42 @@ function CsrMonitor() {
   const syncCsrItems      = useMonitoringStore((s) => s.syncCsrItems)
   const addCsrLog         = useMonitoringStore((s) => s.addCsrLog)
   const clearCsr          = useMonitoringStore((s) => s.clearCsr)
-  const registerProcess   = useMonitoringStore((s) => s.registerProcess)
-  const unregisterProcess = useMonitoringStore((s) => s.unregisterProcess)
-  const getProcess        = useMonitoringStore((s) => s.getProcess)
+
+  // monitoring-event 리스너 (컴포넌트 마운트 시 1회 등록)
+  useEffect(() => {
+    if (!isTauri()) return
+    let unlisten
+    import('@tauri-apps/api/event').then(({ listen }) => {
+      listen('monitoring-event', (event) => {
+        const { task, line } = event.payload
+        if (task !== 'csr') return
+        try {
+          const ev = JSON.parse(line)
+          switch (ev.type) {
+            case 'log':
+              addCsrLog(ev.message)
+              break
+            case 'csr_new':
+              upsertCsrItem(ev.data)
+              addCsrLog(`신규 CSR: ${ev.data.ritm}`)
+              sendNotification({ title: 'CSR 신규 접수', body: ev.data.title || ev.data.ritm }).catch(() => {})
+              break
+            case 'csr_update':
+              upsertCsrItem(ev.data)
+              break
+            case 'csr_sync':
+              syncCsrItems(ev.data.ritms)
+              break
+            case 'done':
+              setCsrRunning(false)
+              addCsrLog(`모니터링 종료 (코드 ${ev.code})`)
+              break
+          }
+        } catch { /* JSON 파싱 실패 무시 */ }
+      }).then(fn => { unlisten = fn })
+    })
+    return () => { if (unlisten) unlisten() }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleStart = async () => {
     if (!isTauri()) {
@@ -24,54 +55,24 @@ function CsrMonitor() {
       return
     }
     try {
-      const { Command } = await import('@tauri-apps/plugin-shell')
       const { invoke } = await import('@tauri-apps/api/core')
       setCsrRunning(true)
-
-      const automationDir = await invoke('get_automation_dir_path')
-      const cmd = Command.create('node', [CSR_SCRIPT], { cwd: automationDir })
-      cmd.stdout.on('data', (chunk) => {
-        chunk.split('\n').forEach((line) => {
-          if (!line.trim()) return
-          try {
-            const ev = JSON.parse(line)
-            switch (ev.type) {
-              case 'log':        addCsrLog(ev.message); break
-              case 'csr_new':
-                upsertCsrItem(ev.data)
-                addCsrLog(`신규 CSR: ${ev.data.ritm}`)
-                sendNotification({ title: 'CSR 신규 접수', body: ev.data.title || ev.data.ritm }).catch(() => {})
-                break
-              case 'csr_update': upsertCsrItem(ev.data); break
-              case 'csr_sync':   syncCsrItems(ev.data.ritms); break
-            }
-          } catch { /* JSON 파싱 실패 무시 */ }
-        })
-      })
-      cmd.stderr.on('data', (line) => {
-        if (line.trim()) addCsrLog(`[오류] ${line.trim()}`)
-      })
-      cmd.on('close', ({ code }) => {
-        setCsrRunning(false)
-        addCsrLog(`프로세스 종료 (코드 ${code})`)
-        unregisterProcess('csr')
-      })
-
-      const child = await cmd.spawn()
-      registerProcess('csr', child)
+      addCsrLog('모니터링 시작')
+      const config = await invoke('get_automation_config').catch(() => ({}))
+      await invoke('run_monitoring', { task: 'csr', config })
     } catch (err) {
       setCsrRunning(false)
-      addCsrLog(`실행 오류: ${err.message}`)
+      addCsrLog(`실행 오류: ${String(err)}`)
     }
   }
 
   const handleStop = async () => {
-    const child = getProcess('csr')
-    if (child) {
-      try { await child.kill() } catch { /* ignore */ }
-    }
+    if (!isTauri()) return
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      await invoke('stop_monitoring', { task: 'csr' })
+    } catch { /* 무시 */ }
     setCsrRunning(false)
-    unregisterProcess('csr')
     addCsrLog('모니터링 중지')
   }
 
@@ -82,8 +83,6 @@ function CsrMonitor() {
     const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50
     if (isNearBottom) el.scrollTop = el.scrollHeight
   }, [csrLogs])
-
-  const newCount = csrItems.filter((i) => i.isNew).length
 
   return (
     <main className="main-content monitoring-view">
@@ -106,7 +105,6 @@ function CsrMonitor() {
                 ? <button className="btn-monitor-start" onClick={handleStart}>▶ 시작</button>
                 : <button className="btn-monitor-stop" onClick={handleStop}>■ 중지</button>
               }
-
               <button className="btn-clear" onClick={clearCsr} disabled={csrRunning}>초기화</button>
             </div>
           </div>
