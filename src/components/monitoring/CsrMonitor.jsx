@@ -3,6 +3,10 @@ import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
+// StrictMode 이중 등록 방지 (AutomationPanel과 동일 패턴)
+let _csrUnlisten = null
+let _csrListenerSetup = false
+
 function CsrMonitor() {
   const csrRunning        = useMonitoringStore((s) => s.csrRunning)
   const csrItems          = useMonitoringStore((s) => s.csrItems)
@@ -13,40 +17,42 @@ function CsrMonitor() {
   const addCsrLog         = useMonitoringStore((s) => s.addCsrLog)
   const clearCsr          = useMonitoringStore((s) => s.clearCsr)
 
-  // monitoring-event 리스너 (컴포넌트 마운트 시 1회 등록)
+  // monitoring-event 리스너 (StrictMode 이중 등록 방지)
   useEffect(() => {
-    if (!isTauri()) return
-    let unlisten
-    import('@tauri-apps/api/event').then(({ listen }) => {
+    if (_csrListenerSetup || !isTauri()) return
+    _csrListenerSetup = true
+
+    import('@tauri-apps/api/event').then(({ listen }) =>
       listen('monitoring-event', (event) => {
         const { task, line } = event.payload
         if (task !== 'csr') return
         try {
           const ev = JSON.parse(line)
           switch (ev.type) {
-            case 'log':
-              addCsrLog(ev.message)
-              break
+            case 'log':        addCsrLog(ev.message); break
             case 'csr_new':
               upsertCsrItem(ev.data)
               addCsrLog(`신규 CSR: ${ev.data.ritm}`)
               sendNotification({ title: 'CSR 신규 접수', body: ev.data.title || ev.data.ritm }).catch(() => {})
               break
-            case 'csr_update':
-              upsertCsrItem(ev.data)
-              break
-            case 'csr_sync':
-              syncCsrItems(ev.data.ritms)
-              break
+            case 'csr_update': upsertCsrItem(ev.data); break
+            case 'csr_sync':   syncCsrItems(ev.data.ritms); break
             case 'done':
               setCsrRunning(false)
               addCsrLog(`모니터링 종료 (코드 ${ev.code})`)
               break
           }
         } catch { /* JSON 파싱 실패 무시 */ }
-      }).then(fn => { unlisten = fn })
+      })
+    ).then(fn => {
+      if (!_csrListenerSetup || _csrUnlisten) { fn(); return }
+      _csrUnlisten = fn
     })
-    return () => { if (unlisten) unlisten() }
+
+    return () => {
+      if (_csrUnlisten) { _csrUnlisten(); _csrUnlisten = null }
+      _csrListenerSetup = false
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleStart = async () => {

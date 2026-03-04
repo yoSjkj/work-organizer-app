@@ -300,6 +300,15 @@ pub async fn run_monitoring(
     let script_path = get_monitoring_script_path(&automation_dir, &task)?;
     let full_config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
 
+    // 동일 task가 이미 실행 중이면 먼저 종료 (중복 실행 방지)
+    {
+        let registry = app.state::<ProcessRegistry>();
+        let existing_pid = registry.0.lock().unwrap().remove(&task);
+        if let Some(pid) = existing_pid {
+            kill_process_tree(pid);
+        }
+    }
+
     let mut child = Command::new("node")
         .arg(script_path.to_str().unwrap_or(""))
         .env("FULL_CONFIG", &full_config_json)

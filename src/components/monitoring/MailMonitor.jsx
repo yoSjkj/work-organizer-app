@@ -3,6 +3,10 @@ import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
 
+// StrictMode 이중 등록 방지
+let _mailUnlisten = null
+let _mailListenerSetup = false
+
 function MailMonitor() {
   const mailRunning       = useMonitoringStore((s) => s.mailRunning)
   const mailItems         = useMonitoringStore((s) => s.mailItems)
@@ -20,39 +24,41 @@ function MailMonitor() {
 
   const [newKeyword, setNewKeyword] = useState('')
 
-  // monitoring-event 리스너 (컴포넌트 마운트 시 1회 등록)
+  // monitoring-event 리스너 (StrictMode 이중 등록 방지)
   useEffect(() => {
-    if (!isTauri()) return
-    let unlisten
-    import('@tauri-apps/api/event').then(({ listen }) => {
+    if (_mailListenerSetup || !isTauri()) return
+    _mailListenerSetup = true
+
+    import('@tauri-apps/api/event').then(({ listen }) =>
       listen('monitoring-event', (event) => {
         const { task, line } = event.payload
         if (task !== 'mail') return
         try {
           const ev = JSON.parse(line)
           switch (ev.type) {
-            case 'log':
-              addMailLog(ev.message)
-              break
+            case 'log':        addMailLog(ev.message); break
             case 'mail_new':
               upsertMailItem(ev.data)
               sendNotification({ title: '새 메일', body: ev.data.subject || ev.data.from }).catch(() => {})
               break
-            case 'mail_count':
-              setUnreadCount(ev.data.unread)
-              break
-            case 'mail_sync':
-              syncMailItems(ev.data.items)
-              break
+            case 'mail_count': setUnreadCount(ev.data.unread); break
+            case 'mail_sync':  syncMailItems(ev.data.items); break
             case 'done':
               setMailRunning(false)
               addMailLog(`모니터링 종료 (코드 ${ev.code})`)
               break
           }
         } catch { /* JSON 파싱 실패 무시 */ }
-      }).then(fn => { unlisten = fn })
+      })
+    ).then(fn => {
+      if (!_mailListenerSetup || _mailUnlisten) { fn(); return }
+      _mailUnlisten = fn
     })
-    return () => { if (unlisten) unlisten() }
+
+    return () => {
+      if (_mailUnlisten) { _mailUnlisten(); _mailUnlisten = null }
+      _mailListenerSetup = false
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const logRef = useRef(null)
