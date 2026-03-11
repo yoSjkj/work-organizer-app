@@ -7,13 +7,10 @@ import { MONITORING_IDS } from '../config/categories'
 const Dashboard      = lazy(() => import('../components/monitoring/Dashboard'))
 const CsrMonitor     = lazy(() => import('../components/monitoring/CsrMonitor'))
 const MailMonitor    = lazy(() => import('../components/monitoring/MailMonitor'))
-const AutomationPanel = lazy(() => import('../components/monitoring/AutomationPanel'))
-
 const MONITORING_COMPONENTS = {
   'dashboard':    Dashboard,
   'csr-monitor':  CsrMonitor,
   'mail-monitor': MailMonitor,
-  'automation':   AutomationPanel,
 }
 
 function AppLayout({

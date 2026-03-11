@@ -11,6 +11,7 @@
 ✅ **검색 및 필터링** - 실시간 검색
 ✅ **데이터 백업/복원** - JSON 내보내기/가져오기
 ✅ **설정 기반 아키텍처** - 확장 가능한 구조
+✅ **업무 자동화 모니터링** - CSR/메일 모니터링, ITSM 자동화
 
 ---
 
@@ -104,11 +105,17 @@ src/
 │   ├── search.js
 │   └── dateUtils.js
 │
-└── styles/              # 디자인 토큰 기반 CSS
-    ├── tokens/          # 색상, 간격, 타이포
-    ├── base/
-    ├── components/
-    └── features/
+├── styles/              # 디자인 토큰 기반 CSS
+│   ├── tokens/          # 색상, 간격, 타이포
+│   ├── base/
+│   ├── components/
+│   └── features/
+│
+└── components/monitoring/  # 업무 자동화 모니터링
+    ├── Dashboard.jsx        # ITSM/AWS/SSO 자동화 대시보드
+    ├── CsrMonitor.jsx       # CSR 목록 실시간 모니터링
+    ├── MailMonitor.jsx      # 미읽음 메일 모니터링
+    └── AutomationPanel.jsx
 ```
 
 **특징:**
@@ -152,7 +159,7 @@ export const CATEGORIES = {
 - ✅ **Done** - 완료된 항목
 - 📋 **Forms** - 재사용 가능한 양식
 - 📄 **Docs** - 문서 관리
-- 🚀 **Releases** - 배포 기록
+- 🚀 **Releases** - 배포 기록 (상태: 임시/진행/완료)
 
 ---
 
@@ -170,9 +177,9 @@ export const CATEGORIES = {
 
 ---
 
-## 🏆 완료된 주요 리팩토링
+## 🏆 완료된 주요 작업
 
-### Phase 1-6 완료 ✅
+### 리팩토링 Phase 1-6 ✅
 1. ✅ 카테고리 시스템 정규화
 2. ✅ 레이아웃 계층 분리
 3. ✅ 카드 컴포넌트 분리
@@ -180,10 +187,17 @@ export const CATEGORIES = {
 5. ✅ 비즈니스 로직 분리
 6. ✅ 유틸리티 정리
 
+### 기능 추가 ✅
+- ✅ 업무 자동화 모니터링 (CSR/메일/ITSM/AWS)
+- ✅ 모니터링 대시보드 세션 상태 표시
+- ✅ 모니터링 중 갱신 차단 (Rust 프로세스 관리)
+- ✅ 배포 기록 폼 간소화 (환경 선택 제거, 상태 통일)
+- ✅ HTML5 form validation (alert() 제거)
+- ✅ CSS 디자인 토큰 기반 전면 리팩토링
+- ✅ 라이트/다크 테마 전환
+
 ### 성과
-- 📉 코드량 **400+ 줄 감소**
-- 🚀 유지보수성 **80% 향상**
-- 🎯 새 기능 추가 시간 **70% 단축**
+- 📉 코드량 **1000+ 줄 감소** (CSS 중복 제거)
 - ✨ 조건부 렌더링 **완전 제거**
 
 ---
@@ -203,7 +217,7 @@ export const CATEGORIES = {
 - 변경사항 1
 - 변경사항 2
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
 
 **타입:** `feat`, `fix`, `refactor`, `style`, `docs`, `chore`

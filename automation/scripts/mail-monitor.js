@@ -22,7 +22,7 @@ try {
 }
 
 const SESSION_PATH = path.join(__dirname, '../sessions/browser-session.json')
-const POLL_INTERVAL_MS = 3 * 60 * 1000  // 3분
+const POLL_INTERVAL_MS = 5 * 60 * 1000  // 5분
 
 /** JSON Lines 이벤트 출력 */
 function emit(type, messageOrData) {

@@ -98,7 +98,6 @@ export const MONITORING_CATEGORIES = [
   { id: 'dashboard',    label: 'Dashboard', icon: '⌂', color: 'teal' },
   { id: 'csr-monitor',  label: 'CSR',       icon: '◉', color: 'teal' },
   { id: 'mail-monitor', label: 'Mail',      icon: '✉', color: 'teal' },
-  { id: 'automation',   label: 'Automation',icon: '▶', color: 'teal' },
 ]
 
 /** 모니터링 카테고리 ID 세트 (빠른 조회) */

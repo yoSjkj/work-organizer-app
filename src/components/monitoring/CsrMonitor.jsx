@@ -1,59 +1,15 @@
 import { useRef, useEffect } from 'react'
-import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
-
-// StrictMode 이중 등록 방지 (AutomationPanel과 동일 패턴)
-let _csrUnlisten = null
-let _csrListenerSetup = false
 
 function CsrMonitor() {
   const csrRunning        = useMonitoringStore((s) => s.csrRunning)
   const csrItems          = useMonitoringStore((s) => s.csrItems)
   const csrLogs           = useMonitoringStore((s) => s.csrLogs)
   const setCsrRunning     = useMonitoringStore((s) => s.setCsrRunning)
-  const upsertCsrItem     = useMonitoringStore((s) => s.upsertCsrItem)
-  const syncCsrItems      = useMonitoringStore((s) => s.syncCsrItems)
   const addCsrLog         = useMonitoringStore((s) => s.addCsrLog)
   const clearCsr          = useMonitoringStore((s) => s.clearCsr)
-
-  // monitoring-event 리스너 (StrictMode 이중 등록 방지)
-  useEffect(() => {
-    if (_csrListenerSetup || !isTauri()) return
-    _csrListenerSetup = true
-
-    import('@tauri-apps/api/event').then(({ listen }) =>
-      listen('monitoring-event', (event) => {
-        const { task, line } = event.payload
-        if (task !== 'csr') return
-        try {
-          const ev = JSON.parse(line)
-          switch (ev.type) {
-            case 'log':        addCsrLog(ev.message); break
-            case 'csr_new':
-              upsertCsrItem(ev.data)
-              addCsrLog(`신규 CSR: ${ev.data.ritm}`)
-              sendNotification({ title: 'CSR 신규 접수', body: ev.data.title || ev.data.ritm }).catch(() => {})
-              break
-            case 'csr_update': upsertCsrItem(ev.data); break
-            case 'csr_sync':   syncCsrItems(ev.data.ritms); break
-            case 'done':
-              setCsrRunning(false)
-              addCsrLog(`모니터링 종료 (코드 ${ev.code})`)
-              break
-          }
-        } catch { /* JSON 파싱 실패 무시 */ }
-      })
-    ).then(fn => {
-      if (!_csrListenerSetup || _csrUnlisten) { fn(); return }
-      _csrUnlisten = fn
-    })
-
-    return () => {
-      if (_csrUnlisten) { _csrUnlisten(); _csrUnlisten = null }
-      _csrListenerSetup = false
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const markCsrSeen       = useMonitoringStore((s) => s.markCsrSeen)
 
   const handleStart = async () => {
     if (!isTauri()) {
@@ -120,10 +76,10 @@ function CsrMonitor() {
           ) : (
             <div className="csr-list">
               {csrItems.map((item) => (
-                <div key={item.ritm} className={`csr-item ${item.isNew ? 'is-new' : ''}`}>
+                <div key={item.ritm} className={`csr-item ${item.isNew ? 'is-new' : ''}`} onClick={() => item.isNew && markCsrSeen(item.ritm)}>
                   <div className="csr-item-header">
                     <span className="csr-ritm">{item.ritm}</span>
-                    {item.isNew && <span className="badge-new">NEW</span>}
+                    {item.isNew && <span className="badge-new" title="클릭하여 확인">NEW</span>}
                     {item.status && (
                       <span className="csr-status">{item.status}</span>
                     )}

@@ -14,48 +14,57 @@ function formatRelativeTime(date) {
   return '방금 전'
 }
 
+// 폴링 간격 기준으로 세션 상태 판단
+// running + 최근 폴링 → active / running + 오래됨 → stale / 중지 → stopped
+function getSessionHealth(running, lastPoll, intervalMin) {
+  if (!running) return 'stopped'
+  if (!lastPoll) return 'waiting'
+  const elapsed = (Date.now() - lastPoll) / 60000
+  if (elapsed < intervalMin * 2) return 'active'
+  return 'stale'
+}
+
+const HEALTH_LABEL = {
+  active:  { dot: '●', text: '세션 유지 중',   color: 'var(--success-text)' },
+  waiting: { dot: '◌', text: '확인 대기 중',   color: 'var(--text-muted)'   },
+  stale:   { dot: '●', text: '응답 지연',       color: 'var(--warning-text, #f59e0b)' },
+  stopped: { dot: '○', text: '모니터링 중지됨', color: 'var(--text-muted)'   },
+}
+
 const TASK_META = {
-  sso:      { label: 'SSO 로그인',     script: 'automation/scripts/sso-login.js' },
-  itsm:     { label: 'ITSM 일일 체크', script: 'automation/scripts/itsm-daily.js' },
-  aws:      { label: 'AWS 개발서버',   script: 'automation/scripts/aws-dev-server.js' },
-  external: { label: '외부망 로그인',  script: 'automation/scripts/external-net.js' },
+  itsm: { label: 'ITSM 일일 체크' },
 }
 
 const STATUS_ICON = { idle: '⏸', running: '↻', done: '✓', error: '✕' }
 
 async function spawnTask(taskId, store) {
-  const { updateTask, addTaskLog, registerProcess, unregisterProcess } = store
+  const { updateTask, addTaskLog } = store
   if (!isTauri()) {
     addTaskLog(taskId, 'Tauri 환경에서만 실행 가능합니다')
     return
   }
   try {
-    const { Command } = await import('@tauri-apps/plugin-shell')
+    const { invoke } = await import('@tauri-apps/api/core')
+    const { listen } = await import('@tauri-apps/api/event')
     const meta = TASK_META[taskId]
+
     updateTask(taskId, { status: 'running', lastRun: Date.now() })
     addTaskLog(taskId, `${meta.label} 시작`)
 
-    const cmd = Command.create('node', [meta.script])
-    cmd.stdout.on('data', (line) => {
-      if (!line.trim()) return
-      try {
-        const ev = JSON.parse(line)
-        addTaskLog(taskId, ev.message || line.trim())
-      } catch {
-        addTaskLog(taskId, line.trim())
+    const unlisten = await listen('automation-log', (event) => {
+      const { task, level, message } = event.payload
+      if (task !== taskId) return
+      addTaskLog(taskId, message)
+      if (level === 'success') {
+        updateTask(taskId, { status: 'done' })
+        unlisten()
+      } else if (level === 'error' && (message.startsWith('❌') || message.startsWith('대기 오류'))) {
+        updateTask(taskId, { status: 'error' })
+        unlisten()
       }
     })
-    cmd.stderr.on('data', (line) => {
-      if (line.trim()) addTaskLog(taskId, `[오류] ${line.trim()}`)
-    })
-    cmd.on('close', ({ code }) => {
-      updateTask(taskId, { status: code === 0 ? 'done' : 'error' })
-      addTaskLog(taskId, `완료 (종료코드 ${code})`)
-      unregisterProcess(taskId)
-    })
 
-    const child = await cmd.spawn()
-    registerProcess(taskId, child)
+    await invoke('run_automation', { task: taskId, config: {} })
   } catch (err) {
     updateTask(taskId, { status: 'error' })
     addTaskLog(taskId, `실행 오류: ${err.message}`)
@@ -113,11 +122,12 @@ function Dashboard() {
   const csrItems          = useMonitoringStore((s) => s.csrItems)
   const unreadCount       = useMonitoringStore((s) => s.unreadCount)
   const csrRunning        = useMonitoringStore((s) => s.csrRunning)
+  const csrLastPoll       = useMonitoringStore((s) => s.csrLastPoll)
   const mailRunning       = useMonitoringStore((s) => s.mailRunning)
+  const mailLastPoll      = useMonitoringStore((s) => s.mailLastPoll)
   const updateTask        = useMonitoringStore((s) => s.updateTask)
   const addTaskLog        = useMonitoringStore((s) => s.addTaskLog)
-  const registerProcess   = useMonitoringStore((s) => s.registerProcess)
-  const unregisterProcess = useMonitoringStore((s) => s.unregisterProcess)
+  const clearAllLogs      = useMonitoringStore((s) => s.clearAllLogs)
   const setSelectedCategory = useUIStore((s) => s.setSelectedCategory)
   const [sessionStatus, setSessionStatus] = useState('idle') // idle | running | done | error
   const [sessionMtime, setSessionMtime]   = useState(null)
@@ -143,7 +153,7 @@ function Dashboard() {
     return () => { cancelled = true }
   }, [sessionStatus])
 
-  const store = { updateTask, addTaskLog, registerProcess, unregisterProcess }
+  const store = { updateTask, addTaskLog }
 
   const handleRun = (taskId) => spawnTask(taskId, store)
   const handleRunAll = () => {
@@ -170,40 +180,14 @@ function Dashboard() {
       <h2 className="category-title category-dashboard">Dashboard</h2>
 
       <div className="monitoring-container">
-        {/* 자동화 루틴 */}
-        <div className="monitoring-section">
-          <div className="monitoring-section-header">
-            <h3 className="monitoring-section-title">오늘의 자동화 루틴</h3>
-            <div className="monitoring-section-actions">
-              {lastRun && (
-                <span className="last-run-time">
-                  마지막: {new Date(lastRun).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              )}
-              <button className="btn-run-all" onClick={handleRunAll}>전체 실행</button>
-            </div>
-          </div>
-          <div className="task-list">
-            {Object.entries(tasks).map(([id, task]) => (
-              <TaskCard key={id} taskId={id} task={task} onRun={handleRun} />
-            ))}
-          </div>
-        </div>
-
         {/* 세션 설정 */}
         <div className="monitoring-section">
           <div className="monitoring-section-header">
-            <h3 className="monitoring-section-title">모니터링 세션</h3>
+            <h3 className="monitoring-section-title">세션</h3>
             {sessionMtime && (
               <span className="session-last-updated">
                 마지막 갱신: {formatRelativeTime(sessionMtime)}
               </span>
-            )}
-          </div>
-          <div className="session-setup">
-            <p className="session-desc">Chrome이 열려 있는 상태에서 세션을 추출하면, 이후 모니터링이 백그라운드에서 자동 실행됩니다.</p>
-            {isMonitoring && (
-              <p className="session-warning">⚠ 모니터링 실행 중에는 세션을 갱신할 수 없습니다. 먼저 모니터링을 중지하세요.</p>
             )}
             <button
               className={`btn-session-extract status-${sessionStatus}`}
@@ -216,11 +200,41 @@ function Dashboard() {
                 : '세션 갱신'}
             </button>
           </div>
+          <div className="session-setup">
+            <div className="session-health-list">
+              {[
+                { label: 'CSR',  running: csrRunning,  lastPoll: csrLastPoll,  interval: 5 },
+                { label: '메일', running: mailRunning, lastPoll: mailLastPoll, interval: 3 },
+              ].map(({ label, running, lastPoll, interval }) => {
+                const health = getSessionHealth(running, lastPoll, interval)
+                const { dot, text, color } = HEALTH_LABEL[health]
+                return (
+                  <div key={label} className="session-health-item">
+                    <span className="session-health-label">{label}</span>
+                    <span className="session-health-status" style={{ color }}>
+                      {dot} {text}
+                    </span>
+                    {lastPoll && (
+                      <span className="session-health-time">
+                        {formatRelativeTime(lastPoll)} 폴링
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+            <p className="session-desc">Chrome이 열려 있는 상태에서 세션을 추출하면, 이후 모니터링이 백그라운드에서 자동 실행됩니다.</p>
+            {isMonitoring && (
+              <p className="session-warning">⚠ 모니터링 실행 중에는 세션을 갱신할 수 없습니다. 먼저 모니터링을 중지하세요.</p>
+            )}
+          </div>
         </div>
 
         {/* 현황 요약 */}
         <div className="monitoring-section">
-          <h3 className="monitoring-section-title">현황</h3>
+          <div className="monitoring-section-header">
+            <h3 className="monitoring-section-title">현황</h3>
+          </div>
           <div className="summary-list">
             <button className="summary-item" onClick={() => setSelectedCategory('csr-monitor')}>
               <span className="summary-icon">◉</span>
@@ -245,10 +259,32 @@ function Dashboard() {
           </div>
         </div>
 
+        {/* 자동화 루틴 */}
+        <div className="monitoring-section">
+          <div className="monitoring-section-header">
+            <h3 className="monitoring-section-title">자동화</h3>
+            <div className="monitoring-section-actions">
+              {lastRun && (
+                <span className="last-run-time">
+                  마지막: {new Date(lastRun).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="task-list">
+            {Object.entries(tasks).map(([id, task]) => (
+              <TaskCard key={id} taskId={id} task={task} onRun={handleRun} />
+            ))}
+          </div>
+        </div>
+
         {/* 실행 로그 */}
         {allLogs.length > 0 && (
           <div className="monitoring-section">
-            <h3 className="monitoring-section-title">실행 로그</h3>
+            <div className="monitoring-section-header">
+              <h3 className="monitoring-section-title">실행 로그</h3>
+              <button className="btn-log-clear" onClick={clearAllLogs} title="로그 지우기">✕</button>
+            </div>
             <div className="log-area">
               {allLogs.map((entry, i) => (
                 <div key={i} className="log-line">

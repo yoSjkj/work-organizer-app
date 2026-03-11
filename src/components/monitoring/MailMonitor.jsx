@@ -1,11 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import { sendNotification } from '@tauri-apps/plugin-notification'
 import { useMonitoringStore } from '../../stores/useMonitoringStore'
 import { isTauri } from '../../stores/tauriStorage'
-
-// StrictMode 이중 등록 방지
-let _mailUnlisten = null
-let _mailListenerSetup = false
 
 function MailMonitor() {
   const mailRunning       = useMonitoringStore((s) => s.mailRunning)
@@ -14,9 +9,6 @@ function MailMonitor() {
   const mailLogs          = useMonitoringStore((s) => s.mailLogs)
   const mailKeywords      = useMonitoringStore((s) => s.mailKeywords)
   const setMailRunning    = useMonitoringStore((s) => s.setMailRunning)
-  const upsertMailItem    = useMonitoringStore((s) => s.upsertMailItem)
-  const syncMailItems     = useMonitoringStore((s) => s.syncMailItems)
-  const setUnreadCount    = useMonitoringStore((s) => s.setUnreadCount)
   const addMailLog        = useMonitoringStore((s) => s.addMailLog)
   const clearMail         = useMonitoringStore((s) => s.clearMail)
   const addMailKeyword    = useMonitoringStore((s) => s.addMailKeyword)
@@ -24,42 +16,7 @@ function MailMonitor() {
 
   const [newKeyword, setNewKeyword] = useState('')
 
-  // monitoring-event 리스너 (StrictMode 이중 등록 방지)
-  useEffect(() => {
-    if (_mailListenerSetup || !isTauri()) return
-    _mailListenerSetup = true
-
-    import('@tauri-apps/api/event').then(({ listen }) =>
-      listen('monitoring-event', (event) => {
-        const { task, line } = event.payload
-        if (task !== 'mail') return
-        try {
-          const ev = JSON.parse(line)
-          switch (ev.type) {
-            case 'log':        addMailLog(ev.message); break
-            case 'mail_new':
-              upsertMailItem(ev.data)
-              sendNotification({ title: '새 메일', body: ev.data.subject || ev.data.from }).catch(() => {})
-              break
-            case 'mail_count': setUnreadCount(ev.data.unread); break
-            case 'mail_sync':  syncMailItems(ev.data.items); break
-            case 'done':
-              setMailRunning(false)
-              addMailLog(`모니터링 종료 (코드 ${ev.code})`)
-              break
-          }
-        } catch { /* JSON 파싱 실패 무시 */ }
-      })
-    ).then(fn => {
-      if (!_mailListenerSetup || _mailUnlisten) { fn(); return }
-      _mailUnlisten = fn
-    })
-
-    return () => {
-      if (_mailUnlisten) { _mailUnlisten(); _mailUnlisten = null }
-      _mailListenerSetup = false
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  // (monitoring-event 리스너는 App.jsx에서 전역 등록)
 
   const logRef = useRef(null)
   useEffect(() => {

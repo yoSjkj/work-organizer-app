@@ -8,18 +8,19 @@ const makeTaskState = () => ({
 
 export const useMonitoringStore = create((set, get) => ({
   tasks: {
-    itsm:     makeTaskState(),
-    external: makeTaskState(),
+    itsm: makeTaskState(),
   },
 
   csrRunning: false,
   csrItems: [],
   csrLogs: [],
+  csrLastPoll: null,   // 마지막 폴링 성공 시각 (timestamp)
 
   mailRunning: false,
   mailItems: [],
   unreadCount: 0,
   mailLogs: [],
+  mailLastPoll: null,  // 마지막 폴링 성공 시각 (timestamp)
   mailKeywords: JSON.parse(localStorage.getItem('monitoring-mail-keywords') || '[]'),
 
   // Non-reactive process map (직접 변이, 렌더링 트리거 없음)
@@ -50,6 +51,13 @@ export const useMonitoringStore = create((set, get) => ({
       tasks: { ...state.tasks, [taskId]: { ...state.tasks[taskId], log: [] } },
     })),
 
+  clearAllLogs: () =>
+    set((state) => ({
+      tasks: Object.fromEntries(
+        Object.entries(state.tasks).map(([id, t]) => [id, { ...t, log: [] }])
+      ),
+    })),
+
   // --- CSR actions ---
   setCsrRunning: (running) => set({ csrRunning: running }),
 
@@ -76,7 +84,14 @@ export const useMonitoringStore = create((set, get) => ({
       csrLogs: [...state.csrLogs.slice(-199), { message, ts: Date.now() }],
     })),
 
-  clearCsr: () => set({ csrItems: [], csrLogs: [] }),
+  setCsrLastPoll: (ts) => set({ csrLastPoll: ts }),
+
+  markCsrSeen: (ritm) =>
+    set((state) => ({
+      csrItems: state.csrItems.map((i) => i.ritm === ritm ? { ...i, isNew: false } : i),
+    })),
+
+  clearCsr: () => set({ csrItems: [], csrLogs: [], csrLastPoll: null }),
 
   // --- Mail actions ---
   setMailRunning: (running) => set({ mailRunning: running }),
@@ -95,7 +110,9 @@ export const useMonitoringStore = create((set, get) => ({
       mailLogs: [...state.mailLogs.slice(-199), { message, ts: Date.now() }],
     })),
 
-  clearMail: () => set({ mailItems: [], mailLogs: [], unreadCount: 0 }),
+  setMailLastPoll: (ts) => set({ mailLastPoll: ts }),
+
+  clearMail: () => set({ mailItems: [], mailLogs: [], unreadCount: 0, mailLastPoll: null }),
 
   addMailKeyword: (keyword) =>
     set((state) => {

@@ -13,7 +13,7 @@
   gap: 16px;
   padding-bottom: 24px;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
 }
 
 .monitoring-section {
@@ -66,6 +66,35 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.session-health-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.session-health-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.session-health-label {
+  width: 32px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.session-health-status {
+  flex: 1;
+  font-size: 12px;
+}
+
+.session-health-time {
+  font-size: 11px;
+  color: var(--text-muted);
 }
 
 .session-desc {
@@ -466,6 +495,16 @@
 
 .log-area.compact { max-height: 130px; }
 
+.btn-log-clear {
+  padding: 2px 7px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s;
+}
+.btn-log-clear:hover { color: var(--text-secondary); }
+
 .log-line {
   display: flex;
   gap: 8px;
@@ -514,7 +553,7 @@
   border-radius: 8px;
   transition: border-left-color 0.1s;
 }
-.csr-item.is-new { border-left-color: var(--color-red-500); }
+.csr-item.is-new { border-left-color: var(--color-red-500); cursor: pointer; }
 
 .csr-item-header {
   display: flex;

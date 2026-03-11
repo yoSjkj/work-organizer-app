@@ -284,9 +284,36 @@ pub struct MonitoringEvent {
     pub line: String, // csr-monitor.js / mail-monitor.js 의 JSON Lines 출력 그대로
 }
 
+// PID 파일 경로: {AppData}/monitor-{task}.pid
+fn pid_file_path(app: &AppHandle, task: &str) -> Option<std::path::PathBuf> {
+    app.path().app_data_dir().ok().map(|d| d.join(format!("monitor-{}.pid", task)))
+}
+
+// PID 파일에서 읽어 프로세스 트리 kill, 파일 삭제
+fn kill_from_pid_file(app: &AppHandle, task: &str) {
+    if let Some(path) = pid_file_path(app, task) {
+        if let Ok(s) = std::fs::read_to_string(&path) {
+            if let Ok(pid) = s.trim().parse::<u32>() {
+                kill_process_tree(pid);
+            }
+        }
+        let _ = std::fs::remove_file(&path);
+    }
+}
+
+// PID 파일 저장
+fn save_pid_file(app: &AppHandle, task: &str, pid: u32) {
+    if let Some(path) = pid_file_path(app, task) {
+        if let Some(parent) = path.parent() {
+            let _ = std::fs::create_dir_all(parent);
+        }
+        let _ = std::fs::write(&path, pid.to_string());
+    }
+}
+
 /// CSR/메일 모니터링 프로세스 실행
 /// stdout(JSON Lines) → "monitoring-event" 이벤트로 프론트에 전달
-/// PID는 ProcessRegistry에 등록 → F5 새로고침 후에도 stop_monitoring으로 중지 가능
+/// PID는 ProcessRegistry + PID 파일에 등록 → 앱 재시작 후에도 중복 실행 방지
 #[tauri::command]
 pub async fn run_monitoring(
     app: AppHandle,
@@ -300,7 +327,10 @@ pub async fn run_monitoring(
     let script_path = get_monitoring_script_path(&automation_dir, &task)?;
     let full_config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
 
-    // 동일 task가 이미 실행 중이면 먼저 종료 (중복 실행 방지)
+    // 이전 세션 고아 프로세스 정리 (PID 파일 기반)
+    kill_from_pid_file(&app, &task);
+
+    // 현재 세션 레지스트리에 남아있는 경우도 정리
     {
         let registry = app.state::<ProcessRegistry>();
         let existing_pid = registry.0.lock().unwrap().remove(&task);
@@ -329,6 +359,8 @@ pub async fn run_monitoring(
         let registry = app.state::<ProcessRegistry>();
         registry.0.lock().unwrap().insert(task.clone(), pid);
     }
+    // PID 파일 저장 (앱 재시작 후 고아 프로세스 정리용)
+    save_pid_file(&app, &task, pid);
 
     let stdout = child.stdout.take().unwrap();
     let stderr = child.stderr.take().unwrap();
@@ -370,7 +402,7 @@ pub async fn run_monitoring(
         }
     });
 
-    // 종료 처리: done 이벤트 + ProcessRegistry 정리
+    // 종료 처리: done 이벤트 + ProcessRegistry + PID 파일 정리
     let app_wait = app.clone();
     let task_wait = task.clone();
     tokio::spawn(async move {
@@ -378,6 +410,14 @@ pub async fn run_monitoring(
             {
                 let registry = app_wait.state::<ProcessRegistry>();
                 registry.0.lock().unwrap().remove(&task_wait);
+            }
+            // PID 파일에 우리 PID가 그대로 있을 때만 삭제 (새 프로세스의 파일을 건드리지 않음)
+            if let Some(path) = pid_file_path(&app_wait, &task_wait) {
+                if let Ok(s) = std::fs::read_to_string(&path) {
+                    if s.trim().parse::<u32>().ok() == Some(pid) {
+                        let _ = std::fs::remove_file(&path);
+                    }
+                }
             }
             let ts = std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
@@ -410,6 +450,9 @@ pub async fn stop_monitoring(app: AppHandle, task: String) -> Result<(), String>
     if let Some(pid) = pid {
         kill_process_tree(pid);
     }
+
+    // PID 파일 기반으로도 정리 (레지스트리에 없는 고아 프로세스 대비)
+    kill_from_pid_file(&app, &task);
 
     let ts = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -467,7 +510,16 @@ pub async fn run_automation(
     let automation_dir = get_automation_dir(&app)?;
     let script_path = get_script_path(&automation_dir, &task)?;
 
-    let full_config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    // config가 비어 있으면 automation/config.json 파일에서 읽기
+    let effective_config = if config.as_object().map(|o| o.is_empty()).unwrap_or(true) {
+        let config_file = automation_dir.join("config.json");
+        let text = std::fs::read_to_string(&config_file)
+            .map_err(|_| format!("config.json 없음: {}", config_file.display()))?;
+        serde_json::from_str(&text).map_err(|e| e.to_string())?
+    } else {
+        config
+    };
+    let full_config_json = serde_json::to_string(&effective_config).map_err(|e| e.to_string())?;
 
     let _ = app.emit("automation-log", AutomationLog {
         task: task.clone(),
