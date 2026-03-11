@@ -454,6 +454,22 @@
 :root[data-theme="dark"] .badge-unread  { background: var(--color-blue-alpha-15); color: var(--accent-primary); }
 :root[data-theme="light"] .badge-unread { background: var(--color-blue-alpha-10); color: var(--accent-primary); }
 
+/* 승인 상태 배지 */
+.badge-approval {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+:root[data-theme="dark"]  .badge-approval.approval-requested { background: rgba(234,179,8,0.15); color: #fbbf24; }
+:root[data-theme="light"] .badge-approval.approval-requested { background: rgba(234,179,8,0.12); color: #92400e; }
+:root[data-theme="dark"]  .badge-approval.approval-approved  { background: var(--color-green-alpha-15); color: var(--color-green-300); }
+:root[data-theme="light"] .badge-approval.approval-approved  { background: var(--color-green-alpha-10); color: var(--color-green-600); }
+:root[data-theme="dark"]  .badge-approval.approval-rejected  { background: var(--color-red-alpha-15);   color: var(--color-red-300); }
+:root[data-theme="light"] .badge-approval.approval-rejected  { background: var(--color-red-alpha-10);   color: var(--color-red-600); }
+
 /* unread-badge: h2 옆 숫자 알림 배지 */
 .unread-badge {
   display: inline-flex;

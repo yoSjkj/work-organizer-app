@@ -80,6 +80,9 @@ function CsrMonitor() {
                   <div className="csr-item-header">
                     <span className="csr-ritm">{item.ritm}</span>
                     {item.isNew && <span className="badge-new" title="클릭하여 확인">NEW</span>}
+                    {item.approvalKo && (
+                      <span className={`badge-approval approval-${item.approval}`}>{item.approvalKo}</span>
+                    )}
                     {item.status && (
                       <span className="csr-status">{item.status}</span>
                     )}
