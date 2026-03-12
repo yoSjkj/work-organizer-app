@@ -43,26 +43,32 @@ async function processTask(frame, taskName) {
 
   // 진행결과 "정상" 선택
   const resultSelect = frame.locator('select[name="u_daily_operational_task.u_check_result"]')
-  const normalValue = await resultSelect.evaluate(sel => {
-    const opt = Array.from(sel.options).find(o => o.text.includes('정상'))
-    return opt?.value ?? null
-  })
+  const selectVisible = await resultSelect.isVisible().catch(() => false)
 
-  if (normalValue !== null) {
-    await resultSelect.selectOption(normalValue)
-    await resultSelect.evaluate(el => {
-      ;['change', 'blur'].forEach(type =>
-        el.dispatchEvent(new Event(type, { bubbles: true }))
-      )
-      const win = el.ownerDocument.defaultView
-      if (win?.angular) win.angular.element(el).scope()?.$apply()
-    })
-    console.log('  진행결과 "정상" 선택 완료')
+  if (!selectVisible) {
+    console.log('  ⚠️ 진행결과 선택 필드 없음 (건너뜀)')
   } else {
-    const options = await resultSelect.evaluate(sel =>
-      Array.from(sel.options).map(o => `${o.value}=${o.text}`).join(', ')
-    )
-    console.log(`  ⚠️ "정상" 옵션 없음. 사용 가능한 옵션: ${options}`)
+    const normalValue = await resultSelect.evaluate(sel => {
+      const opt = Array.from(sel.options).find(o => o.text.includes('정상'))
+      return opt?.value ?? null
+    })
+
+    if (normalValue !== null) {
+      await resultSelect.selectOption(normalValue)
+      await resultSelect.evaluate(el => {
+        ;['change', 'blur'].forEach(type =>
+          el.dispatchEvent(new Event(type, { bubbles: true }))
+        )
+        const win = el.ownerDocument.defaultView
+        if (win?.angular) win.angular.element(el).scope()?.$apply()
+      })
+      console.log('  진행결과 "정상" 선택 완료')
+    } else {
+      const options = await resultSelect.evaluate(sel =>
+        Array.from(sel.options).map(o => `${o.value}=${o.text}`).join(', ')
+      )
+      console.log(`  ⚠️ "정상" 옵션 없음. 사용 가능한 옵션: ${options}`)
+    }
   }
 
   await frame.waitForTimeout(500)

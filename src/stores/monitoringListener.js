@@ -25,7 +25,19 @@ if (isTauri() && !window.__monitoringListenerReady) {
                 sendNotification({ title: 'CSR 신규 접수', body: ev.data.title || ev.data.ritm }).catch(() => {})
               )
               break
-            case 'csr_update': store.upsertCsrItem(ev.data); break
+            case 'csr_update': {
+              const existing = store.csrItems.find(i => i.ritm === ev.data.ritm)
+              store.upsertCsrItem(ev.data)
+              if (ev.data.approval && existing?.approval !== ev.data.approval) {
+                import('@tauri-apps/plugin-notification').then(({ sendNotification }) =>
+                  sendNotification({
+                    title: 'CSR 승인 상태 변경',
+                    body: `${ev.data.ritm}: ${ev.data.approvalKo || ev.data.approval}`,
+                  }).catch(() => {})
+                )
+              }
+              break
+            }
             case 'csr_sync':   store.syncCsrItems(ev.data.ritms); store.setCsrLastPoll(Date.now()); break
             case 'done':
               store.setCsrRunning(false)

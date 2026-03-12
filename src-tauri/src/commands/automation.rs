@@ -472,7 +472,7 @@ pub async fn stop_monitoring(app: AppHandle, task: String) -> Result<(), String>
 }
 
 fn classify_log_level(line: &str) -> &'static str {
-    if line.contains("✅") || line.contains("완료") || line.contains("성공") {
+    if line.contains("✅") || line.contains("성공") {
         "success"
     } else if line.contains("❌") || line.contains("오류") || line.contains("Error:") || line.contains("error:") {
         "error"
