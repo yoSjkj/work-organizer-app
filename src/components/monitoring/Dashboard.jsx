@@ -63,19 +63,23 @@ async function spawnTask(taskId, store) {
       const { task, payload } = event.payload
       if (task !== taskId) return
 
-      if (payload.type === 'found') {
-        addTaskLog(taskId, `📋 Task ${payload.count}개 발견`)
-      } else if (payload.type === 'progress') {
-        addTaskLog(taskId, `[${payload.current}/${payload.total}] ${payload.name}`)
-      } else if (payload.type === 'done') {
-        const msg = payload.failed === 0
-          ? `✅ 완료: ${payload.processed}개 처리됨`
-          : `완료: ${payload.processed}개 성공, ${payload.failed}개 실패`
-        addTaskLog(taskId, msg)
-      } else if (payload.type === 'exit') {
-        updateTask(taskId, { status: payload.success ? 'done' : 'error' })
-        unlisten?.()
-        unlistenEvent?.()
+      switch (payload.type) {
+        case 'found':
+          addTaskLog(taskId, `📋 Task ${payload.count}개 발견`)
+          break
+        case 'progress':
+          addTaskLog(taskId, `[${payload.current}/${payload.total}] ${payload.name}`)
+          break
+        case 'done':
+          addTaskLog(taskId, payload.failed === 0
+            ? `✅ 완료: ${payload.processed}개 처리됨`
+            : `완료: ${payload.processed}개 성공, ${payload.failed}개 실패`)
+          break
+        case 'exit':
+          updateTask(taskId, { status: payload.success ? 'done' : 'error' })
+          unlisten?.()
+          unlistenEvent?.()
+          break
       }
     })
 
