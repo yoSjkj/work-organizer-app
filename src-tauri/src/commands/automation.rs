@@ -425,6 +425,8 @@ pub async fn run_monitoring(
                     }
                 }
             }
+            // stdout 잔여 줄이 프론트에 먼저 도착하도록 잠깐 대기
+            tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
             let ts = std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .map(|d| d.as_millis() as u64)
@@ -494,14 +496,14 @@ fn kill_process_tree(pid: u32) {
     let _ = std::process::Command::new("taskkill")
         .args(["/F", "/T", "/PID", &pid.to_string()])
         .creation_flags(CREATE_NO_WINDOW)
-        .spawn();
+        .status(); // spawn() 대신 status()로 완료까지 대기
 }
 
 #[cfg(not(windows))]
 fn kill_process_tree(pid: u32) {
     let _ = std::process::Command::new("kill")
         .args(["-TERM", &pid.to_string()])
-        .spawn();
+        .status();
 }
 
 #[tauri::command]
