@@ -51,16 +51,31 @@ async function spawnTask(taskId, store) {
     updateTask(taskId, { status: 'running', lastRun: Date.now() })
     addTaskLog(taskId, `${meta.label} 시작`)
 
-    const unlisten = await listen('automation-log', (event) => {
-      const { task, level, message } = event.payload
+    let unlisten, unlistenEvent
+
+    unlisten = await listen('automation-log', (event) => {
+      const { task, message } = event.payload
       if (task !== taskId) return
       addTaskLog(taskId, message)
-      if (level === 'success') {
-        updateTask(taskId, { status: 'done' })
-        unlisten()
-      } else if (level === 'error' && (message.startsWith('❌') || message.startsWith('대기 오류'))) {
-        updateTask(taskId, { status: 'error' })
-        unlisten()
+    })
+
+    unlistenEvent = await listen('automation-event', (event) => {
+      const { task, payload } = event.payload
+      if (task !== taskId) return
+
+      if (payload.type === 'found') {
+        addTaskLog(taskId, `📋 Task ${payload.count}개 발견`)
+      } else if (payload.type === 'progress') {
+        addTaskLog(taskId, `[${payload.current}/${payload.total}] ${payload.name}`)
+      } else if (payload.type === 'done') {
+        const msg = payload.failed === 0
+          ? `✅ 완료: ${payload.processed}개 처리됨`
+          : `완료: ${payload.processed}개 성공, ${payload.failed}개 실패`
+        addTaskLog(taskId, msg)
+      } else if (payload.type === 'exit') {
+        updateTask(taskId, { status: payload.success ? 'done' : 'error' })
+        unlisten?.()
+        unlistenEvent?.()
       }
     })
 

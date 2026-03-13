@@ -216,6 +216,12 @@ pub struct AutomationLog {
     pub message: String,
 }
 
+#[derive(Clone, serde::Serialize)]
+pub struct AutomationEvent {
+    pub task: String,
+    pub payload: serde_json::Value,
+}
+
 /// automation/ 폴더 경로 탐색
 /// - 디버그 빌드: CARGO_MANIFEST_DIR 기준 (프로젝트 루트/automation)
 /// - 릴리즈 빌드: exe 폴더 옆의 automation/
@@ -552,12 +558,24 @@ pub async fn run_automation(
     let stdout = child.stdout.take().unwrap();
     let stderr = child.stderr.take().unwrap();
 
-    // stdout 스트리밍
+    // stdout 스트리밍 — JSON이면 automation-event, 텍스트면 automation-log
     let app_out = app.clone();
     let task_out = task.clone();
     tokio::spawn(async move {
         let mut lines = tokio::io::BufReader::new(stdout).lines();
         while let Ok(Some(line)) = lines.next_line().await {
+            let trimmed = line.trim();
+            if trimmed.starts_with('{') {
+                if let Ok(val) = serde_json::from_str::<serde_json::Value>(trimmed) {
+                    if val.get("type").is_some() {
+                        let _ = app_out.emit("automation-event", AutomationEvent {
+                            task: task_out.clone(),
+                            payload: val,
+                        });
+                        continue;
+                    }
+                }
+            }
             let level = classify_log_level(&line);
             let _ = app_out.emit("automation-log", AutomationLog {
                 task: task_out.clone(),
@@ -591,22 +609,24 @@ pub async fn run_automation(
                     let registry = app_wait.state::<ProcessRegistry>();
                     registry.0.lock().unwrap().remove(&task_wait);
                 }
-                let (level, msg) = if status.success() {
-                    ("success", "✅ 완료".to_string())
-                } else {
-                    ("error", format!("❌ 종료 (코드: {})", status.code().unwrap_or(-1)))
-                };
-                let _ = app_wait.emit("automation-log", AutomationLog {
+                let _ = app_wait.emit("automation-event", AutomationEvent {
                     task: task_wait,
-                    level: level.to_string(),
-                    message: msg,
+                    payload: serde_json::json!({
+                        "type": "exit",
+                        "success": status.success(),
+                        "code": status.code().unwrap_or(-1)
+                    }),
                 });
             }
             Err(e) => {
-                let _ = app_wait.emit("automation-log", AutomationLog {
+                let _ = app_wait.emit("automation-event", AutomationEvent {
                     task: task_wait,
-                    level: "error".to_string(),
-                    message: format!("대기 오류: {}", e),
+                    payload: serde_json::json!({
+                        "type": "exit",
+                        "success": false,
+                        "code": -1,
+                        "error": e.to_string()
+                    }),
                 });
             }
         }

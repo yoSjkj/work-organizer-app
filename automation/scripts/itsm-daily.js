@@ -142,17 +142,21 @@ async function itsmDaily() {
     console.log(`📋 Task ${taskItems.length}개 발견`)
     if (taskItems.length === 0) {
       console.log('✅ 오늘 처리할 Task 없음')
+      process.stdout.write(JSON.stringify({ type: 'done', processed: 0, failed: 0 }) + '\n')
       return
     }
 
     taskItems.forEach((t, i) => console.log(`  [${i + 1}] ${t.name}`))
+    process.stdout.write(JSON.stringify({ type: 'found', count: taskItems.length, tasks: taskItems.map(t => t.name) }) + '\n')
 
     // 각 Task 처리
     let processed = 0
     let failed = 0
 
     for (const task of taskItems) {
-      console.log(`\n[${processed + failed + 1}/${taskItems.length}] ${task.name}`)
+      const current = processed + failed + 1
+      console.log(`\n[${current}/${taskItems.length}] ${task.name}`)
+      process.stdout.write(JSON.stringify({ type: 'progress', current, total: taskItems.length, name: task.name }) + '\n')
       try {
         await gsftFrame.goto(task.url, { waitUntil: 'domcontentloaded', timeout: 20000 })
         await gsftFrame.waitForTimeout(1500)
@@ -165,11 +169,8 @@ async function itsmDaily() {
       }
     }
 
-    if (failed === 0) {
-      console.log(`\n✅ 완료: ${processed}개 처리됨`)
-    } else {
-      console.log(`\n완료: ${processed}개 성공, ${failed}개 실패`)
-    }
+    console.log(failed === 0 ? `\n✅ 완료: ${processed}개 처리됨` : `\n완료: ${processed}개 성공, ${failed}개 실패`)
+    process.stdout.write(JSON.stringify({ type: 'done', processed, failed }) + '\n')
 
   } catch (err) {
     console.error(`❌ 오류: ${err.message}`)
